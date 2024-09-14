@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.domain.review;
+package com.nbacm.zzap_ki_yo.domain.review.entity;
 
 import com.nbacm.zzap_ki_yo.domain.order.Order;
 import jakarta.persistence.*;
