@@ -3,6 +3,7 @@ package com.nbacm.zzap_ki_yo.domain.user;
 import com.nbacm.zzap_ki_yo.domain.favorite.Favorite;
 import com.nbacm.zzap_ki_yo.domain.order.Order;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
@@ -26,6 +27,9 @@ public class User {
     private String nickname;
 
     @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -39,4 +43,17 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
     private List<Favorite> favorites;
+
+    @Builder
+    public User(String email, String nickname, String name, UserRole userRole,String password) {
+        this.email = email;
+        this.nickname = nickname;
+        this.name = name;
+        this.password = password;
+        this.userRole = userRole;
+    }
+    public void update(String nickname, String email) {
+        this.nickname = nickname;
+        this.email = email;
+    }
 }
