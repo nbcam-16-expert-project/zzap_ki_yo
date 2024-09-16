@@ -1,7 +1,7 @@
 package com.nbacm.zzap_ki_yo.domain.user;
 
 import com.nbacm.zzap_ki_yo.domain.favorite.Favorite;
-import com.nbacm.zzap_ki_yo.domain.order.Order;
+import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

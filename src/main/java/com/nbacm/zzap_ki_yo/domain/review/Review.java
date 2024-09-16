@@ -1,6 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.review;
 
-import com.nbacm.zzap_ki_yo.domain.order.Order;
+import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
