@@ -50,4 +50,15 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
     private List<OrderedMenu> orderedMenuList;
+
+    public static Order createOrder(OrderType orderType, String orderAddress, LocalDateTime orderAt, Store store, User user, OrderStatus orderStatus) {
+        Order order = new Order();
+        order.orderType = orderType;
+        order.orderAddress = orderAddress;
+        order.orderAt = orderAt;
+        order.store = store;
+        order.user = user;
+        order.orderStatus = orderStatus;
+        return order;
+    }
 }
