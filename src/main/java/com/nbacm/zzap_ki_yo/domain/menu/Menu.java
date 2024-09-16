@@ -27,7 +27,4 @@ public class Menu {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
-
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.REMOVE)
-    private List<OrderedMenu> orderedMenuList;
 }

@@ -9,5 +9,5 @@ public class OrderSaveRequest {
 
     private String orderType;
     private String orderAddress;
-    private List<String> menuList;
+    private List<Long> menuList;
 }
