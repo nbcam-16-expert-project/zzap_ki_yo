@@ -1,7 +1,7 @@
 package com.nbacm.zzap_ki_yo.domain.order;
 
 import com.nbacm.zzap_ki_yo.domain.review.Review;
-import com.nbacm.zzap_ki_yo.domain.store.Store;
+import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;

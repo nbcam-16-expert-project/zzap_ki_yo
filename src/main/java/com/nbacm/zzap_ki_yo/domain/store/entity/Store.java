@@ -1,8 +1,9 @@
-package com.nbacm.zzap_ki_yo.domain.store;
+package com.nbacm.zzap_ki_yo.domain.store.entity;
 
 import com.nbacm.zzap_ki_yo.domain.menu.Menu;
 import com.nbacm.zzap_ki_yo.domain.order.Order;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
@@ -38,4 +39,13 @@ public class Store {
     @BatchSize(size = 20)
     private List<Order> orders;
 
+
+    @Builder
+    public Store(String storeName, String storeAddress, String storeNumber, Integer favoriteCount, List<Menu> menus) {
+        this.storeName = storeName;
+        this.storeAddress = storeAddress;
+        this.storeNumber = storeNumber;
+        this.favoriteCount = favoriteCount;
+        this.menus = menus;
+    }
 }
