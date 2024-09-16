@@ -47,4 +47,7 @@ public class Order {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
     private List<Review> reviews;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
+    private List<OrderedMenu> orderedMenuList;
 }

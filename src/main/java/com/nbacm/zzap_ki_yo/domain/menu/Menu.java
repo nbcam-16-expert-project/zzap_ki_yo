@@ -1,9 +1,12 @@
 package com.nbacm.zzap_ki_yo.domain.menu;
 
+import com.nbacm.zzap_ki_yo.domain.order.entity.OrderedMenu;
 import com.nbacm.zzap_ki_yo.domain.store.Store;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -25,4 +28,6 @@ public class Menu {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.REMOVE)
+    private List<OrderedMenu> orderedMenuList;
 }
