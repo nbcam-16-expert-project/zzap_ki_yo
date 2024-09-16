@@ -1,7 +1,11 @@
 package com.nbacm.zzap_ki_yo.domain.order.controller;
 
+import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveRequest;
 import com.nbacm.zzap_ki_yo.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -11,6 +15,13 @@ public class OrderController {
     private final OrderService orderService;
 
     // 주문하기.
+    // 롱 userid는 임시.
+    // 로그인 쪽 완성되면 잊지 말고 헤더에서 '로그인된 유저'를 받게 바꾸기
+    @PostMapping("/orders")
+    public ResponseEntity<OrderSaveRequest> saveOrder(
+            Long userId,
+            @RequestBody OrderSaveRequest orderSaveRequest
+    ) {}
 
     // 주문 내역 조회
 
