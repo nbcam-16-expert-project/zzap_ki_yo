@@ -10,7 +10,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    // 주문하기
+    // 주문하기.
 
     // 주문 내역 조회
 
