@@ -8,6 +8,7 @@ import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveResponse;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.order.entity.OrderedMenu;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderRepository;
+import com.nbacm.zzap_ki_yo.domain.order.repository.OrderedMenuRepository;
 import com.nbacm.zzap_ki_yo.domain.store.Store;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.User;
@@ -27,6 +28,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
+    private final OrderedMenuRepository orderedMenuRepository;
     // 나중에 까먹지 말고 필요한 다른 repository 주입하기
 
     @Transactional
@@ -55,7 +57,11 @@ public class OrderService {
 
         orderRepository.save(order);
 
-        return new OrderSaveResponse(
+        OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(order, orderSaveRequest.getMenuList());
+
+        return orderSaveResponse;
+
+        /*return new OrderSaveResponse(
                 order.getOrderId(),
                 order.getOrderType(),
                 order.getOrderAddress(),
@@ -64,6 +70,19 @@ public class OrderService {
                 order.getOrderStatus(),
                 orderSaveRequest.getMenuList()
 
-        );
+        );*/
     }
+
+    public List<OrderSaveResponse> getOrdersByUser (Long userId) {
+        List<Order> orderList = orderRepository.findAllByUserId(userId);
+
+        List<OrderSaveResponse> orderSaveResponseList = new ArrayList<>();
+        for (Order order : orderList) {
+
+        }
+    }
+
+
+
+
 }
