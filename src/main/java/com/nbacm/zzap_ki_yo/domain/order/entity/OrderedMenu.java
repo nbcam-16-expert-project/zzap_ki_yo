@@ -20,4 +20,11 @@ public class OrderedMenu {
     @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
+
+    public static OrderedMenu create(Order order, Menu menu) {
+        OrderedMenu orderedMenu = new OrderedMenu();
+        orderedMenu.order = order;
+        orderedMenu.menu = menu;
+        return orderedMenu;
+    }
 }

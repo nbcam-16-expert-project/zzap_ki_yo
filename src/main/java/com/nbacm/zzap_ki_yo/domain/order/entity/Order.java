@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Order {
+public class Order extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
@@ -28,9 +28,6 @@ public class Order {
 
     @Column(name = "order_adress", nullable = false)
     private String orderAddress;
-
-    @Column(name = "order_at", nullable = false)
-    private LocalDateTime orderAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
@@ -53,14 +50,18 @@ public class Order {
 
 
 
-    public static Order createOrder(OrderType orderType, String orderAddress, LocalDateTime orderAt, Store store, User user, OrderStatus orderStatus) {
+    public static Order createOrder(String orderType, String orderAddress, Store store, User user, String orderStatus) {
         Order order = new Order();
-        order.orderType = orderType;
+        order.orderType = OrderType.valueOf(orderType);
         order.orderAddress = orderAddress;
-        order.orderAt = orderAt;
         order.store = store;
         order.user = user;
-        order.orderStatus = orderStatus;
+        order.orderStatus = OrderStatus.valueOf(orderStatus);
+        return order;
+    }
+
+    public static Order addMenu(Order order, List<OrderedMenu> orderedMenuList){
+        order.orderedMenuList = orderedMenuList;
         return order;
     }
 }
