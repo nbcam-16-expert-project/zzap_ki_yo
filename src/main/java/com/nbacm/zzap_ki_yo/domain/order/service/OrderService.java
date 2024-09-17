@@ -60,26 +60,20 @@ public class OrderService {
         OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(order, orderSaveRequest.getMenuList());
 
         return orderSaveResponse;
-
-        /*return new OrderSaveResponse(
-                order.getOrderId(),
-                order.getOrderType(),
-                order.getOrderAddress(),
-                order.getStore().getStoreId(),
-                order.getUser().getUserId(),
-                order.getOrderStatus(),
-                orderSaveRequest.getMenuList()
-
-        );*/
     }
 
     public List<OrderSaveResponse> getOrdersByUser (Long userId) {
+
         List<Order> orderList = orderRepository.findAllByUserId(userId);
+
 
         List<OrderSaveResponse> orderSaveResponseList = new ArrayList<>();
         for (Order order : orderList) {
-
+            List<Long> menuIdList = orderedMenuRepository.findMenuIdsByOrder(order);
+            OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(order, menuIdList);
+            orderSaveResponseList.add(orderSaveResponse);
         }
+        return orderSaveResponseList;
     }
 
 

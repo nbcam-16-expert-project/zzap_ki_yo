@@ -13,4 +13,8 @@ public interface OrderedMenuRepository extends JpaRepository<OrderedMenu, Long> 
     @Query("SELECT om.menu FROM OrderedMenu om WHERE om.order = :order")
     List<Menu> findMenuByOrder(@Param("order") Order order);
 
+    @Query("SELECT om.menu.menuId FROM OrderedMenu om WHERE om.order = :order")
+    List<Long> findMenuIdsByOrder(@Param("order") Order order);
+
+
 }

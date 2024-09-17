@@ -28,10 +28,10 @@ public class OrderController {
         return ResponseEntity.ok(orderService.saveOrder(userId, storeId, orderSaveRequest));
     }
 
-    // 주문 내역 조회
+    // 주문 내역 조회  // 로그인 쪽 완성되면 잊지 말고 헤더에서 '로그인된 유저'를 받게 바꾸기
     @GetMapping("/orders")
     public ResponseEntity<List<OrderSaveResponse>> getOrders(Long userId) {
-        return ResponseEntity.ok()
+        return ResponseEntity.ok(orderService.getOrdersByUser(userId));
     }
 
     // 주문 상태 추적
