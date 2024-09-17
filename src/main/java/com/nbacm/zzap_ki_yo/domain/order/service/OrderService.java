@@ -54,9 +54,7 @@ public class OrderService {
         }
 
         Order orderPlusMenu = Order.addMenu(order, orderedMenuList);
-
         orderRepository.save(orderPlusMenu);
-
         OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(orderPlusMenu, orderSaveRequest.getMenuList());
 
         return orderSaveResponse;
@@ -66,13 +64,13 @@ public class OrderService {
 
         List<Order> orderList = orderRepository.findAllByUserId(userId);
 
-
         List<OrderSaveResponse> orderSaveResponseList = new ArrayList<>();
         for (Order order : orderList) {
             List<Long> menuIdList = orderedMenuRepository.findMenuIdsByOrder(order);
             OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(order, menuIdList);
             orderSaveResponseList.add(orderSaveResponse);
         }
+
         return orderSaveResponseList;
     }
 
