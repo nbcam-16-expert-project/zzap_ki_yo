@@ -53,11 +53,11 @@ public class OrderService {
             ));
         }
 
-        Order.addMenu(order, orderedMenuList);
+        Order orderPlusMenu = Order.addMenu(order, orderedMenuList);
 
-        orderRepository.save(order);
+        orderRepository.save(orderPlusMenu);
 
-        OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(order, orderSaveRequest.getMenuList());
+        OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(orderPlusMenu, orderSaveRequest.getMenuList());
 
         return orderSaveResponse;
     }
