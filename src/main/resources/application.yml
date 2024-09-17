@@ -36,3 +36,7 @@ file:
   upload-dir: upload/feed-images
 
 
+logging:
+  level:
+    root: info
+
