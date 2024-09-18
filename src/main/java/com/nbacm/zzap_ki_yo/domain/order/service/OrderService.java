@@ -38,7 +38,9 @@ public class OrderService {
     @Transactional
     public OrderSaveResponse saveOrder (AuthUser authUser, Long storeId, OrderSaveRequest orderSaveRequest) {
 
-        Store store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException(storeId + "번 가게는 없는 가게입니다."));
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException(storeId + "번 가게는 없는 가게입니다."));
+
         User user = userRepository.findByEmail(authUser.getEmail()).get();
 
         Order order = Order.createOrder(
@@ -59,6 +61,7 @@ public class OrderService {
 
         Order orderPlusMenu = Order.addMenu(order, orderedMenuList);
         orderRepository.save(orderPlusMenu);
+
         OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(orderPlusMenu, orderSaveRequest.getMenuList());
 
         return orderSaveResponse;
@@ -84,6 +87,7 @@ public class OrderService {
 
     // 주문 id를 기준으로 해당되는 주문 단건 조회
     public OrderSaveResponse getOrderById(Long orderId, AuthUser authUser) {
+
         User user = userRepository.findByEmail(authUser.getEmail()).get();
         Long userId = user.getUserId();
 
@@ -117,8 +121,4 @@ public class OrderService {
 
         orderRepository.delete(order);
     }
-
-
-
-
 }
