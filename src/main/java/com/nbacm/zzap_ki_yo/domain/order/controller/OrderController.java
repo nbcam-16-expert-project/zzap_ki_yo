@@ -35,6 +35,10 @@ public class OrderController {
     }
 
     // 주문 상태 추적
+    @GetMapping("/orders/{orderId}")
+    public ResponseEntity<OrderSaveResponse> getOrder(@PathVariable Long orderId, @Auth AuthUser authUser) {
+        return ResponseEntity.ok(orderService.getOrderById(orderId, authUser));
+    }
 
     // 주문 취소
 }

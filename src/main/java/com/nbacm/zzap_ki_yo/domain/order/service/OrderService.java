@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.order.service;
 
+import com.nbacm.zzap_ki_yo.domain.exception.ForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
 import com.nbacm.zzap_ki_yo.domain.menu.Menu;
 import com.nbacm.zzap_ki_yo.domain.menu.repository.MenuRepository;
@@ -33,6 +34,7 @@ public class OrderService {
     private final OrderedMenuRepository orderedMenuRepository;
     private final UserRepository userRepository;
 
+    // 주문하기
     @Transactional
     public OrderSaveResponse saveOrder (AuthUser authUser, Long storeId, OrderSaveRequest orderSaveRequest) {
 
@@ -62,6 +64,7 @@ public class OrderService {
         return orderSaveResponse;
     }
 
+    // 로그인 중인 유저 id를 기준으로 해당되는 모든 주문 조회
     public List<OrderSaveResponse> getOrdersByUser (AuthUser authUser) {
 
         User user = userRepository.findByEmail(authUser.getEmail()).get();
@@ -77,6 +80,27 @@ public class OrderService {
         }
 
         return orderSaveResponseList;
+    }
+
+    // 주문 id를 기준으로 해당되는 주문 단건 조회
+    public OrderSaveResponse getOrderById(Long orderId, AuthUser authUser) {
+        User user = userRepository.findByEmail(authUser.getEmail()).get();
+        Long userId = user.getUserId();
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()-> new NotFoundException(orderId + "번 주문은 없는 주문입니다."));
+
+        if(!order.getUser().getUserId().equals(userId)){
+            throw new ForbiddenException("다른 사용자의 주문은 조회할 수 없습니다.");
+        }
+
+        List<Long> menuIdList = orderedMenuRepository.findMenuIdsByOrder(order);
+
+        OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(order, menuIdList);
+
+        return orderSaveResponse;
+
+
     }
 
 
