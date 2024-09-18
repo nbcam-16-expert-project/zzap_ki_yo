@@ -99,8 +99,22 @@ public class OrderService {
         OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(order, menuIdList);
 
         return orderSaveResponse;
+    }
 
+    @Transactional
+    public void deleteOrderById(Long orderId, AuthUser authUser) {
 
+        User user = userRepository.findByEmail(authUser.getEmail()).get();
+        Long userId = user.getUserId();
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()-> new NotFoundException(orderId + "번 주문은 없는 주문입니다."));
+
+        if(!order.getUser().getUserId().equals(userId)){
+            throw new ForbiddenException("다른 사용자의 주문은 삭제할 수 없습니다.");
+        }
+
+        orderRepository.delete(order);
     }
 
 

@@ -41,4 +41,8 @@ public class OrderController {
     }
 
     // 주문 취소
+    @DeleteMapping("/orders/{orderId}")
+    public void deleteOrder(@PathVariable Long orderId, @Auth AuthUser authUser) {
+        orderService.deleteOrderById(orderId, authUser);
+    }
 }
