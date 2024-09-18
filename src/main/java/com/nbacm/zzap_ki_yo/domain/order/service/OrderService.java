@@ -101,6 +101,7 @@ public class OrderService {
         return orderSaveResponse;
     }
 
+    // 주문 id를 기준으로 해당되는 주문 삭제
     @Transactional
     public void deleteOrderById(Long orderId, AuthUser authUser) {
 
