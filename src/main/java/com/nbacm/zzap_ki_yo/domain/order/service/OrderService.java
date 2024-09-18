@@ -12,6 +12,8 @@ import com.nbacm.zzap_ki_yo.domain.order.repository.OrderedMenuRepository;
 import com.nbacm.zzap_ki_yo.domain.store.Store;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.User;
+import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
+import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,13 +31,14 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
     private final OrderedMenuRepository orderedMenuRepository;
+    private final UserRepository userRepository;
     // 나중에 까먹지 말고 필요한 다른 repository 주입하기
 
     @Transactional
-    public OrderSaveResponse saveOrder (Long userId, Long storeId, OrderSaveRequest orderSaveRequest) {
+    public OrderSaveResponse saveOrder (AuthUser authUser, Long storeId, OrderSaveRequest orderSaveRequest) {
 
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException(storeId + "번 가게는 없는 가게입니다."));
-        User user = new User();// 임시 객체. 로그인된 유저를 가져오는 것으로 바꾸기!!
+        User user = userRepository.findByEmail(authUser.getEmail()).get();
 
         Order order = Order.createOrder(
                 orderSaveRequest.getOrderType(),
