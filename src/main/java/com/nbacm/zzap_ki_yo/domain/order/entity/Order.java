@@ -15,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Table(name = "orders")  // 테이블 이름을 'orders'로 변경
 @NoArgsConstructor
 public class Order extends Timestamped {
     @Id
@@ -34,7 +35,7 @@ public class Order extends Timestamped {
     private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_Id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
