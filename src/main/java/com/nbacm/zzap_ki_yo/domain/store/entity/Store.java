@@ -48,4 +48,8 @@ public class Store {
         this.favoriteCount = favoriteCount;
         this.menus = menus;
     }
+
+    public void updateStoreName(String storeName) {
+        this.storeName = storeName;
+    }
 }
