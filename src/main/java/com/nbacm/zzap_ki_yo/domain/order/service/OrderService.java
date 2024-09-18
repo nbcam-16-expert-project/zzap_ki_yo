@@ -32,7 +32,6 @@ public class OrderService {
     private final StoreRepository storeRepository;
     private final OrderedMenuRepository orderedMenuRepository;
     private final UserRepository userRepository;
-    // 나중에 까먹지 말고 필요한 다른 repository 주입하기
 
     @Transactional
     public OrderSaveResponse saveOrder (AuthUser authUser, Long storeId, OrderSaveRequest orderSaveRequest) {
@@ -63,7 +62,10 @@ public class OrderService {
         return orderSaveResponse;
     }
 
-    public List<OrderSaveResponse> getOrdersByUser (Long userId) {
+    public List<OrderSaveResponse> getOrdersByUser (AuthUser authUser) {
+
+        User user = userRepository.findByEmail(authUser.getEmail()).get();
+        Long userId = user.getUserId();
 
         List<Order> orderList = orderRepository.findAllByUserId(userId);
 

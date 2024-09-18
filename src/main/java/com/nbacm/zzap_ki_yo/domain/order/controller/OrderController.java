@@ -19,8 +19,6 @@ public class OrderController {
     private final OrderService orderService;
 
     // 주문하기.
-    // 롱 userid는 임시.
-    // 로그인 쪽 완성되면 잊지 말고 헤더에서 '로그인된 유저'를 받게 바꾸기
     @PostMapping("/stores/{storeId}/orders")
     public ResponseEntity<OrderSaveResponse> saveOrder(
             @Auth AuthUser authUser,
@@ -30,10 +28,10 @@ public class OrderController {
         return ResponseEntity.ok(orderService.saveOrder(authUser, storeId, orderSaveRequest));
     }
 
-    // 주문 내역 조회  // 로그인 쪽 완성되면 잊지 말고 헤더에서 '로그인된 유저'를 받게 바꾸기
+    // 주문 내역 조회
     @GetMapping("/orders")
-    public ResponseEntity<List<OrderSaveResponse>> getOrders(Long userId) {
-        return ResponseEntity.ok(orderService.getOrdersByUser(userId));
+    public ResponseEntity<List<OrderSaveResponse>> getOrders(@Auth AuthUser authUser) {
+        return ResponseEntity.ok(orderService.getOrdersByUser(authUser));
     }
 
     // 주문 상태 추적
