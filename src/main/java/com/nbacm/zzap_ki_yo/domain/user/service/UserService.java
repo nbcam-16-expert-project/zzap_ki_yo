@@ -14,6 +14,8 @@ public interface UserService {
 
     UserResponseDto updateUser(String email,UserRequestDto userRequestDto);
 
+    UserResponseDto updateAdmin(String email,String targetUserEmail,UserRequestDto userRequestDto);
+
     void deleteUser(String email,String password);
 
 

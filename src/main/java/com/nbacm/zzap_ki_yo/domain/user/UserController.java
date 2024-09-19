@@ -51,6 +51,18 @@ public class UserController {
         return ResponseEntity.ok(updateUser);
     }
 
+    @PostMapping("/admin/update")
+    public ResponseEntity<UserResponseDto> updateAdmin(@RequestBody UserRequestDto userRequestDto, @Auth AuthUser authUser) {
+        try {
+            String email = authUser.getEmail();
+            String targetUserEmail = userRequestDto.getEmail();
+            UserResponseDto updateUser = userService.updateAdmin(email, targetUserEmail, userRequestDto);
+            return ResponseEntity.ok(updateUser);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteAccount(@RequestBody UserRequestDto userRequestDto,@Auth AuthUser authUser) {
         String email  = authUser.getEmail();

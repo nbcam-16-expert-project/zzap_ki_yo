@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 @Component
 @Slf4j
@@ -21,15 +22,13 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
+
     private final RedisTemplate<String, String> redisTemplate;
-
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String authHeader = request.getHeader(JwtUtils.AUTHORIZATION_HEADER);
-
         if (authHeader != null && authHeader.startsWith(JwtUtils.BEARER_PREFIX)) {
             String token = authHeader.substring(JwtUtils.BEARER_PREFIX.length());
             log.info("token : {}", token);
@@ -50,6 +49,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             return;
                         }
                     }
+                    if (isAdminPath(request.getRequestURI()) && role != UserRole.ADMIN) {
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.getWriter().write("접근이 거부되었습니다. 관리자 권한이 필요합니다.");
+                        return;
+                    }
+
+                    if(isStorePath(request.getRequestURI()) && role != UserRole.ADMIN && role != UserRole.OWNER) {
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.getWriter().write("접근이 거부되었습니다. 권한이 필요합니다.");
+                        return;
+                    }
                     // 인증된 사용자 및 역할을 요청 속성에 설정
                     request.setAttribute("AuthenticatedUser", email);
                     request.setAttribute("role",role);
@@ -68,8 +78,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-
     private boolean isExcludedPath(String path) {
         return "/api/v1/users/login".equalsIgnoreCase(path) || "/api/v1/users".equalsIgnoreCase(path);
+    }
+    private boolean isAdminPath(String path) {
+        // 정규 표현식을 사용하여 /api/v1/{anything}/admin 패턴 확인
+        return Pattern.matches("/api/v1/[^/]+/admin.*", path);
+    }
+    private boolean isStorePath(String path) {
+        return Pattern.matches("/api/v1/[^/]+/store.*", path);
     }
 }
