@@ -50,6 +50,7 @@ public class Store {
     @JoinColumn(name = "user_Id", nullable = false)
     private User user;
 
+
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
     private List<Menu> menus;

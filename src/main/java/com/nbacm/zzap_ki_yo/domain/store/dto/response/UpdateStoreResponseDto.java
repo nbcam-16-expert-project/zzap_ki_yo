@@ -25,7 +25,6 @@ public class UpdateStoreResponseDto {
         this.status = status;
     }
 
-
     public static UpdateStoreResponseDto updateStoreName(Store store) {
         return new UpdateStoreResponseDto(store.getStoreName(),"가게 수정 성공", store.getStoreAddress(), store.getStoreNumber(), HttpStatus.OK.value());
     }

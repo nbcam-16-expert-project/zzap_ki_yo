@@ -44,7 +44,6 @@ public class UserStoreServiceImpl implements UserStoreService{
 
             menuNamePrices.add(menuNamePrice);
         }
-
         return SelectStoreResponseDto.selectStore(store, menuNamePrices);
     }
 

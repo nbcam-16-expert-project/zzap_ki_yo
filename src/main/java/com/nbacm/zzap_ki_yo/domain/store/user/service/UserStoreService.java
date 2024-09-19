@@ -12,3 +12,4 @@ public interface UserStoreService {
 
     List<SelectAllStoreResponseDto> selectAllStore(StoreNameRequestDto requestDto);
 }
+

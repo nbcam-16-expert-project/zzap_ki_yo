@@ -27,7 +27,6 @@ public class SelectStoreResponseDto {
         this.favoriteCount = favoriteCount;
     }
 
-
     public static SelectStoreResponseDto selectStore(Store store, List<MenuNamePrice> menus) {
         return SelectStoreResponseDto.builder()
                 .storeId(store.getStoreId())

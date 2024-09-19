@@ -7,3 +7,4 @@ public class StoreForbiddenException extends ForbiddenException {
         super(message);
     }
 }
+

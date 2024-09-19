@@ -7,3 +7,4 @@ public class StoreNotFoundException extends NotFoundException {
         super(message);
     }
 }
+

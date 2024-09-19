@@ -11,3 +11,4 @@ public class UpdateStoreNameRequest {
     private String storeAddress;
     private String storeNumber;
 }
+

@@ -14,6 +14,7 @@ public class DeleteStoreResponseDto {
         this.status = status;
     }
 
+
     public static DeleteStoreResponseDto delete(String message, int status) {
         return new DeleteStoreResponseDto(message, status);
     }

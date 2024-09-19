@@ -22,6 +22,7 @@ public class SelectAllStoreResponseDto {
         this.favoriteCount = favoriteCount;
     }
 
+
     public static SelectAllStoreResponseDto selectAllStore(Store store) {
         return SelectAllStoreResponseDto.builder()
                 .storeId(store.getStoreId())

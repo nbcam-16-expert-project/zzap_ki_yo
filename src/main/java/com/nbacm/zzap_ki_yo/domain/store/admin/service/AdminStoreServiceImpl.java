@@ -71,7 +71,6 @@ public class AdminStoreServiceImpl implements AdminStoreService {
         return CreateStoreResponseDto.createStore(store.getStoreId(), store.getStoreName());
     }
 
-
     @Transactional
     @Override
     public UpdateStoreResponseDto updateStore(AuthUser authUser, Long storeId, UpdateStoreNameRequest request) {

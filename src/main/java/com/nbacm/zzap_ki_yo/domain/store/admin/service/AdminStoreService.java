@@ -8,6 +8,7 @@ import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 
 import java.util.List;
 
+
 public interface AdminStoreService {
 
     CreateStoreResponseDto createStore(AuthUser authUser, CreateStoreRequestDto createStoreRequestDto);

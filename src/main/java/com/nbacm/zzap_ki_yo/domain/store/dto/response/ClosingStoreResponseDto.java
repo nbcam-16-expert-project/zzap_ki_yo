@@ -17,3 +17,4 @@ public class ClosingStoreResponseDto {
         return new ClosingStoreResponseDto(storeName, storeType);
     }
 }
+

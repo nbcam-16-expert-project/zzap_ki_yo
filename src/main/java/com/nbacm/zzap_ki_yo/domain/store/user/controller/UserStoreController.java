@@ -31,3 +31,4 @@ public class UserStoreController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDtos);
     }
 }
+

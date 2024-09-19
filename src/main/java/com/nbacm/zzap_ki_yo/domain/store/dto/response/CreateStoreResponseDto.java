@@ -17,6 +17,7 @@ public class CreateStoreResponseDto {
 
 
 
+
     private CreateStoreResponseDto(Long storeId, String storeName) {
         this.storeId = storeId;
         this.storeName = storeName;
