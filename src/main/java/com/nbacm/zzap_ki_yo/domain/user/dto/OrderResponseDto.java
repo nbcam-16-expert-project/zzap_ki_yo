@@ -1,7 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.user.dto;
 
-import com.nbacm.zzap_ki_yo.domain.order.Order;
-import com.nbacm.zzap_ki_yo.domain.user.User;
+import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 
 import java.util.List;
 
