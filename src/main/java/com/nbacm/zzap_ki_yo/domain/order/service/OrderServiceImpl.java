@@ -2,7 +2,7 @@ package com.nbacm.zzap_ki_yo.domain.order.service;
 
 import com.nbacm.zzap_ki_yo.domain.exception.ForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
-import com.nbacm.zzap_ki_yo.domain.menu.Menu;
+import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.menu.repository.MenuRepository;
 import com.nbacm.zzap_ki_yo.domain.order.OrderStatus;
 import com.nbacm.zzap_ki_yo.domain.order.OrderType;

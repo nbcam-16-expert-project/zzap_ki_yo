@@ -16,7 +16,6 @@ import com.nbacm.zzap_ki_yo.domain.store.exception.StoreNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.User;
 import com.nbacm.zzap_ki_yo.domain.user.UserRole;
-import com.nbacm.zzap_ki_yo.domain.user.common.Auth;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import com.nbacm.zzap_ki_yo.domain.user.exception.UserNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;

@@ -1,6 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.order.repository;
 
-import com.nbacm.zzap_ki_yo.domain.menu.Menu;
+import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.order.entity.OrderedMenu;
 import org.springframework.data.jpa.repository.JpaRepository;

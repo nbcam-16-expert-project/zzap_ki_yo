@@ -1,6 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.order.entity;
 
-import com.nbacm.zzap_ki_yo.domain.menu.Menu;
+import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
