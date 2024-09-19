@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -33,8 +32,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserResponseDto signUp(UserRequestDto userRequestDto) {
-        log.info("Email: {}, Nickname: {}", userRequestDto.getEmail(), userRequestDto.getNickname());
-
         UserRole role = Optional.ofNullable(userRequestDto.getUserRole()).orElse(UserRole.USER);
         User user = User.builder()
                 .email(userRequestDto.getEmail())
@@ -76,5 +73,33 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    @Transactional
+    public UserResponseDto updateUser(String email,UserRequestDto userRequestDto) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+        if(!passwordUtil.matches(userRequestDto.getPassword(), user.getPassword())){
+            throw new UserNotFoundException("비밀 번호가 일치 하지 않습니다");
+        }
+        if(user.getUserRole() == UserRole.USER){
+            user.update(userRequestDto.getNickname(),userRequestDto.getPassword());
+        }
+        if(user.getUserRole() == UserRole.OWNER){
+            user.AdminUpdate(userRequestDto.getEmail(),userRequestDto.getName());
+        }
+        User UpdateUser = userRepository.save(user);
+        return UserResponseDto.from(UpdateUser);
+    }
 
+    @Override
+    @Transactional
+    public void deleteUser(String email, String password) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+        if(!passwordUtil.matches(password, user.getPassword())){
+            throw new UserNotFoundException("비밀번호가 일치 하지 않습니다");
+        }
+        user.deleteAccount();
+        userRepository.save(user);
+        redisTemplate.delete("RT:"+user.getEmail());
+
+    }
 }

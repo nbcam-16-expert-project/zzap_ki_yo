@@ -40,7 +40,6 @@ public class User {
     @BatchSize(size = 20)
     private List<Order> order;
 
-
     private boolean isDeleted = false;
 
     private LocalDateTime deletedAt;
@@ -65,5 +64,15 @@ public class User {
         this.nickname = nickname;
         this.password = password;
 
+    }
+    public void AdminUpdate(String email,String name){
+        this.email = email;
+        this.name = name;
+
+    }
+
+    public void deleteAccount(){
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
     }
 }

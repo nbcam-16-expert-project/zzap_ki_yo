@@ -12,5 +12,9 @@ public interface UserService {
 
     String logout(String accessToken);
 
+    UserResponseDto updateUser(String email,UserRequestDto userRequestDto);
+
+    void deleteUser(String email,String password);
+
 
 }

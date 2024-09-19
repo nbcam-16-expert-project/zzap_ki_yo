@@ -88,8 +88,10 @@ public class JwtUtils {
 
     // 토큰에서 사용자 이름 추출
     public String getUserEmailFromToken(String token) {
-        return parseClaims(token)
-                .getSubject();
+        Claims claims = parseClaims(token);
+        String email = claims.getSubject();
+        logger.info("JwtUtils - Extracted email from token: {}", email);
+        return email;
     }
 
     public String getUserRoleFromToken(String token) {
@@ -126,7 +128,7 @@ public class JwtUtils {
     // JWT 토큰에서 Claims 추출
     private Claims parseClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(getSecretKey())
                 .setAllowedClockSkewSeconds(60)
                 .parseClaimsJws(token.replace(BEARER_PREFIX, ""))
                 .getBody();
