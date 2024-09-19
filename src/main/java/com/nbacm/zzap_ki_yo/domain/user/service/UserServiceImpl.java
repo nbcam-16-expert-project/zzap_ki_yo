@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
         if(user.getUserRole() == UserRole.USER){
             user.update(userRequestDto.getNickname(),userRequestDto.getPassword());
         }
-        if(user.getUserRole() == UserRole.OWNER){
+        if(user.getUserRole() == UserRole.ADMIN){
             user.AdminUpdate(userRequestDto.getEmail(),userRequestDto.getName());
         }
         User UpdateUser = userRepository.save(user);
