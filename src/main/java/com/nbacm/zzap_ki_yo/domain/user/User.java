@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -21,20 +22,20 @@ public class User {
     @Column(name = "user_Id")
     private Long userId;
 
-    @Column(nullable = false)
+
     private String email;
 
-    @Column(nullable = false)
+
     private String nickname;
 
-    @Column(nullable = false)
+
     private String password;
 
     @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "UserRole", nullable = false)
+    @Column(nullable = false)
     private UserRole userRole;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -43,7 +44,11 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
-    private List<Order> orders;
+    private List<Order> order;
+
+    private boolean isDeleted = false;
+
+    private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
@@ -57,8 +62,21 @@ public class User {
         this.password = password;
         this.userRole = userRole;
     }
-    public void update(String nickname, String email) {
+
+
+    public void update(String nickname, String password) {
         this.nickname = nickname;
+        this.password = password;
+
+    }
+    public void AdminUpdate(String email,String name){
         this.email = email;
+        this.name = name;
+
+    }
+
+    public void deleteAccount(){
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
     }
 }
