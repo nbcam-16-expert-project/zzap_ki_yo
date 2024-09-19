@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/zzap_ki_yo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://13.124.17.212:3306/zzap_ki_yo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: root
   jpa:
@@ -28,12 +28,8 @@ server:
       enabled: true
       force: true
 
-profile:
-  image:
-    base:
-      dir: upload/user-profile-images
 file:
-  upload-dir: upload/feed-images
+  upload-dir: upload/images
 
 
 logging:
