@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @Table(name = "orders")  // 테이블 이름을 'orders'로 변경
 @NoArgsConstructor
-public class Order extends Timestamped {
+public class Order{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
@@ -50,6 +50,12 @@ public class Order extends Timestamped {
     @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
     private List<OrderedMenu> orderedMenuList;
 
+    @Column(name = "ordered_at")
+    private LocalDateTime orderedAt;
+
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
+
     @Builder
     public Order(
             OrderType orderType,
@@ -71,6 +77,24 @@ public class Order extends Timestamped {
     public void updateOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
+
+    @PrePersist
+    public void recordOrderedAt(){
+        this.orderedAt = LocalDateTime.now();
+    }
+
+    public void recordCompletedAt(OrderStatus orderStatus){
+        this.orderStatus = orderStatus;
+        if(orderStatus.equals(OrderStatus.COMPLETE)){
+            this.completedAt = LocalDateTime.now();
+        }
+    }
+
+
+
+
+
+
 
     // 롬복을 사용하지 않고 써 본 빌더(원리 이해용)
     /*public static Builder builder() {
