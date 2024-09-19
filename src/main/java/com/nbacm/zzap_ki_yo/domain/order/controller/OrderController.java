@@ -2,7 +2,6 @@ package com.nbacm.zzap_ki_yo.domain.order.controller;
 
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveRequest;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveResponse;
-import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.order.service.OrderService;
 import com.nbacm.zzap_ki_yo.domain.user.common.Auth;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
@@ -25,24 +24,28 @@ public class OrderController {
             @PathVariable Long storeId,
             @RequestBody OrderSaveRequest orderSaveRequest
     ) {
-        return ResponseEntity.ok(orderService.saveOrder(authUser, storeId, orderSaveRequest));
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(orderService.saveOrder(email, storeId, orderSaveRequest));
     }
 
     // 주문 내역 조회
     @GetMapping("/orders")
     public ResponseEntity<List<OrderSaveResponse>> getOrders(@Auth AuthUser authUser) {
-        return ResponseEntity.ok(orderService.getOrdersByUser(authUser));
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(orderService.getOrdersByUser(email));
     }
 
     // 주문 상태 추적
     @GetMapping("/orders/{orderId}")
     public ResponseEntity<OrderSaveResponse> getOrder(@PathVariable Long orderId, @Auth AuthUser authUser) {
-        return ResponseEntity.ok(orderService.getOrderById(orderId, authUser));
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(orderService.getOrderById(orderId, email));
     }
 
     // 주문 취소
     @DeleteMapping("/orders/{orderId}")
     public void deleteOrder(@PathVariable Long orderId, @Auth AuthUser authUser) {
-        orderService.deleteOrderById(orderId, authUser);
+        String email = authUser.getEmail();
+        orderService.deleteOrderById(orderId, email);
     }
 }

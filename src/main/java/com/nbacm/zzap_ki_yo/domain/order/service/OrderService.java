@@ -36,12 +36,12 @@ public class OrderService {
 
     // 주문하기
     @Transactional
-    public OrderSaveResponse saveOrder (AuthUser authUser, Long storeId, OrderSaveRequest orderSaveRequest) {
+    public OrderSaveResponse saveOrder (String eMail, Long storeId, OrderSaveRequest orderSaveRequest) {
 
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new NotFoundException(storeId + "번 가게는 없는 가게입니다."));
 
-        User user = userRepository.findByEmail(authUser.getEmail()).get();
+        User user = userRepository.findByEmail(eMail).get();
 
         Order order = Order.createOrder(
                 orderSaveRequest.getOrderType(),
@@ -68,9 +68,9 @@ public class OrderService {
     }
 
     // 로그인 중인 유저 id를 기준으로 해당되는 모든 주문 조회
-    public List<OrderSaveResponse> getOrdersByUser (AuthUser authUser) {
+    public List<OrderSaveResponse> getOrdersByUser (String email) {
 
-        User user = userRepository.findByEmail(authUser.getEmail()).get();
+        User user = userRepository.findByEmail(email).get();
         Long userId = user.getUserId();
 
         List<Order> orderList = orderRepository.findAllByUserId(userId);
@@ -86,9 +86,9 @@ public class OrderService {
     }
 
     // 주문 id를 기준으로 해당되는 주문 단건 조회
-    public OrderSaveResponse getOrderById(Long orderId, AuthUser authUser) {
+    public OrderSaveResponse getOrderById(Long orderId,String email) {
 
-        User user = userRepository.findByEmail(authUser.getEmail()).get();
+        User user = userRepository.findByEmail(email).get();
         Long userId = user.getUserId();
 
         Order order = orderRepository.findById(orderId)
@@ -107,9 +107,9 @@ public class OrderService {
 
     // 주문 id를 기준으로 해당되는 주문 삭제
     @Transactional
-    public void deleteOrderById(Long orderId, AuthUser authUser) {
+    public void deleteOrderById(Long orderId, String email) {
 
-        User user = userRepository.findByEmail(authUser.getEmail()).get();
+        User user = userRepository.findByEmail(email).get();
         Long userId = user.getUserId();
 
         Order order = orderRepository.findById(orderId)
