@@ -8,6 +8,7 @@ import com.nbacm.zzap_ki_yo.domain.order.OrderStatus;
 import com.nbacm.zzap_ki_yo.domain.order.OrderType;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveRequest;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveResponse;
+import com.nbacm.zzap_ki_yo.domain.order.dto.OrderUpdateRequest;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.order.entity.OrderedMenu;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderRepository;
@@ -154,5 +155,30 @@ public class OrderServiceImpl implements OrderService {
         }
 
         orderRepository.delete(order);
+    }
+
+    // ADMIN 혹은 주문받은 가게의 OWNER가 특정 주문 ID를 기준으로 orderStatus 수정.
+    @Transactional
+    @Override
+    public void updateOrder (
+            Long storeId,
+            Long orderId,
+            OrderUpdateRequest orderUpdateRequest,
+            String email
+    ) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()-> new NotFoundException(orderId + "번 주문은 없는 주문입니다."));
+
+        User user = userRepository.findByEmail(email).get();
+
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(()-> new NotFoundException(storeId + "번 가게는 없는 가게입니다."));
+
+        if(!user.getUserId().equals(store.getUser.getUserId()) && !user.getUserRole().equals(UserRole.ADMIN)){
+            throw new ForbiddenException("주문을 받은 가게가 아닙니다.");
+        }
+
+        String orderStatus = orderUpdateRequest.getOrderStatus();
+        order.updateOrderStatus(OrderStatus.valueOf(orderStatus));
     }
 }

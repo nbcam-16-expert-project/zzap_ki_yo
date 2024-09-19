@@ -2,6 +2,7 @@ package com.nbacm.zzap_ki_yo.domain.order.controller;
 
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveRequest;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveResponse;
+import com.nbacm.zzap_ki_yo.domain.order.dto.OrderUpdateRequest;
 import com.nbacm.zzap_ki_yo.domain.order.service.OrderServiceImpl;
 import com.nbacm.zzap_ki_yo.domain.user.common.Auth;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
@@ -54,5 +55,17 @@ public class OrderController {
     public void deleteOrder(@PathVariable Long orderId, @Auth AuthUser authUser) {
         String email = authUser.getEmail();
         orderServiceImpl.deleteOrderById(orderId, email);
+    }
+
+    // 주문 상태 변경(사장)
+    @PutMapping("/stores/{storeId}/orders/{orderId}")
+    public void updateOrder(
+            @PathVariable Long storeId,
+            @PathVariable Long orderId,
+            @RequestBody OrderUpdateRequest orderUpdateRequest,
+            @Auth AuthUser authUser
+    ) {
+        String email = authUser.getEmail();
+        orderServiceImpl.updateOrder(storeId, orderId, orderUpdateRequest, email);
     }
 }

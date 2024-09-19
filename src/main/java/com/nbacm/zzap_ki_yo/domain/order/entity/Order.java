@@ -68,6 +68,10 @@ public class Order extends Timestamped {
         this.orderedMenuList = orderedMenuList;
     }
 
+    public void updateOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
     // 롬복을 사용하지 않고 써 본 빌더(원리 이해용)
     /*public static Builder builder() {
         return new Builder();
