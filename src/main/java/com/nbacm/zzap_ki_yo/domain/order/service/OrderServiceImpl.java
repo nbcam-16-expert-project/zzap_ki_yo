@@ -13,7 +13,7 @@ import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.order.entity.OrderedMenu;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderRepository;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderedMenuRepository;
-import com.nbacm.zzap_ki_yo.domain.store.Store;
+import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.User;
 import com.nbacm.zzap_ki_yo.domain.user.UserRole;
@@ -174,7 +174,7 @@ public class OrderServiceImpl implements OrderService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(()-> new NotFoundException(storeId + "번 가게는 없는 가게입니다."));
 
-        if(!user.getUserId().equals(store.getUser.getUserId()) && !user.getUserRole().equals(UserRole.ADMIN)){
+        if(!user.getUserId().equals(store.getUser().getUserId()) && !user.getUserRole().equals(UserRole.ADMIN)){
             throw new ForbiddenException("주문을 받은 가게가 아닙니다.");
         }
 
