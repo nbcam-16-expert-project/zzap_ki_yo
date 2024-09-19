@@ -25,4 +25,11 @@ public class Menu {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+
+    public Menu(String menuName, Integer price, Store store) {
+        this.menuName = menuName;
+        this.price = price;
+        this.store = store;
+    }
+
 }

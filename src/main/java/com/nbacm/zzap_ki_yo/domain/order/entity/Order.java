@@ -50,7 +50,7 @@ public class Order{
     @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
     private List<OrderedMenu> orderedMenuList;
 
-    @Column(name = "ordered_at")
+    @Column(name = "order_at")
     private LocalDateTime orderedAt;
 
     @Column(name = "completed_at")
