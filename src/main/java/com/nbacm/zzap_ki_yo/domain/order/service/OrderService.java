@@ -86,6 +86,26 @@ public class OrderService {
         return orderSaveResponseList;
     }
 
+    // 특정 유저 id를 기준으로 해당되는 모든 주문 조회(관리자 권한 필요)
+    public List<OrderSaveResponse> getOrdersByUserAdmin (String email, Long userId) {
+
+        User admin = userRepository.findByEmail(email).get();
+        if(!admin.getUserRole().equals(UserRole.ADMIN)){
+            throw new ForbiddenException(admin.getUserId()+ "번 유저는 관리자가 아닙니다.");
+        }
+
+        List<Order> orderList = orderRepository.findAllByUserId(userId);
+
+        List<OrderSaveResponse> orderSaveResponseList = new ArrayList<>();
+        for (Order order : orderList) {
+            List<Long> menuIdList = orderedMenuRepository.findMenuIdsByOrder(order);
+            OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(order, menuIdList);
+            orderSaveResponseList.add(orderSaveResponse);
+        }
+
+        return orderSaveResponseList;
+    }
+
     // 주문 id를 기준으로 해당되는 주문 단건 조회
     public OrderSaveResponse getOrderById(Long orderId,String email) {
 

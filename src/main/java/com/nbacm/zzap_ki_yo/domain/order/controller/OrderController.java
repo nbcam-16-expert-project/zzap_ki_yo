@@ -35,6 +35,13 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByUser(email));
     }
 
+    // 주문 내역 조회(관리자)
+    @GetMapping("/orders/{userId}")
+    public ResponseEntity<List<OrderSaveResponse>> getOrdersByUserId(@Auth AuthUser authUser, @PathVariable Long userId) {
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(orderService.getOrdersByUserAdmin(email, userId));
+    }
+
     // 주문 상태 추적
     @GetMapping("/orders/{orderId}")
     public ResponseEntity<OrderSaveResponse> getOrder(@PathVariable Long orderId, @Auth AuthUser authUser) {
