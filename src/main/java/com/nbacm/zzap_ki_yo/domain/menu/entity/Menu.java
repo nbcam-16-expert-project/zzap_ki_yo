@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.domain.menu;
+package com.nbacm.zzap_ki_yo.domain.menu.entity;
 
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import jakarta.persistence.*;

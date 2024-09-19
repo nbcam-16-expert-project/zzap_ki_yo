@@ -1,6 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.image;
 
-import com.nbacm.zzap_ki_yo.domain.menu.Menu;
+import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.review.Review;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import jakarta.persistence.*;

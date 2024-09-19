@@ -20,7 +20,7 @@ public class UserStoreController {
     private final UserStoreService userStoreService;
 
     @GetMapping("/stores/{storeId}")
-    public ResponseEntity<SelectStoreResponseDto> selectStore(@PathVariable Long storeId){
+    public ResponseEntity<SelectStoreResponseDto> selectStore(@PathVariable Long storeId) {
         SelectStoreResponseDto responseDto = userStoreService.selectStore(storeId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
