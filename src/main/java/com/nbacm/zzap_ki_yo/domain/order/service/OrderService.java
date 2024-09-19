@@ -13,6 +13,7 @@ import com.nbacm.zzap_ki_yo.domain.order.repository.OrderedMenuRepository;
 import com.nbacm.zzap_ki_yo.domain.store.Store;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.User;
+import com.nbacm.zzap_ki_yo.domain.user.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -115,7 +116,7 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(()-> new NotFoundException(orderId + "번 주문은 없는 주문입니다."));
 
-        if(!order.getUser().getUserId().equals(userId)){
+        if(!order.getUser().getUserRole().equals(UserRole.ADMIN) && !order.getUser().getUserId().equals(userId)){
             throw new ForbiddenException("다른 사용자의 주문은 삭제할 수 없습니다.");
         }
 
