@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.order.service;
 
+import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
 import com.nbacm.zzap_ki_yo.domain.exception.ForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
@@ -43,9 +44,9 @@ public class OrderServiceImpl implements OrderService {
     public OrderSaveResponse saveOrder (String eMail, Long storeId, OrderSaveRequest orderSaveRequest) {
 
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new NotFoundException(storeId + "번 가게는 없는 가게입니다."));
+                .orElseThrow(() -> new NotFoundException("해당 가게는 없는 가게입니다."));
 
-        User user = userRepository.findByEmail(eMail).get();
+        User user = userRepository.findByEmailOrElseThrow(eMail);
 
         Order order = Order.builder()
                 .orderType(OrderType.valueOf(orderSaveRequest.getOrderType()))
@@ -60,7 +61,10 @@ public class OrderServiceImpl implements OrderService {
         List<OrderedMenu> orderedMenuList = orderSaveRequest.getMenuList().stream()
                         .map(menuId -> {
                             Menu menu = menuRepository.findById(menuId)
-                                    .orElseThrow(()-> new NotFoundException("주문에 포함된 " + menuId + "번 메뉴는 없는 메뉴입니다."));
+                                    .orElseThrow(()-> new NotFoundException("해당 메뉴는 없는 메뉴입니다."));
+                            if(!menu.getStore().getStoreId().equals(storeId)){
+                                throw new BadRequestException("다른 가게의 메뉴는 주문할 수 없습니다.");
+                            }
                             OrderedMenu orderedMenu = OrderedMenu.builder()
                                     .order(order)
                                     .menu(menu)
@@ -82,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderSaveResponse> getOrdersByUser (String email) {
 
-        User user = userRepository.findByEmail(email).get();
+        User user = userRepository.findByEmailOrElseThrow(email);
         Long userId = user.getUserId();
 
         List<Order> orderList = orderRepository.findAllByUserId(userId);
@@ -101,9 +105,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderSaveResponse> getOrdersByUserAdmin (String email, Long userId) {
 
-        User admin = userRepository.findByEmail(email).get();
+        User admin = userRepository.findByEmailOrElseThrow(email);
         if(!admin.getUserRole().equals(UserRole.ADMIN)){
-            throw new ForbiddenException(admin.getUserId()+ "번 유저는 관리자가 아닙니다.");
+            throw new ForbiddenException("해당 유저는 관리자가 아닙니다.");
         }
 
         List<Order> orderList = orderRepository.findAllByUserId(userId);
@@ -122,11 +126,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderSaveResponse getOrderById(Long orderId,String email) {
 
-        User user = userRepository.findByEmail(email).get();
+        User user = userRepository.findByEmailOrElseThrow(email);
         Long userId = user.getUserId();
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new NotFoundException(orderId + "번 주문은 없는 주문입니다."));
+                .orElseThrow(()-> new NotFoundException("해당 주문은 없는 주문입니다."));
 
         if(!order.getUser().getUserRole().equals(UserRole.ADMIN) && !order.getUser().getUserId().equals(userId)){
             throw new ForbiddenException("다른 사용자의 주문은 조회할 수 없습니다.");
@@ -144,11 +148,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrderById(Long orderId, String email) {
 
-        User user = userRepository.findByEmail(email).get();
+        User user = userRepository.findByEmailOrElseThrow(email);
         Long userId = user.getUserId();
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new NotFoundException(orderId + "번 주문은 없는 주문입니다."));
+                .orElseThrow(()-> new NotFoundException("해당 주문은 없는 주문입니다."));
 
         if(!order.getUser().getUserRole().equals(UserRole.ADMIN) && !order.getUser().getUserId().equals(userId)){
             throw new ForbiddenException("다른 사용자의 주문은 삭제할 수 없습니다.");
@@ -167,12 +171,12 @@ public class OrderServiceImpl implements OrderService {
             String email
     ) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new NotFoundException(orderId + "번 주문은 없는 주문입니다."));
+                .orElseThrow(()-> new NotFoundException("해당 주문은 없는 주문입니다."));
 
-        User user = userRepository.findByEmail(email).get();
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(()-> new NotFoundException(storeId + "번 가게는 없는 가게입니다."));
+                .orElseThrow(()-> new NotFoundException("해당 가게는 없는 가게입니다."));
 
         if(!user.getUserId().equals(store.getUser().getUserId()) && !user.getUserRole().equals(UserRole.ADMIN)){
             throw new ForbiddenException("주문을 받은 가게가 아닙니다.");
