@@ -38,7 +38,7 @@ public class OrderController {
     }
 
     // 주문 내역 조회(관리자)
-    @GetMapping("/orderss/{userId}")
+    @GetMapping("/admin/orders/{userId}")
     public ResponseEntity<List<OrderSaveResponse>> getOrdersByUserId(@Auth AuthUser authUser, @PathVariable Long userId) {
         String email = authUser.getEmail();
         return ResponseEntity.ok(orderServiceImpl.getOrdersByUserAdmin(email, userId));
