@@ -61,6 +61,7 @@ public class Store {
 
 
     @Builder
+
     public Store(String storeName, String storeAddress, String storeNumber, Integer favoriteCount,StoreType storeType, User user, LocalTime openingTime, LocalTime closingTime) {
         this.storeName = storeName;
         this.storeAddress = storeAddress;
@@ -73,11 +74,13 @@ public class Store {
     }
 
     public void updateStore(String storeName, String storeAddress, String storeNumber) {
-        Store.builder().storeNumber(storeNumber).storeName(storeName).storeAddress(storeAddress).build();
+        this.storeName = storeName;
+        this.storeAddress = storeAddress;
+        this.storeNumber = storeNumber;
     }
 
 
     public void closingStore(StoreType storeType){
-        Store.builder().storeType(storeType).build();
+        this.storeType = storeType;
     }
 }

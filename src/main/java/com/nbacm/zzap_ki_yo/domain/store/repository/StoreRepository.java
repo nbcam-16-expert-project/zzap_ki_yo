@@ -14,7 +14,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findAllByStoreNameContainingAndStoreType(String storeName, StoreType storeType);
 
     @Query("select s from Store s join fetch s.menus where s.storeId = :storeId")
-    Optional<Store> findByStoreId(Long storeId);
+    Store findByStoreId(Long storeId);
 
     List<Store> findAllByUserAndStoreType(User user, StoreType storeType);
 

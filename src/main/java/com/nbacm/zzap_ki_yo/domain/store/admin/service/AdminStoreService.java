@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.store.admin.service;
 
+import com.nbacm.zzap_ki_yo.domain.store.dto.request.ClosingStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.CreateStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreNameRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.UpdateStoreNameRequest;
@@ -21,5 +22,5 @@ public interface AdminStoreService {
 
     List<SelectAllStoreResponseDto> selectAllStore(AuthUser authUser, StoreNameRequestDto requestDto);
 
-    ClosingStoreResponseDto closingStore(AuthUser authUser, Long storeId);
+    ClosingStoreResponseDto closingStore(AuthUser authUser, Long storeId, ClosingStoreRequestDto requestDto);
 }

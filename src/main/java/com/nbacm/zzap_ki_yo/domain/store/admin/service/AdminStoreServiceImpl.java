@@ -4,6 +4,7 @@ package com.nbacm.zzap_ki_yo.domain.store.admin.service;
 import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
 import com.nbacm.zzap_ki_yo.domain.exception.UnauthorizedException;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
+import com.nbacm.zzap_ki_yo.domain.store.dto.request.ClosingStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.CreateStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreNameRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.UpdateStoreNameRequest;
@@ -71,19 +72,18 @@ public class AdminStoreServiceImpl implements AdminStoreService {
         return CreateStoreResponseDto.createStore(store.getStoreId(), store.getStoreName());
     }
 
-    @Transactional
     @Override
+    @Transactional
     public UpdateStoreResponseDto updateStore(AuthUser authUser, Long storeId, UpdateStoreNameRequest request) {
-        if(request.getStoreName() == null
-        || request.getStoreAddress() == null
-        || request.getStoreNumber() == null){
-            throw new BadRequestException("수정할 가게 이름, 주소, 번호가 없으면 안 됩니다.");
-        }
 
         roleAdminCheck(authUser);
         User user = findByEmail(authUser);
 
         Store store = findByStoreIdAndUser(storeId, user);
+
+        if(store.getStoreType().equals(StoreType.CLOSING)){
+            throw new StoreForbiddenException("페업한 가게는 수정을 할 수 없습니다.");
+        }
 
         store.updateStore(request.getStoreName(),request.getStoreAddress(),request.getStoreNumber());
 
@@ -94,7 +94,6 @@ public class AdminStoreServiceImpl implements AdminStoreService {
     @Transactional
     @Override
     public DeleteStoreResponseDto deleteStore(AuthUser authUser, Long storeId) {
-
         roleAdminCheck(authUser);
         User user = findByEmail(authUser);
 
@@ -103,7 +102,6 @@ public class AdminStoreServiceImpl implements AdminStoreService {
         storeRepository.delete(store);
 
         return DeleteStoreResponseDto.delete("가게 제거 성공", HttpStatus.NO_CONTENT.value());
-        
     }
 
 
@@ -113,6 +111,10 @@ public class AdminStoreServiceImpl implements AdminStoreService {
         User user = findByEmail(authUser);
 
         Store store = findByStoreIdAndUser(storeId,user);
+
+        if(store.getStoreType().equals(StoreType.CLOSING)){
+            throw new UnauthorizedException("폐업한 가게는 조회할 수 없습니다.");
+        }
 
         List<Menu> menus = store.getMenus();
 
@@ -150,14 +152,15 @@ public class AdminStoreServiceImpl implements AdminStoreService {
 
     @Transactional
     @Override
-    public ClosingStoreResponseDto closingStore(AuthUser authUser, Long storeId) {
+    public ClosingStoreResponseDto closingStore(AuthUser authUser, Long storeId, ClosingStoreRequestDto requestDto) {
         roleAdminCheck(authUser);
         User user = findByEmail(authUser);
 
         Store store = findByStoreIdAndUser(storeId,user);
-
-        store.closingStore(StoreType.CLOSING);
-        return ClosingStoreResponseDto.closingStore(store.getStoreName(), store.getStoreType());
+        if(requestDto.getMessage().equals("폐업합니다")) {
+            store.closingStore(StoreType.CLOSING);
+        }
+        return ClosingStoreResponseDto.closingStore("폐업 완료", HttpStatus.OK.value());
     }
 
     private User findByEmail(AuthUser authUser){
