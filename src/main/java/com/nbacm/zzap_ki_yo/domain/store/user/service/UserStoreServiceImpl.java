@@ -1,6 +1,7 @@
 package com.nbacm.zzap_ki_yo.domain.store.user.service;
 
 
+import com.nbacm.zzap_ki_yo.domain.exception.UnauthorizedException;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreNameRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.MenuNamePrice;
@@ -10,6 +11,8 @@ import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
 import com.nbacm.zzap_ki_yo.domain.store.exception.StoreNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
+import com.nbacm.zzap_ki_yo.domain.user.UserRole;
+import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,4 +65,5 @@ public class UserStoreServiceImpl implements UserStoreService{
 
         return responseDto;
     }
+
 }

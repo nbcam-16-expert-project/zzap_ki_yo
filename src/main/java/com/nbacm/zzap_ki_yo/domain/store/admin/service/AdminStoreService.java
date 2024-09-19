@@ -4,20 +4,21 @@ import com.nbacm.zzap_ki_yo.domain.store.dto.request.CreateStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreNameRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.UpdateStoreNameRequest;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.*;
+import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 
 import java.util.List;
 
 public interface AdminStoreService {
 
-    CreateStoreResponseDto createStore(CreateStoreRequestDto createStoreRequestDto);
+    CreateStoreResponseDto createStore(AuthUser authUser, CreateStoreRequestDto createStoreRequestDto);
 
-    UpdateStoreResponseDto updateStore(Long storeId, UpdateStoreNameRequest request);
+    UpdateStoreResponseDto updateStore(AuthUser authUser, Long storeId, UpdateStoreNameRequest request);
 
-    DeleteStoreResponseDto deleteStore(Long storeId);
+    DeleteStoreResponseDto deleteStore(AuthUser authUser, Long storeId);
 
-    SelectStoreResponseDto selectStore(Long storeId);
+    SelectStoreResponseDto selectStore(AuthUser authUser, Long storeId);
 
-    List<SelectAllStoreResponseDto> selectAllStore(StoreNameRequestDto requestDto);
+    List<SelectAllStoreResponseDto> selectAllStore(AuthUser authUser, StoreNameRequestDto requestDto);
 
-    ClosingStoreResponseDto closingStore(Long storeId);
+    ClosingStoreResponseDto closingStore(AuthUser authUser, Long storeId);
 }

@@ -71,8 +71,8 @@ public class Store {
         this.closingTime = closingTime;
     }
 
-    public void updateStoreName(String storeName) {
-        this.storeName = storeName;
+    public void updateStore(String storeName, String storeAddress, String storeNumber) {
+        Store.builder().storeNumber(storeNumber).storeName(storeName).storeAddress(storeAddress).build();
     }
 
 
