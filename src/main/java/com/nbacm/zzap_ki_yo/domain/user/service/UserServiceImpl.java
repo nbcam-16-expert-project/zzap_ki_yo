@@ -1,8 +1,7 @@
 package com.nbacm.zzap_ki_yo.domain.user.service;
 
-import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
-import com.nbacm.zzap_ki_yo.domain.user.User;
-import com.nbacm.zzap_ki_yo.domain.user.UserRole;
+import com.nbacm.zzap_ki_yo.domain.user.entity.User;
+import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.common.util.JwtUtils;
 import com.nbacm.zzap_ki_yo.domain.user.common.util.PasswordUtil;
 import com.nbacm.zzap_ki_yo.domain.user.dto.UserRequestDto;
@@ -17,7 +16,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 

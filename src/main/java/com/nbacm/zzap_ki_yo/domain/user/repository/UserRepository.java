@@ -1,6 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.user.repository;
 
-import com.nbacm.zzap_ki_yo.domain.user.User;
+import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import com.nbacm.zzap_ki_yo.domain.user.exception.UserNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 

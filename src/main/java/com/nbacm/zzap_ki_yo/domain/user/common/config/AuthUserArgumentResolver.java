@@ -1,6 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.user.common.config;
 
-import com.nbacm.zzap_ki_yo.domain.user.UserRole;
+import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.common.Auth;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import jakarta.servlet.http.HttpServletRequest;

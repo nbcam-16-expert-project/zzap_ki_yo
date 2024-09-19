@@ -2,7 +2,7 @@ package com.nbacm.zzap_ki_yo.domain.store.repository;
 
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
-import com.nbacm.zzap_ki_yo.domain.user.User;
+import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,5 +19,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findAllByUserAndStoreType(User user, StoreType storeType);
 
     Store findByStoreIdAndUser(Long storeId, User user);
+
+    Optional<Store> findById(Long storeId);
 }
 

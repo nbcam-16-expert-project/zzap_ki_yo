@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.domain.user;
+package com.nbacm.zzap_ki_yo.domain.user.entity;
 
 import com.nbacm.zzap_ki_yo.domain.favorite.Favorite;
 import com.nbacm.zzap_ki_yo.domain.order.Order;

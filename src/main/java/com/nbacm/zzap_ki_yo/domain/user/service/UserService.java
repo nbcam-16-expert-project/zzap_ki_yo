@@ -1,6 +1,5 @@
 package com.nbacm.zzap_ki_yo.domain.user.service;
 
-import com.nbacm.zzap_ki_yo.domain.user.User;
 import com.nbacm.zzap_ki_yo.domain.user.dto.UserRequestDto;
 import com.nbacm.zzap_ki_yo.domain.user.dto.UserResponseDto;
 

@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.domain.user;
+package com.nbacm.zzap_ki_yo.domain.user.entity;
 
 import com.nbacm.zzap_ki_yo.domain.user.common.Auth;
 import com.nbacm.zzap_ki_yo.domain.user.common.util.JwtUtils;
