@@ -2,12 +2,15 @@ package com.nbacm.zzap_ki_yo.domain.store.entity;
 
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.order.Order;
+import com.nbacm.zzap_ki_yo.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -28,8 +31,24 @@ public class Store {
     @Column(name = "store_number", nullable = false)
     private String storeNumber;
 
+    @Column(name = "open_time", nullable = false)
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime openingTime;
+
+    @Column(name = "close_time", nullable = false)
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime closingTime;
+
     @Column(name = "favorite_conut", nullable = false)
     private Integer favoriteCount;
+
+    @Column(name = "store_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private StoreType storeType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_Id", nullable = false)
+    private User user;
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
@@ -41,15 +60,23 @@ public class Store {
 
 
     @Builder
-    public Store(String storeName, String storeAddress, String storeNumber, Integer favoriteCount, List<Menu> menus) {
+    public Store(String storeName, String storeAddress, String storeNumber, Integer favoriteCount,StoreType storeType, User user, LocalTime openingTime, LocalTime closingTime) {
         this.storeName = storeName;
         this.storeAddress = storeAddress;
         this.storeNumber = storeNumber;
         this.favoriteCount = favoriteCount;
-        this.menus = menus;
+        this.storeType = storeType;
+        this.user = user;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
     }
 
     public void updateStoreName(String storeName) {
         this.storeName = storeName;
+    }
+
+
+    public void closingStore(StoreType storeType){
+        Store.builder().storeType(storeType).build();
     }
 }

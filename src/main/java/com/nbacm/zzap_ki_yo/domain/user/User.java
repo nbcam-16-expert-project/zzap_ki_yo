@@ -2,6 +2,7 @@ package com.nbacm.zzap_ki_yo.domain.user;
 
 import com.nbacm.zzap_ki_yo.domain.favorite.Favorite;
 import com.nbacm.zzap_ki_yo.domain.order.Order;
+import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +36,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "UserRole", nullable = false)
     private UserRole userRole;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @BatchSize(size = 20)
+    private List<Store> stores;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
