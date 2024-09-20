@@ -43,6 +43,14 @@ public class Review {
     // 별점
     @Column(nullable = false)
     private int starPoint;
+    // 필수 입력값을 가진 builder 메서드
+    public static ReviewBuilder builder(Order order, String content) {
+        // 필수값 확인
+        if(order == null || content == null)
+            throw new IllegalArgumentException("주문과 리뷰 내용은 필수입니다.");
+
+        return new ReviewBuilder().order(order).content(content);}
+
 
     // 리뷰 생성자
     @Builder

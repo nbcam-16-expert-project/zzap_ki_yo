@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.review.service;
 
+import com.nbacm.zzap_ki_yo.domain.order.Order;
 import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewSaveRequestDto;
 import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewSaveResponseDto;
 import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewSimpleResponseDto;
@@ -19,53 +20,55 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
 
-    // 리뷰 등록
-    @Transactional
-    public ReviewSaveResponseDto saveReview(ReviewSaveRequestDto reviewSaveRequestDto) {
-        // 해당 주문이 존재하는지 확인 ++ 배달이 완료된 건인지 확인
+//    // 리뷰 등록
+//    @Transactional
+//    public ReviewSaveResponseDto saveReview(ReviewSaveRequestDto reviewSaveRequestDto) {
+//        // 해당 주문이 존재하는지 확인 ++ 배달이 완료된 건인지 확인
+//        Order order = orderRepository.findById(reviewRepository.findById(reviewSaveRequestDto.getOrderId())).
+//                orElseThrow(()-> new NullPointerException("주문을 찾을 수 없습니다."));
+//
+//        // 리뷰 만들기 필수값 반영
+//        Review newReview = Review.builder(order,reviewSaveRequestDto.getContent()).
+//                starPoint(reviewSaveRequestDto.getStarPoint()).build();
+//
+//        // 별점은 0~5 점 사이 점수만 줄 수 있도록 예외처리
+//        if (reviewSaveRequestDto.getStarPoint()<0 || reviewSaveRequestDto.getStarPoint()>5){
+//            throw new RuntimeException("별점은 0~5 점 사이의 정수만 입력할 수 있습니다.");
+//        }
+//
+//        reviewRepository.save(newReview);
+//        return  ReviewSaveResponseDto.builder().
+//                oderId(newReview.getOrder().getOrderId()).
+//                reviewId(newReview.getReviewId()).
+//                content(newReview.getContent()).
+//                starPoint(newReview.getStarPoint()).
+//                createdAt(newReview.getCreatedAt()).
+//                modifiedAt(newReview.getModifiedAt()).build();
+//    }
 
-        // 리뷰 만들고 저장하고 Dto 에 담아서 리턴 빌더 사용법 확인 후 수정
-        Review newReview = Review.builder().
-                order(reviewSaveRequestDto.getOrder()).
-                starPoint(reviewSaveRequestDto.getStarPoint()).
-                content(reviewSaveRequestDto.getContent()).build();
-
-        // 별점은 0~5 점 사이 점수만 줄 수 있도록 예외처리
-        if (reviewSaveRequestDto.getStarPoint()<0 || reviewSaveRequestDto.getStarPoint()>5){
-            throw new RuntimeException("별점은 0~5 점 사이의 정수만 입력할 수 있습니다.");
-        }
-
-        reviewRepository.save(newReview);
-        return  ReviewSaveResponseDto.builder().
-                oderId(newReview.getOrder().getOrderId()).
-                reviewId(newReview.getReviewId()).
-                content(newReview.getContent()).
-                starPoint(newReview.getStarPoint()).
-                createdAt(newReview.getCreatedAt()).
-                modifiedAt(newReview.getModifiedAt()).build();
-    }
-
-    // 리뷰에 리뷰 등록
-    public ReviewSaveResponseDto saveReplyReview(Long reviewId, ReviewSaveRequestDto reviewSaveRequestDto) {
-        // 리뷰가 있는지 확인 (부모 리뷰)
-        Review parentReview = reviewRepository.findById(reviewId).orElseThrow(()-> new NullPointerException("리뷰를 찾을 수 없습니다."));
-
-        // 부모 리뷰에 다는 리뷰
-        Review newReview = Review.builder().
-                order(reviewSaveRequestDto.getOrder()).
-                parentReview(parentReview).
-                content(reviewSaveRequestDto.getContent()).build();
-
-        reviewRepository.save(newReview);
-        return ReviewSaveResponseDto.builder().
-                oderId(newReview.getOrder().getOrderId()).
-                reviewId(newReview.getReviewId()).
-                parentReviewId(newReview.getParentReview().getReviewId()).
-                content(newReview.getContent()).
-                starPoint(newReview.getStarPoint()).
-                createdAt(newReview.getCreatedAt()).
-                modifiedAt(newReview.getModifiedAt()).build();
-    }
+//    // 리뷰에 리뷰 등록
+//    public ReviewSaveResponseDto saveReplyReview(Long reviewId, ReviewSaveRequestDto reviewSaveRequestDto) {
+//        //주문이 있는지 확인
+//        Order order = orderRepository.findById(reviewRepository.findById(reviewSaveRequestDto.getOrderId())).
+//                orElseThrow(()-> new NullPointerException("주문을 찾을 수 없습니다."));
+//
+//        // 리뷰가 있는지 확인 (부모 리뷰)
+//        Review parentReview = reviewRepository.findById(reviewId).orElseThrow(()-> new NullPointerException("리뷰를 찾을 수 없습니다."));
+//
+//        // 부모 리뷰에 다는 리뷰
+//        Review newReview = Review.builder(order,reviewSaveRequestDto.getContent()).
+//                parentReview(parentReview).build();
+//
+//        reviewRepository.save(newReview);
+//        return ReviewSaveResponseDto.builder().
+//                oderId(newReview.getOrder().getOrderId()).
+//                reviewId(newReview.getReviewId()).
+//                parentReviewId(newReview.getParentReview().getReviewId()).
+//                content(newReview.getContent()).
+//                starPoint(newReview.getStarPoint()).
+//                createdAt(newReview.getCreatedAt()).
+//                modifiedAt(newReview.getModifiedAt()).build();
+//    }
 
     // 리뷰 조회
     public Page<ReviewSimpleResponseDto> getReviewList(Long storeId, int pageNo, int size,int minStarPoint, int maxStarPoint) {

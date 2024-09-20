@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("/api/v1/reviews")
 @RestController
 @RequiredArgsConstructor
 public class ReviewController {
@@ -14,13 +15,13 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     // 리뷰 등록
-    @PostMapping("/reviews")
+    @PostMapping
     public ResponseEntity<ReviewSaveResponseDto> saveReview (@RequestBody ReviewSaveRequestDto reviewSaveRequestDto){
         return ResponseEntity.ok(reviewService.saveReview(reviewSaveRequestDto));
     }
 
     // 리뷰에 리뷰 등록
-    @PutMapping("/reviews/{riviewId}")
+    @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewSaveResponseDto> saveReplyReview (@PathVariable Long reviewId,
                                                                   @RequestBody ReviewSaveRequestDto reviewSaveRequestDto){
         return ResponseEntity.ok(reviewService.saveReplyReview(reviewId,reviewSaveRequestDto));
@@ -28,7 +29,7 @@ public class ReviewController {
 
 
     // 리뷰 조회
-    @GetMapping("/reviews/store/{storeId}")
+    @GetMapping("/store/{storeId}")
     public ResponseEntity<Page<ReviewSimpleResponseDto>> getReviewList (@PathVariable Long storeId,
                                                                      @RequestParam (defaultValue = "0", required = false) int pageNo,
                                                                      @RequestParam (defaultValue = "10", required = false) int size,
@@ -38,14 +39,14 @@ public class ReviewController {
     }
 
     // 리뷰 수정
-    @PutMapping("/reviews/{reviewId}")
+    @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewUpdateResponseDto> updateReview (@PathVariable Long reviewId,
                                                                  @RequestBody ReviewUpdateRequestDto reviewUpdate){
         return ResponseEntity.ok(reviewService.updateReview(reviewId,reviewUpdate.getContent()));
     }
 
     // 리뷰 삭제
-    @DeleteMapping("/reviews/{reviewId}")
+    @DeleteMapping("/{reviewId}")
     public void deleteReview (@PathVariable Long reviewId){
         reviewService.deleteReview(reviewId);
     }
