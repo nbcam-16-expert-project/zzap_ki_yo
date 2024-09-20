@@ -12,6 +12,8 @@ import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveResponse;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderUpdateRequest;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.order.entity.OrderedMenu;
+import com.nbacm.zzap_ki_yo.domain.order.exeption.ClosedStoreException;
+import com.nbacm.zzap_ki_yo.domain.order.exeption.NotEnoughPriceException;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderRepository;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderedMenuRepository;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +61,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderedMenuList(new ArrayList<>())
                 .build();
 
+        // 요청의 메뉴id 리스트를 OrderedMenu(주문-메뉴 중간 테이블)의 리스트로 변경하기
         List<OrderedMenu> orderedMenuList = orderSaveRequest.getMenuList().stream()
                         .map(menuId -> {
                             Menu menu = menuRepository.findById(menuId)
@@ -72,6 +76,33 @@ public class OrderServiceImpl implements OrderService {
                             order.getOrderedMenuList().add(orderedMenu);
                             return orderedMenu;
                         }).toList();
+
+        // 요청의 메뉴id 리스트에 있는 메뉴들의 가격을 전부 더하고, 그 값이 가게의 최소 주문 금액보다 작으면 예외처리.
+        Integer totalPrice = orderSaveRequest.getMenuList().stream().map(menuId -> {
+            Menu menu = menuRepository.findById(menuId)
+                    .orElseThrow(()-> new NotFoundException("해당 메뉴는 없는 메뉴입니다."));
+            return menu.getPrice();
+        }).reduce(0, Integer::sum);
+        if(totalPrice < store.getOrderMinPrice()){
+            throw new NotEnoughPriceException("최소 주문 금액 미달입니다.");
+        }
+
+        //오픈 시간 예외처리
+        LocalTime now = LocalTime.now();
+        LocalTime open = store.getOpeningTime();
+        LocalTime close = store.getClosingTime();
+        if(open.isBefore(close)){
+            // 시작이 끝 이전일 때(opening is before closing), 즉 영업 시간이 자정을 통과하지 않을 때
+            // '현 시각이 끝 이전이며 시작 이후일 때' 가 아닐 때 예외 발생
+            if(!(now.isBefore(close) && now.isAfter(open))){
+                throw new ClosedStoreException("영업 시간이 아닙니다.");
+            }
+        }else{ // '시작이 끝 이전일 때(opening is before closing)' 가 아닐 때, 즉 영업 시간이 자정을 통과할 때
+            // '현 시각이 시작 이전이거나 끝 이후일 때' 예외 발생
+            if (now.isBefore(open) || now.isAfter(close)){
+                throw new ClosedStoreException("영업 시간이 아닙니다.");
+            }
+        }
 
         orderedMenuRepository.saveAll(orderedMenuList);
 
@@ -104,11 +135,6 @@ public class OrderServiceImpl implements OrderService {
     // 특정 유저 id를 기준으로 해당되는 모든 주문 조회(관리자 권한 필요)
     @Override
     public List<OrderSaveResponse> getOrdersByUserAdmin (String email, Long userId) {
-
-        User admin = userRepository.findByEmailOrElseThrow(email);
-        if(!admin.getUserRole().equals(UserRole.ADMIN)){
-            throw new ForbiddenException("해당 유저는 관리자가 아닙니다.");
-        }
 
         List<Order> orderList = orderRepository.findAllByUserId(userId);
 
@@ -143,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
         return orderSaveResponse;
     }
 
-    // 주문 id를 기준으로 해당되는 주문 삭제
+    // 주문 id를 기준으로 해당되는 주문 삭제. 주문자 본인과 관리자만 삭제 가능.
     @Transactional
     @Override
     public void deleteOrderById(Long orderId, String email) {
@@ -185,4 +211,48 @@ public class OrderServiceImpl implements OrderService {
         String orderStatus = orderUpdateRequest.getOrderStatus();
         order.updateOrderStatus(OrderStatus.valueOf(orderStatus));
     }
+
+    // 주문 '취소'상태로 바꾸기
+    @Transactional
+    @Override
+    public void cancelOrder(Long orderId){
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()-> new NotFoundException("해당 주문은 없는 주문입니다."));
+
+        order.updateOrderStatus(OrderStatus.CANCELLED);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

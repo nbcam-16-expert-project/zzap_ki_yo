@@ -51,7 +51,7 @@ public class OrderController {
         return ResponseEntity.ok(orderServiceImpl.getOrderById(orderId, email));
     }
 
-    // 주문 취소
+    // 주문 삭제(관리자, 본인)
     @DeleteMapping("/orders/{orderId}")
     public void deleteOrder(@PathVariable Long orderId, @Auth AuthUser authUser) {
         String email = authUser.getEmail();
@@ -69,4 +69,34 @@ public class OrderController {
         String email = authUser.getEmail();
         orderServiceImpl.updateOrder(storeId, orderId, orderUpdateRequest, email);
     }
+
+    // 주문 취소(관리자)
+    @PutMapping("/admin/orders/{orderId}")
+    public void cancelOrder(@PathVariable Long orderId){
+        orderServiceImpl.cancelOrder(orderId);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
