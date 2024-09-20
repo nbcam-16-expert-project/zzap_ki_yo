@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.domain.user;
+package com.nbacm.zzap_ki_yo.domain.user.entity;
 
 import com.nbacm.zzap_ki_yo.domain.favorite.Favorite;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
@@ -69,10 +69,23 @@ public class User {
         this.password = password;
 
     }
-    public void AdminUpdate(String email,String name){
-        this.email = email;
-        this.name = name;
 
+    public void adminUpdate(UserRole userRole, String name, String password, String nickname, String email) {
+        if (userRole != null) {
+            this.userRole = userRole;
+        }
+        if (name != null && !name.isEmpty()) {
+            this.name = name;
+        }
+        if (password != null && !password.isEmpty()) {
+            this.password = password;
+        }
+        if (nickname != null && !nickname.isEmpty()) {
+            this.nickname = nickname;
+        }
+        if (email != null && !email.isEmpty()) {
+            this.email = email;
+        }
     }
 
     public void deleteAccount(){

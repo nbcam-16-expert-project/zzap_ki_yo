@@ -10,6 +10,7 @@ import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewSimpleResponseDto;
 import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewUpdateResponseDto;
 import com.nbacm.zzap_ki_yo.domain.review.entity.Review;
 import com.nbacm.zzap_ki_yo.domain.review.repository.ReviewRepository;
+import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
+    private final StoreRepository storeRepository;
 
     // 리뷰 등록
     @Transactional
@@ -42,7 +44,7 @@ public class ReviewService {
 
         reviewRepository.save(newReview);
         return  ReviewSaveResponseDto.builder().
-                oderId(newReview.getOrder().getOrderId()).
+                orderId(newReview.getOrder().getOrderId()).
                 reviewId(newReview.getReviewId()).
                 content(newReview.getContent()).
                 starPoint(newReview.getStarPoint()).
@@ -64,7 +66,7 @@ public class ReviewService {
 
         reviewRepository.save(newReview);
         return ReviewSaveResponseDto.builder().
-                oderId(newReview.getOrder().getOrderId()).
+                orderId(newReview.getOrder().getOrderId()).
                 reviewId(newReview.getReviewId()).
                 parentReviewId(newReview.getParentReview().getReviewId()).
                 content(newReview.getContent()).
@@ -76,14 +78,12 @@ public class ReviewService {
     // 리뷰 조회
     public Page<ReviewSimpleResponseDto> getReviewList(Long storeId, int pageNo, int size,int minStarPoint, int maxStarPoint) {
         // 가게가 존재하는지 확인
-//        storeRepository.findbyId(storeId).orElseThrow(()-> new NotfoundException("가게를 찾을 수 없습니다."));
-        // 가게에 리뷰가 있는지 확인 = 스토어 합친 후 처리.
+        storeRepository.findById(storeId).orElseThrow(()-> new NotFoundException("가게가 존재하지 않습니다."));
 
-        // 리뷰를 가장 최근에 수정한 순서대로 정렬
+        // 페이징 + 리뷰를 가장 최근에 수정한 순서대로 정렬
         Pageable pageable = PageRequest.of(pageNo,size, Sort.by("modifiedAt").descending());
 
-
-        // 가게에 있는 별점으로 조회할 리뷰를 선택
+        // 가게에 있는 별점으로 조회할 구간 설정
         Page<Review> reviewList = reviewRepository.findBystarPoint(storeId,minStarPoint,maxStarPoint,pageable);
 
         // 찾은 리뷰를 Dto 에 담아서 리턴
@@ -108,6 +108,7 @@ public class ReviewService {
         return ReviewUpdateResponseDto.builder().
                 orderId(review.getOrder().getOrderId()).
                 reviewId(reviewId).
+                parentReviewId(review.getParentReview().getReviewId()).
                 content(review.getContent()).
                 starPoint(review.getStarPoint()).
                 createdAt(review.getCreatedAt()).

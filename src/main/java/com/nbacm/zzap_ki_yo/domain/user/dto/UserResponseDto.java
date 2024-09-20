@@ -1,7 +1,7 @@
 package com.nbacm.zzap_ki_yo.domain.user.dto;
 
-import com.nbacm.zzap_ki_yo.domain.user.User;
-import com.nbacm.zzap_ki_yo.domain.user.UserRole;
+import com.nbacm.zzap_ki_yo.domain.user.entity.User;
+import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

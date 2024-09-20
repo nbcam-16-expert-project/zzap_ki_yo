@@ -1,10 +1,8 @@
 package com.nbacm.zzap_ki_yo.domain.order.entity;
 
-import com.nbacm.zzap_ki_yo.domain.order.OrderStatus;
-import com.nbacm.zzap_ki_yo.domain.order.OrderType;
 import com.nbacm.zzap_ki_yo.domain.review.entity.Review;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
-import com.nbacm.zzap_ki_yo.domain.user.User;
+import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,5 @@
 package com.nbacm.zzap_ki_yo.domain.review.dto;
 
-import com.nbacm.zzap_ki_yo.domain.order.Order;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 public class ReviewSaveResponseDto {
 
     // 리뷰를 작성하려는 주문
-    private final Long oderId;
+    private final Long orderId;
 
     // 리뷰 Id
     private final Long reviewId;

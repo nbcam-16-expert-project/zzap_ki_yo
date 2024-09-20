@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.domain.user;
+package com.nbacm.zzap_ki_yo.domain.user.controller;
 
 import com.nbacm.zzap_ki_yo.domain.user.common.Auth;
 import com.nbacm.zzap_ki_yo.domain.user.common.util.JwtUtils;
@@ -49,6 +49,18 @@ public class UserController {
         UserResponseDto updateUser = userService.updateUser(email, userRequestDto);
         System.out.println(email);
         return ResponseEntity.ok(updateUser);
+    }
+
+    @PostMapping("/admin/update")
+    public ResponseEntity<UserResponseDto> updateAdmin(@RequestBody UserRequestDto userRequestDto, @Auth AuthUser authUser) {
+        try {
+            String email = authUser.getEmail();
+            String targetUserEmail = userRequestDto.getEmail();
+            UserResponseDto updateUser = userService.updateAdmin(email, targetUserEmail, userRequestDto);
+            return ResponseEntity.ok(updateUser);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @DeleteMapping("/delete")

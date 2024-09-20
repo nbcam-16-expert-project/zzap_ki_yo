@@ -17,6 +17,9 @@ public class ReviewUpdateResponseDto {
     // 리뷰 Id
     private final Long reviewId;
 
+    // 부모 리뷰 Id
+    private final Long parentReviewId;
+
     // 리뷰를 수정하는 내용
     private final String content;
 

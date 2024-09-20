@@ -1,6 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.user.dto;
 
-import com.nbacm.zzap_ki_yo.domain.user.UserRole;
+import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
