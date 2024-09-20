@@ -59,6 +59,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderedMenuList(new ArrayList<>())
                 .build();
 
+        // 요청의 메뉴id 리스트를 OrderedMenu(주문-메뉴 중간 테이블)의 리스트로 변경하기
         List<OrderedMenu> orderedMenuList = orderSaveRequest.getMenuList().stream()
                         .map(menuId -> {
                             Menu menu = menuRepository.findById(menuId)
@@ -74,6 +75,7 @@ public class OrderServiceImpl implements OrderService {
                             return orderedMenu;
                         }).toList();
 
+        // 요청의 메뉴id 리스트에 있는 메뉴들의 가격을 전부 더하고, 그 값이 가게의 최소 주문 금액보다 작으면 예외처리.
         Integer totalPrice = orderSaveRequest.getMenuList().stream().map(menuId -> {
             Menu menu = menuRepository.findById(menuId)
                     .orElseThrow(()-> new NotFoundException("해당 메뉴는 없는 메뉴입니다."));
