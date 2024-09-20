@@ -12,6 +12,7 @@ import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveResponse;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderUpdateRequest;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.order.entity.OrderedMenu;
+import com.nbacm.zzap_ki_yo.domain.order.exeption.NotEnoughPriceException;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderRepository;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderedMenuRepository;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
@@ -72,6 +73,15 @@ public class OrderServiceImpl implements OrderService {
                             order.getOrderedMenuList().add(orderedMenu);
                             return orderedMenu;
                         }).toList();
+
+        Integer totalPrice = orderSaveRequest.getMenuList().stream().map(menuId -> {
+            Menu menu = menuRepository.findById(menuId)
+                    .orElseThrow(()-> new NotFoundException("해당 메뉴는 없는 메뉴입니다."));
+            return menu.getPrice();
+        }).reduce(0, Integer::sum);
+        if(totalPrice < store.getOrderMinPrice()){
+            throw new NotEnoughPriceException("최소 주문 금액 미달입니다.");
+        }
 
         orderedMenuRepository.saveAll(orderedMenuList);
 
