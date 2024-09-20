@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
+import java.util.List;
+
 public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("SELECT m FROM Menu m JOIN FETCH m.store WHERE m.menuId = :menuId")
     Optional<Menu> findMenuWithStore(@Param("menuId") Long menuId);

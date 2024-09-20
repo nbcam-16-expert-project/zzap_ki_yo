@@ -14,7 +14,6 @@ import java.util.Optional;
 public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findAllByStoreNameContainingAndStoreType(String storeName, StoreType storeType);
 
-
     List<Store> findAllByUserAndStoreType(User user, StoreType storeType);
 
     Store findByStoreIdAndUser(Long storeId, User user);
@@ -23,5 +22,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     @Query("SELECT s FROM Store s JOIN FETCH s.user WHERE s.storeId = :storeId")
     Optional<Store> findByIdWithUser(@Param("storeId") Long storeId);
+
+    List<Store> findAllByStoreType(StoreType storeType);
 }
 
