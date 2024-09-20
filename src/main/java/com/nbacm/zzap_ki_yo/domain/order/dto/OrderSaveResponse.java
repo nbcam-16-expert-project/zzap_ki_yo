@@ -1,7 +1,7 @@
 package com.nbacm.zzap_ki_yo.domain.order.dto;
 
-import com.nbacm.zzap_ki_yo.domain.order.OrderStatus;
-import com.nbacm.zzap_ki_yo.domain.order.OrderType;
+import com.nbacm.zzap_ki_yo.domain.order.entity.OrderStatus;
+import com.nbacm.zzap_ki_yo.domain.order.entity.OrderType;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import lombok.Getter;
 

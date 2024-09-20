@@ -2,6 +2,7 @@ package com.nbacm.zzap_ki_yo.domain.menu.entity;
 
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,11 +26,25 @@ public class Menu {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+    @Enumerated(EnumType.STRING)
+    private MenuStatus status = MenuStatus.AVAILABLE;
 
+    @Builder
     public Menu(String menuName, Integer price, Store store) {
         this.menuName = menuName;
         this.price = price;
         this.store = store;
     }
+
+    public void update(String menuName, Integer price) {
+        this.menuName = menuName;
+        this.price = price;
+    }
+
+    public void changeStatus(MenuStatus newStatus) {
+        this.status = newStatus;
+    }
+
+
 
 }

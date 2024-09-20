@@ -1,7 +1,7 @@
-package com.nbacm.zzap_ki_yo.domain.store.admin.controller;
+package com.nbacm.zzap_ki_yo.domain.store.controller;
 
 
-import com.nbacm.zzap_ki_yo.domain.store.admin.service.AdminStoreServiceImpl;
+import com.nbacm.zzap_ki_yo.domain.store.service.AdminStoreServiceImpl;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.ClosingStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.CreateStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreNameRequestDto;

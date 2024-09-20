@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.domain.store.admin.service;
+package com.nbacm.zzap_ki_yo.domain.store.service;
 
 
 import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
@@ -14,8 +14,8 @@ import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
 import com.nbacm.zzap_ki_yo.domain.store.exception.StoreForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.store.exception.StoreNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
-import com.nbacm.zzap_ki_yo.domain.user.User;
-import com.nbacm.zzap_ki_yo.domain.user.UserRole;
+import com.nbacm.zzap_ki_yo.domain.user.entity.User;
+import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import com.nbacm.zzap_ki_yo.domain.user.exception.UserNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;

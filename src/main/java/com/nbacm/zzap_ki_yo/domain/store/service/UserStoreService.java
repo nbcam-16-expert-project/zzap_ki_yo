@@ -1,9 +1,8 @@
-package com.nbacm.zzap_ki_yo.domain.store.user.service;
+package com.nbacm.zzap_ki_yo.domain.store.service;
 
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreNameRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectAllStoreResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectStoreResponseDto;
-import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 
 import java.util.List;
 
