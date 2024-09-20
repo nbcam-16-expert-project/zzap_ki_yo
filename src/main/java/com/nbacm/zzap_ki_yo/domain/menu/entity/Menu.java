@@ -26,7 +26,8 @@ public class Menu {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    private boolean isDeleted = false;
+    @Enumerated(EnumType.STRING)
+    private MenuStatus status = MenuStatus.AVAILABLE;
 
     @Builder
     public Menu(String menuName, Integer price, Store store) {
@@ -39,9 +40,11 @@ public class Menu {
         this.menuName = menuName;
         this.price = price;
     }
-    public void delete(){
-        this.isDeleted = true;
+
+    public void changeStatus(MenuStatus newStatus) {
+        this.status = newStatus;
     }
+
 
 
 }

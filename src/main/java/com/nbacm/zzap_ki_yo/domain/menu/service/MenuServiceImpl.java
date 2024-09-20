@@ -2,7 +2,10 @@ package com.nbacm.zzap_ki_yo.domain.menu.service;
 
 
 import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
-import com.nbacm.zzap_ki_yo.domain.menu.Repository.MenuRepository;
+import com.nbacm.zzap_ki_yo.domain.menu.dto.MenuUpdateRequestDto;
+import com.nbacm.zzap_ki_yo.domain.menu.entity.MenuStatus;
+import com.nbacm.zzap_ki_yo.domain.menu.exception.MenuNotFoundException;
+import com.nbacm.zzap_ki_yo.domain.menu.repository.MenuRepository;
 import com.nbacm.zzap_ki_yo.domain.menu.dto.MenuRequestDto;
 import com.nbacm.zzap_ki_yo.domain.menu.dto.MenuResponseDto;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
@@ -49,16 +52,29 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
-    public MenuResponseDto updateMenu(String email, UserRole role,Long menuId, MenuRequestDto menuRequestDto) {
+    public MenuResponseDto updateMenu(String email, UserRole role , Long menuId,Long storeId,MenuUpdateRequestDto menuUpdateRequestDto) {
+        log.info("info:{}{}{}",email,role,menuUpdateRequestDto);
         if(role != UserRole.OWNER && role != UserRole.ADMIN) {
             throw new InvalidRoleException("관리자만 접근이 가능합니다");
         }
-        Menu menu = menuRepository.findById(menuId).orElseThrow(()->new NotFoundException("메뉴를 찾을수 없습니다."));
-        if(!menu.getStore().getUser().getEmail().equals(email)) {
-            throw new UserNotFoundException("자신의 매장에 대해서만 메뉴를 업데이트 할수 있습니다");
+        Store store = storeRepository.findByIdWithUser(storeId)
+                .orElseThrow(()->new UserNotFoundException("매장을 찾을 수 없습니다."));
+        if(!store.getUser().getEmail().equals(email)) {
+            throw new UserNotFoundException("자신의 매장에 대해서만  업데이트 가능합니다.");
         }
-        menu.update(menuRequestDto.getMenuName(), menuRequestDto.getPrice());
-        menuRepository.save(menu);
+        Menu menu = menuRepository.findMenuWithStore(menuId)
+                .orElseThrow(()->new NotFoundException("메뉴를 찾을수 없습니다."));
+
+        // 메뉴와 매장 간 일관성 확인 (해당 매장의 메뉴인지 검증)
+        if (!menu.getStore().getStoreId().equals(storeId)) {
+            throw new NotFoundException("해당 매장에 해당하는 메뉴를 찾을 수 없습니다.");
+        }
+        menu.update(menuUpdateRequestDto.getMenuName(), menuUpdateRequestDto.getPrice());
+        if(menuUpdateRequestDto.getStatus() != null){
+            menu.changeStatus(menuUpdateRequestDto.getStatus());
+        }
         return MenuResponseDto.from(menu);
     }
+
+
 }
