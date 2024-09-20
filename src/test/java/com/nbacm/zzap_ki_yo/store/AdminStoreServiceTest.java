@@ -3,7 +3,7 @@
 //
 //import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
 //import com.nbacm.zzap_ki_yo.domain.store.service.AdminStoreServiceImpl;
-//import com.nbacm.zzap_ki_yo.domain.store.dto.request.CreateStoreRequestDto;
+//import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
 //import com.nbacm.zzap_ki_yo.domain.store.dto.response.CreateStoreResponseDto;
 //import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 //import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
@@ -52,7 +52,7 @@
 //
 //            AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
 //
-//            CreateStoreRequestDto createStoreRequestDto = new CreateStoreRequestDto(
+//            StoreRequestDto createStoreRequestDto = new StoreRequestDto(
 //                    "name",
 //                    "address",
 //                    null,

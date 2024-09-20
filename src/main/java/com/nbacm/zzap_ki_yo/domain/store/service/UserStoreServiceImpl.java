@@ -3,7 +3,6 @@ package com.nbacm.zzap_ki_yo.domain.store.service;
 
 import com.nbacm.zzap_ki_yo.domain.exception.UnauthorizedException;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
-import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreNameRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.MenuNamePrice;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectAllStoreResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectStoreResponseDto;
@@ -59,22 +58,19 @@ public class UserStoreServiceImpl implements UserStoreService{
     }
 
     @Override
-    public List<SelectAllStoreResponseDto> selectAllStore(StoreNameRequestDto requestDto) {
-        List<Store> storeList = storeRepository.
-                findAllByStoreNameContainingAndStoreType(requestDto.getStoreName(), StoreType.OPENING).stream().toList();
-
+    public List<SelectAllStoreResponseDto> selectAllStore() {
+        List<Store> storeList = storeRepository.findAll().stream().toList();
         if(storeList.isEmpty()){
             throw new StoreNotFoundException("가게를 찾지 못했습니다.");
         }
-
-        List<SelectAllStoreResponseDto> responseDto = new ArrayList<>();
-
+        List<SelectAllStoreResponseDto> selectAllStoreResponseDtos = new ArrayList<>();
         for (Store store : storeList) {
-            SelectAllStoreResponseDto selectStoreResponseDto = SelectAllStoreResponseDto.selectAllStore(store);
-            responseDto.add(selectStoreResponseDto);
+         SelectAllStoreResponseDto responseDto = SelectAllStoreResponseDto.selectAllStore(store);
+
+         selectAllStoreResponseDtos.add(responseDto);
         }
 
-        return responseDto;
+        return selectAllStoreResponseDtos;
     }
 
 

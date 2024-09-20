@@ -1,12 +1,10 @@
 package com.nbacm.zzap_ki_yo.domain.store.controller;
 
 
-import com.nbacm.zzap_ki_yo.domain.store.service.AdminStoreServiceImpl;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.ClosingStoreRequestDto;
-import com.nbacm.zzap_ki_yo.domain.store.dto.request.CreateStoreRequestDto;
-import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreNameRequestDto;
-import com.nbacm.zzap_ki_yo.domain.store.dto.request.UpdateStoreNameRequest;
+import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.*;
+import com.nbacm.zzap_ki_yo.domain.store.service.AdminStoreServiceImpl;
 import com.nbacm.zzap_ki_yo.domain.user.common.Auth;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +22,14 @@ public class AdminStoreController {
     private final AdminStoreServiceImpl adminStoreServiceImpl;
 
     @PostMapping("/stores")
-    public ResponseEntity<CreateStoreResponseDto> createStore(@Auth AuthUser authUser, @RequestBody CreateStoreRequestDto request) {
+    public ResponseEntity<CreateStoreResponseDto> createStore(@Auth AuthUser authUser, @RequestBody StoreRequestDto request) {
         CreateStoreResponseDto responseDto = adminStoreServiceImpl.createStore(authUser, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
 
     @PutMapping("/stores/{storeId}")
-    public ResponseEntity<UpdateStoreResponseDto> updateStore(@Auth AuthUser authUser, @PathVariable Long storeId, @RequestBody UpdateStoreNameRequest request){
+    public ResponseEntity<UpdateStoreResponseDto> updateStore(@Auth AuthUser authUser, @PathVariable Long storeId, @RequestBody StoreRequestDto request){
         UpdateStoreResponseDto responseDto = adminStoreServiceImpl.updateStore(authUser,storeId,request);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
@@ -46,9 +44,9 @@ public class AdminStoreController {
 
 
     @DeleteMapping("/stores/{storeId}")
-    public ResponseEntity<DeleteStoreResponseDto> deleteStore(@Auth AuthUser authUser, @PathVariable Long storeId) {
-        DeleteStoreResponseDto responseDto = adminStoreServiceImpl.deleteStore(authUser,storeId);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    public ResponseEntity<Void> deleteStore(@Auth AuthUser authUser, @PathVariable Long storeId) {
+        adminStoreServiceImpl.deleteStore(authUser,storeId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
 
@@ -60,8 +58,8 @@ public class AdminStoreController {
 
 
     @GetMapping("/stores")
-    public ResponseEntity<List<SelectAllStoreResponseDto>> selectAllStores(@Auth AuthUser authUser, @RequestBody StoreNameRequestDto requestDto) {
-        List<SelectAllStoreResponseDto> responseDtos = adminStoreServiceImpl.selectAllStore(authUser, requestDto);
+    public ResponseEntity<List<SelectAllStoreResponseDto>> selectAllStores(@Auth AuthUser authUser) {
+        List<SelectAllStoreResponseDto> responseDtos = adminStoreServiceImpl.selectAllStore(authUser);
         return ResponseEntity.status(HttpStatus.OK).body(responseDtos);
     }
 }
