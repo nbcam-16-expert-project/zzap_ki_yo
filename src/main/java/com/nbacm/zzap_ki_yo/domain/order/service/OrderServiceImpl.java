@@ -12,6 +12,7 @@ import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveResponse;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderUpdateRequest;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.order.entity.OrderedMenu;
+import com.nbacm.zzap_ki_yo.domain.order.exeption.ClosedStoreException;
 import com.nbacm.zzap_ki_yo.domain.order.exeption.NotEnoughPriceException;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderRepository;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderedMenuRepository;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +85,23 @@ public class OrderServiceImpl implements OrderService {
         }).reduce(0, Integer::sum);
         if(totalPrice < store.getOrderMinPrice()){
             throw new NotEnoughPriceException("최소 주문 금액 미달입니다.");
+        }
+
+        //오픈 시간 예외처리
+        LocalTime now = LocalTime.now();
+        LocalTime open = store.getOpeningTime();
+        LocalTime close = store.getClosingTime();
+        if(open.isBefore(close)){
+            // 시작이 끝 이전일 때(opening is before closing), 즉 영업 시간이 자정을 통과하지 않을 때
+            // '현 시각이 끝 이전이며 시작 이후일 때' 가 아닐 때 예외 발생
+            if(!(now.isBefore(close) && now.isAfter(open))){
+                throw new ClosedStoreException("영업 시간이 아닙니다.");
+            }
+        }else{ // '시작이 끝 이전일 때(opening is before closing)' 가 아닐 때, 즉 영업 시간이 자정을 통과할 때
+            // '현 시각이 시작 이전이거나 끝 이후일 때' 예외 발생
+            if (now.isBefore(open) || now.isAfter(close)){
+                throw new ClosedStoreException("영업 시간이 아닙니다.");
+            }
         }
 
         orderedMenuRepository.saveAll(orderedMenuList);
