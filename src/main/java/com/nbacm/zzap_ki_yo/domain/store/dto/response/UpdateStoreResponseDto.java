@@ -6,27 +6,32 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalTime;
+
 @Data
 public class UpdateStoreResponseDto {
     private String storeName;
     private String storeAddress;
     private String storeNumber;
-    private String message;
-    private int status;
-
+    private Integer orderMinPrice;
+    private LocalTime openingTime;
+    private LocalTime closingTime;
 
 
     @Builder
-    private UpdateStoreResponseDto(String storeName, String message, String storeAddress, String storeNumber,  int status) {
+    private UpdateStoreResponseDto(String storeName, String storeAddress, String storeNumber
+    , Integer orderMinPrice, LocalTime openingTime, LocalTime closingTime) {
         this.storeName = storeName;
         this.storeAddress = storeAddress;
         this.storeNumber = storeNumber;
-        this.message = message;
-        this.status = status;
+        this.orderMinPrice = orderMinPrice;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
     }
 
     public static UpdateStoreResponseDto updateStoreName(Store store) {
-        return new UpdateStoreResponseDto(store.getStoreName(),"가게 수정 성공", store.getStoreAddress(), store.getStoreNumber(), HttpStatus.OK.value());
+        return new UpdateStoreResponseDto(store.getStoreName(), store.getStoreAddress(), store.getStoreNumber()
+        , store.getOrderMinPrice(), store.getOpeningTime(), store.getClosingTime());
     }
 
 }
