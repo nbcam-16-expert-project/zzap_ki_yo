@@ -1,11 +1,9 @@
-package com.nbacm.zzap_ki_yo.domain.store.user.controller;
+package com.nbacm.zzap_ki_yo.domain.store.controller;
 
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreNameRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectAllStoreResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectStoreResponseDto;
-import com.nbacm.zzap_ki_yo.domain.store.user.service.UserStoreServiceImpl;
-import com.nbacm.zzap_ki_yo.domain.user.common.Auth;
-import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
+import com.nbacm.zzap_ki_yo.domain.store.service.UserStoreServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

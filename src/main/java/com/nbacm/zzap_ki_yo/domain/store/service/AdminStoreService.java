@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.domain.store.admin.service;
+package com.nbacm.zzap_ki_yo.domain.store.service;
 
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.ClosingStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.CreateStoreRequestDto;
