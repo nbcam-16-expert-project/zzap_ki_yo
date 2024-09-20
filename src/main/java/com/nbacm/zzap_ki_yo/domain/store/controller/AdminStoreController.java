@@ -34,8 +34,6 @@ public class AdminStoreController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    // DB반영은 되는데 출력이 안 됨 뭐가 문제인지 모르겠음 ////////////////////// 밥 먹고 와서 물어보기
-    // (해결 !!!!! dto에 @Data 안 달아줘서 그랬음)
     @PatchMapping(value = "/stores/{storeId}")
     public ResponseEntity<ClosingStoreResponseDto> closingStore(@Auth AuthUser authUser, @PathVariable Long storeId, @RequestBody ClosingStoreRequestDto requestDto){
         ClosingStoreResponseDto responseDto = adminStoreServiceImpl.closingStore(authUser, storeId, requestDto);

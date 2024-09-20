@@ -129,7 +129,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
     @Override
     public List<SelectAllStoreResponseDto> selectAllStore(AuthUser authUser) {
         roleAdminCheck(authUser);
-        List<Store> storeList = storeRepository.findAll().stream().toList();
+        List<Store> storeList = storeRepository.findAllByStoreType(StoreType.OPENING).stream().toList();
         if(storeList.isEmpty()){
             throw new StoreNotFoundException("가게를 찾지 못했습니다.");
         }

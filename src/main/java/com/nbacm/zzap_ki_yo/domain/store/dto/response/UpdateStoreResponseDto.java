@@ -18,7 +18,6 @@ public class UpdateStoreResponseDto {
     private LocalTime closingTime;
 
 
-
     @Builder
     private UpdateStoreResponseDto(String storeName, String storeAddress, String storeNumber
     , Integer orderMinPrice, LocalTime openingTime, LocalTime closingTime) {
