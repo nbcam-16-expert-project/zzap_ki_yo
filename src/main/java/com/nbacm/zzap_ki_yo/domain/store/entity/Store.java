@@ -47,6 +47,9 @@ public class Store {
     @Enumerated(EnumType.STRING)
     private StoreType storeType;
 
+    @Column(name = "order_min_price" , nullable = false)
+    private Integer orderMinPrice;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_Id", nullable = false)
     private User user;
