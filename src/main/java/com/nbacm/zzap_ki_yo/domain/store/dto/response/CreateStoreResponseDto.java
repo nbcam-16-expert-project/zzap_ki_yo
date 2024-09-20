@@ -1,5 +1,7 @@
 package com.nbacm.zzap_ki_yo.domain.store.dto.response;
 
+import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
+import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -7,26 +9,34 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Data
-@AllArgsConstructor
 public class CreateStoreResponseDto {
 
     private Long storeId;
     private String storeName;
-    private String message;
-    private int status;
+    private StoreType storeType;
+    private String storeAddress;
+    private String storeNumber;
+    private Integer orderMinPrice;
 
-
-
-
-    private CreateStoreResponseDto(Long storeId, String storeName) {
+    private CreateStoreResponseDto(Long storeId, String storeName, StoreType storeType, String storeAddress, String storeNumber
+    ,Integer orderMinPrice) {
         this.storeId = storeId;
         this.storeName = storeName;
-        this.message = "가게 등록 성공";
-        this.status = HttpStatus.CREATED.value();
+        this.storeType = storeType;
+        this.storeAddress = storeAddress;
+        this.storeNumber = storeNumber;
+        this.orderMinPrice = orderMinPrice;
     }
 
 
-    public static CreateStoreResponseDto createStore(Long storeId, String storeName) {
-        return new CreateStoreResponseDto(storeId, storeName);
+    public static CreateStoreResponseDto createStore(Store store) {
+        return new CreateStoreResponseDto(
+                store.getStoreId(),
+                store.getStoreName(),
+                store.getStoreType(),
+                store.getStoreAddress(),
+                store.getStoreNumber(),
+                store.getOrderMinPrice()
+        );
     }
 }

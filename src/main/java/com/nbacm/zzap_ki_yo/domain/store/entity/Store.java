@@ -3,6 +3,7 @@ package com.nbacm.zzap_ki_yo.domain.store.entity;
 
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
+import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -65,22 +66,26 @@ public class Store {
 
 
     @Builder
-
-    public Store(String storeName, String storeAddress, String storeNumber, Integer favoriteCount,StoreType storeType, User user, LocalTime openingTime, LocalTime closingTime) {
+    public Store(String storeName, String storeAddress, String storeNumber, Integer favoriteCount,StoreType storeType, User user,
+            Integer orderMinPrice,  LocalTime openingTime, LocalTime closingTime) {
         this.storeName = storeName;
         this.storeAddress = storeAddress;
         this.storeNumber = storeNumber;
         this.favoriteCount = favoriteCount;
         this.storeType = storeType;
         this.user = user;
+        this.orderMinPrice = orderMinPrice;
         this.openingTime = openingTime;
         this.closingTime = closingTime;
     }
 
-    public void updateStore(String storeName, String storeAddress, String storeNumber) {
-        this.storeName = storeName;
-        this.storeAddress = storeAddress;
-        this.storeNumber = storeNumber;
+    public void updateStore(StoreRequestDto dto) {
+        this.storeName = dto.getStoreName();
+        this.storeAddress = dto.getStoreAddress();
+        this.storeNumber = dto.getStoreNumber();
+        this.openingTime = dto.getOpeningTime();
+        this.closingTime = dto.getClosingTime();
+        this.orderMinPrice = dto.getOrderMinPrice();
     }
 
 

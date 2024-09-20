@@ -1,6 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.order.entity;
 
-import com.nbacm.zzap_ki_yo.domain.review.Review;
+import com.nbacm.zzap_ki_yo.domain.review.entity.Review;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import jakarta.persistence.*;
