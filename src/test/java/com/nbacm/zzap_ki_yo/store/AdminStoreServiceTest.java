@@ -2,15 +2,15 @@
 //
 //
 //import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
-//import com.nbacm.zzap_ki_yo.domain.store.admin.service.AdminStoreServiceImpl;
+//import com.nbacm.zzap_ki_yo.domain.store.service.AdminStoreServiceImpl;
 //import com.nbacm.zzap_ki_yo.domain.store.dto.request.CreateStoreRequestDto;
 //import com.nbacm.zzap_ki_yo.domain.store.dto.response.CreateStoreResponseDto;
 //import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 //import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
 //import com.nbacm.zzap_ki_yo.domain.store.exception.StoreForbiddenException;
 //import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
-//import com.nbacm.zzap_ki_yo.domain.user.User;
-//import com.nbacm.zzap_ki_yo.domain.user.UserRole;
+//import com.nbacm.zzap_ki_yo.domain.user.entity.User;
+//import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 //import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 //import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 //import org.junit.jupiter.api.BeforeEach;
