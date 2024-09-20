@@ -105,11 +105,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderSaveResponse> getOrdersByUserAdmin (String email, Long userId) {
 
-        User admin = userRepository.findByEmailOrElseThrow(email);
-        if(!admin.getUserRole().equals(UserRole.ADMIN)){
-            throw new ForbiddenException("해당 유저는 관리자가 아닙니다.");
-        }
-
         List<Order> orderList = orderRepository.findAllByUserId(userId);
 
         List<OrderSaveResponse> orderSaveResponseList = new ArrayList<>();
@@ -143,7 +138,7 @@ public class OrderServiceImpl implements OrderService {
         return orderSaveResponse;
     }
 
-    // 주문 id를 기준으로 해당되는 주문 삭제
+    // 주문 id를 기준으로 해당되는 주문 삭제. 주문자 본인과 관리자만 삭제 가능.
     @Transactional
     @Override
     public void deleteOrderById(Long orderId, String email) {
@@ -185,4 +180,48 @@ public class OrderServiceImpl implements OrderService {
         String orderStatus = orderUpdateRequest.getOrderStatus();
         order.updateOrderStatus(OrderStatus.valueOf(orderStatus));
     }
+
+    // 주문 '취소'상태로 바꾸기
+    @Transactional
+    @Override
+    public void cancelOrder(Long orderId){
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(()-> new NotFoundException("해당 주문은 없는 주문입니다."));
+
+        order.updateOrderStatus(OrderStatus.CANCELLED);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -19,4 +19,6 @@ public interface OrderService {
     void deleteOrderById(Long orderId, String email);
 
     void updateOrder (Long storeId, Long orderId, OrderUpdateRequest orderUpdateRequest, String email);
+
+    void cancelOrder(Long orderId);
 }
