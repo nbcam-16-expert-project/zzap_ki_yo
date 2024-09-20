@@ -1,6 +1,6 @@
-package com.nbacm.zzap_ki_yo.domain.menu;
+package com.nbacm.zzap_ki_yo.domain.menu.entity;
 
-import com.nbacm.zzap_ki_yo.domain.store.Store;
+import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,5 +24,12 @@ public class Menu {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
+
+
+    public Menu(String menuName, Integer price, Store store) {
+        this.menuName = menuName;
+        this.price = price;
+        this.store = store;
+    }
 
 }

@@ -21,7 +21,7 @@ public class ReviewController {
     }
 
     // 리뷰에 리뷰 등록
-    @PutMapping("/{reviewId}")
+    @PostMapping("/{reviewId}")
     public ResponseEntity<ReviewSaveResponseDto> saveReplyReview (@PathVariable Long reviewId,
                                                                   @RequestBody ReviewSaveRequestDto reviewSaveRequestDto){
         return ResponseEntity.ok(reviewService.saveReplyReview(reviewId,reviewSaveRequestDto));
@@ -29,7 +29,7 @@ public class ReviewController {
 
 
     // 리뷰 조회
-    @GetMapping("/store/{storeId}")
+    @GetMapping("/stores/{storeId}")
     public ResponseEntity<Page<ReviewSimpleResponseDto>> getReviewList (@PathVariable Long storeId,
                                                                      @RequestParam (defaultValue = "0", required = false) int pageNo,
                                                                      @RequestParam (defaultValue = "10", required = false) int size,
