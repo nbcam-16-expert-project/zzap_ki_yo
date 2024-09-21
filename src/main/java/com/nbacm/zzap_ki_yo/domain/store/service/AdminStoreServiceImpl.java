@@ -1,9 +1,11 @@
 package com.nbacm.zzap_ki_yo.domain.store.service;
 
 
+import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StoreStatisticsResponseDto;
 import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
 import com.nbacm.zzap_ki_yo.domain.exception.UnauthorizedException;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
+import com.nbacm.zzap_ki_yo.domain.order.service.OrderServiceImpl;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.ClosingStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.*;
@@ -18,19 +20,23 @@ import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.exception.UserNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AdminStoreServiceImpl implements AdminStoreService {
 
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+    private final OrderServiceImpl orderService;
 
     @Transactional
     @Override
@@ -177,5 +183,54 @@ public class AdminStoreServiceImpl implements AdminStoreService {
             throw new StoreNotFoundException("가게를 찾지 못했습니다.");
         }
         return store;
+    }
+
+    @Override
+    @Transactional(readOnly = false) // 수정 작업이 필요하다면 readOnly를 false로 설정
+    public StoreStatisticsResponseDto getDailyStatistics(Long storeId, String email) {
+        try {
+            // 사장님 또는 관리자 권한 확인
+            validateOwnerOrAdmin(email, storeId);
+            return orderService.getDailyStatistics(storeId, LocalDate.now());
+        } catch (Exception e) {
+            // Log the error and return a more specific response
+            log.error("Error fetching daily statistics for storeId: " + storeId, e);
+            throw e;
+        }
+
+    }
+
+    @Override
+    @Transactional(readOnly = false) // 수정 작업이 필요하다면 readOnly를 false로 설정
+    public StoreStatisticsResponseDto getMonthlyStatistics(Long storeId, String email) {
+        try {
+
+
+            // 사장님 또는 관리자 권한 확인
+            validateOwnerOrAdmin(email, storeId);
+
+            // 월간 통계 조회: 현재 월의 시작일과 끝일을 설정
+            LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+            LocalDate endOfMonth = LocalDate.now();
+
+            // 월간 통계 조회
+            return orderService.getMonthlyStatistics(storeId, startOfMonth, endOfMonth);
+        }catch (Exception e){
+            log.error("Error fetching monthly statistics for storeId: " + storeId, e);
+            throw e;
+        }
+    }
+
+
+   // 사장님 또는 관리자 권한 확인 메서드
+    private void validateOwnerOrAdmin(String email, Long storeId) {
+        User user = userRepository.findByEmailOrElseThrow(email);
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new StoreNotFoundException("해당 가게를 찾을 수 없습니다."));
+
+        // 권한이 관리자나 사장님이 아닌 경우 예외 처리
+        if (!user.getUserRole().equals(UserRole.ADMIN) && !user.getUserRole().equals(UserRole.OWNER) && !store.getUser().getEmail().equals(email)) {
+            throw new UnauthorizedException("해당 통계를 조회할 권한이 없습니다.");
+        }
     }
 }

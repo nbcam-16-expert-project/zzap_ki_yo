@@ -1,5 +1,12 @@
 package com.nbacm.zzap_ki_yo.domain.order.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StoreStatisticsDto;
+import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StoreStatisticsResponseDto;
+import com.nbacm.zzap_ki_yo.domain.dashboard.entity.StoreStatistics;
+import com.nbacm.zzap_ki_yo.domain.dashboard.repository.StoreStatisticsRepository;
 import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
 import com.nbacm.zzap_ki_yo.domain.exception.ForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
@@ -22,17 +29,26 @@ import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
-
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -40,6 +56,11 @@ public class OrderServiceImpl implements OrderService {
     private final StoreRepository storeRepository;
     private final OrderedMenuRepository orderedMenuRepository;
     private final UserRepository userRepository;
+    private final StoreStatisticsRepository storeStatisticsRepository;
+    private final RedisTemplate<String, Object> redisObjectTemplate;
+
+    private static final String REDIS_KEY_PREFIX = "store_statistics:";
+
 
     // 주문하기
     @Transactional
@@ -51,6 +72,19 @@ public class OrderServiceImpl implements OrderService {
 
         User user = userRepository.findByEmailOrElseThrow(eMail);
 
+
+        // 요청의 메뉴id 리스트에 있는 메뉴들의 가격을 전부 더하고, 그 값이 가게의 최소 주문 금액보다 작으면 예외처리.
+        Integer totalPrice = orderSaveRequest.getMenuList().stream().map(menuId -> {
+            Menu menu = menuRepository.findById(menuId)
+                    .orElseThrow(()-> new NotFoundException("해당 메뉴는 없는 메뉴입니다."));
+            return menu.getPrice();
+        }).reduce(0, Integer::sum);
+        if(totalPrice < store.getOrderMinPrice()){
+            throw new NotEnoughPriceException("최소 주문 금액 미달입니다.");
+        }
+
+        log.info("total:{}", totalPrice);
+
         Order order = Order.builder()
                 .orderType(OrderType.valueOf(orderSaveRequest.getOrderType()))
                 .orderAddress(orderSaveRequest.getOrderAddress())
@@ -59,6 +93,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderStatus(OrderStatus.PENDING)
                 .reviews(null)
                 .orderedMenuList(new ArrayList<>())
+                .totalPrice(totalPrice)
                 .build();
 
         // 요청의 메뉴id 리스트를 OrderedMenu(주문-메뉴 중간 테이블)의 리스트로 변경하기
@@ -77,15 +112,6 @@ public class OrderServiceImpl implements OrderService {
                             return orderedMenu;
                         }).toList();
 
-        // 요청의 메뉴id 리스트에 있는 메뉴들의 가격을 전부 더하고, 그 값이 가게의 최소 주문 금액보다 작으면 예외처리.
-        Integer totalPrice = orderSaveRequest.getMenuList().stream().map(menuId -> {
-            Menu menu = menuRepository.findById(menuId)
-                    .orElseThrow(()-> new NotFoundException("해당 메뉴는 없는 메뉴입니다."));
-            return menu.getPrice();
-        }).reduce(0, Integer::sum);
-        if(totalPrice < store.getOrderMinPrice()){
-            throw new NotEnoughPriceException("최소 주문 금액 미달입니다.");
-        }
 
         //오픈 시간 예외처리
         LocalTime now = LocalTime.now();
@@ -105,8 +131,16 @@ public class OrderServiceImpl implements OrderService {
         }
 
         orderedMenuRepository.saveAll(orderedMenuList);
-
         orderRepository.save(order);
+        orderRepository.flush();
+        try {
+            // 통계 업데이트 및 Redis 캐시 무효화
+            updateStoreStatistics(store, totalPrice);
+        } catch (Exception e) {
+            log.error("Failed to update store statistics: ", e);
+            // 여기서 예외를 던지지 않고 로깅만 합니다. 주문 저장은 계속 진행됩니다.
+        }
+
 
         OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(order, orderSaveRequest.getMenuList());
 
@@ -221,38 +255,134 @@ public class OrderServiceImpl implements OrderService {
 
         order.updateOrderStatus(OrderStatus.CANCELLED);
     }
+
+    public void updateStoreStatistics(Store store, int totalPrice) {
+        LocalDate today = LocalDate.now();
+        StoreStatistics statistics = storeStatisticsRepository.findByStoreIdAndDateBetween(store.getStoreId(), today, today)
+                .stream()
+                .findFirst()
+                .orElseGet(() -> StoreStatistics.builder()
+                        .store(store)
+                        .date(today)
+                        .totalSales(0)
+                        .customerCount(0)
+                        .build()
+                );
+        statistics.updateSalesAndCustomers(statistics.getTotalSales() + totalPrice, statistics.getCustomerCount() + 1);
+
+        storeStatisticsRepository.save(statistics);
+
+        // StoreStatisticsResponseDto 생성
+        StoreStatisticsResponseDto dto = StoreStatisticsResponseDto.fromEntity(statistics);
+
+        // 일간 및 월간 통계 캐시 저장
+        invalidateCache(store.getStoreId());
+        cacheDailyStatistics(store.getStoreId(), dto);
+        cacheMonthlyStatistics(store.getStoreId(), dto);
+
+    }
+
+    @Override
+    public StoreStatisticsResponseDto getDailyStatistics(Long storeId, LocalDate date) {
+        // Redis에서 캐시된 일간 통계 데이터를 먼저 확인
+        StoreStatisticsResponseDto cachedStatistics = getCachedDailyStatistics(storeId, date);
+        if (cachedStatistics != null) {
+            return cachedStatistics;
+        }
+
+        // 캐시된 데이터가 없다면 DB에서 해당 날짜의 통계 조회
+        StoreStatistics statistics = storeStatisticsRepository.findByStoreIdAndDate(storeId, date)
+                .orElseThrow(() -> new NotFoundException("해당 날짜의 통계 데이터를 찾을 수 없습니다."));
+
+        StoreStatisticsResponseDto dto = StoreStatisticsResponseDto.fromEntity(statistics);
+
+        // 조회된 통계를 Redis에 캐시 저장
+        cacheDailyStatistics(storeId, dto);
+
+        return dto;  // List로 감싸서 from 메서드 사용
+
+    }
+
+    @Override
+    public StoreStatisticsResponseDto getMonthlyStatistics(Long storeId, LocalDate startOfMonth, LocalDate endOfMonth) {
+        // Redis에서 캐시된 월간 통계 데이터를 먼저 확인
+        StoreStatisticsResponseDto cachedStatistics = getCachedMonthlyStatistics(storeId, startOfMonth);
+        if (cachedStatistics != null) {
+            return cachedStatistics;
+        }
+
+        // 캐시된 데이터가 없다면 DB에서 해당 기간의 통계 조회
+        List<StoreStatistics> statisticsList = storeStatisticsRepository.findByStoreIdAndDateBetween(storeId, startOfMonth, endOfMonth);
+        if (statisticsList.isEmpty()) {
+            throw new NotFoundException("해당 월의 통계 데이터를 찾을 수 없습니다.");
+        }
+
+        // 월간 통계를 합산하여 반환
+        StoreStatisticsResponseDto monthlyStatistics = StoreStatisticsResponseDto.from(statisticsList);
+
+        // 조회된 월간 통계를 Redis에 캐시 저장
+        cacheMonthlyStatistics(storeId, monthlyStatistics);
+
+        return monthlyStatistics;
+    }
+
+    private void cacheDailyStatistics(Long storeId, StoreStatisticsResponseDto dto) {
+        String key = "daily:stats:" + storeId + ":" + LocalDate.now();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonValue = mapper.writeValueAsString(dto);
+            redisObjectTemplate.opsForValue().set(key, jsonValue);
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing statistics to JSON", e);
+        }
+    }
+
+    private void cacheMonthlyStatistics(Long storeId, StoreStatisticsResponseDto dto) {
+        String key = "monthly:stats:" + storeId + ":" + YearMonth.now();
+       try {
+           ObjectMapper mapper = new ObjectMapper();
+           String jsonValue = mapper.writeValueAsString(dto);
+           redisObjectTemplate.opsForValue().set(key, jsonValue);
+       }catch (JsonProcessingException e) {
+           log.error("Error serializing statistics to JSON", e);
+       }
+    }
+    private StoreStatisticsResponseDto getCachedDailyStatistics(Long storeId, LocalDate date) {
+        String key = "daily:stats:" + storeId + ":" + date;
+        Object cachedValue = redisObjectTemplate.opsForValue().get(key);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            if (cachedValue instanceof StoreStatisticsResponseDto) {
+                return (StoreStatisticsResponseDto) cachedValue;
+            } else if (cachedValue instanceof String) {
+                return mapper.readValue((String) cachedValue, StoreStatisticsResponseDto.class);
+            } else if (cachedValue instanceof Map) {
+                return mapper.convertValue(cachedValue, StoreStatisticsResponseDto.class);
+            }
+        } catch (Exception e) {
+            log.error("Error deserializing cached value", e);
+        }
+
+        return null;
+    }
+
+    private StoreStatisticsResponseDto getCachedMonthlyStatistics(Long storeId, LocalDate startOfMonth) {
+        String key = "monthly:stats:" + storeId + ":" + YearMonth.from(startOfMonth);
+        return (StoreStatisticsResponseDto) redisObjectTemplate.opsForValue().get(key);
+    }
+    // Redis 캐시 무효화
+    public void invalidateCache(Long storeId) {
+        String dailyRedisKey = REDIS_KEY_PREFIX + storeId + ":daily:" + LocalDate.now();
+        redisObjectTemplate.delete(dailyRedisKey);
+
+        String monthlyRedisKey = REDIS_KEY_PREFIX + storeId + ":monthly:" + LocalDate.now().withDayOfMonth(1) + "-" + LocalDate.now();
+        redisObjectTemplate.delete(monthlyRedisKey);
+    }
+
+
+
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

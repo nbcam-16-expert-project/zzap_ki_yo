@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.order.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.nbacm.zzap_ki_yo.domain.review.entity.Review;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
@@ -31,6 +32,7 @@ public class Order{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
+    @JsonBackReference
     private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,6 +56,8 @@ public class Order{
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
+    private Integer totalPrice;
+
     @Builder
     public Order(
             OrderType orderType,
@@ -61,7 +65,8 @@ public class Order{
             Store store, User user,
             OrderStatus orderStatus,
             List<Review> reviews,
-            List<OrderedMenu> orderedMenuList
+            List<OrderedMenu> orderedMenuList,
+            Integer totalPrice
     ) {
         this.orderType = orderType;
         this.orderAddress = orderAddress;
@@ -70,6 +75,7 @@ public class Order{
         this.orderStatus = orderStatus;
         this.reviews = reviews;
         this.orderedMenuList = orderedMenuList;
+        this.totalPrice = totalPrice;
     }
 
     public void updateOrderStatus(OrderStatus orderStatus) {
@@ -94,70 +100,5 @@ public class Order{
 
 
 
-    // 롬복을 사용하지 않고 써 본 빌더(원리 이해용)
-    /*public static Builder builder() {
-        return new Builder();
-    }
 
-    public static class Builder{
-        private OrderType orderType;
-        private String orderAddress;
-        private Store store;
-        private User user;
-        private OrderStatus orderStatus;
-        private List<Review> reviews;
-        private List<OrderedMenu> orderedMenuList;
-
-        public Builder orderType(OrderType orderType) {
-            this.orderType = orderType;
-            return this;
-        }
-
-        public Builder orderAddress(String orderAddress) {
-            this.orderAddress = orderAddress;
-            return this;
-        }
-
-        public Builder store(Store store) {
-            this.store = store;
-            return this;
-        }
-
-        public Builder user(User user) {
-            this.user = user;
-            return this;
-        }
-
-        public Builder orderStatus(OrderStatus orderStatus) {
-            this.orderStatus = orderStatus;
-            return this;
-        }
-
-        public Builder reviews(List<Review> reviews) {
-            this.reviews = reviews;
-            return this;
-        }
-
-        public Builder orderedMenuList(List<OrderedMenu> orderedMenuList) {
-            this.orderedMenuList = orderedMenuList;
-            return this;
-        }
-    }*/
-
-
-
-    /*public static Order createOrder(String orderType, String orderAddress, Store store, User user, String orderStatus) {
-        Order order = new Order();
-        order.orderType = OrderType.valueOf(orderType);
-        order.orderAddress = orderAddress;
-        order.store = store;
-        order.user = user;
-        order.orderStatus = OrderStatus.valueOf(orderStatus);
-        return order;
-    }*/
-
-    /*public static Order addMenu(Order order, List<OrderedMenu> orderedMenuList){
-        order.orderedMenuList = orderedMenuList;
-        return order;
-    }*/
 }
