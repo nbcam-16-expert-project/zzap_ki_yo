@@ -21,7 +21,7 @@ public class ReviewController {
     }
 
     // 리뷰에 리뷰 등록
-    @PutMapping("/{reviewId}")
+    @PostMapping("/{reviewId}")
     public ResponseEntity<ReviewSaveResponseDto> saveReplyReview (@PathVariable Long reviewId,
                                                                   @RequestBody ReviewSaveRequestDto reviewSaveRequestDto){
         return ResponseEntity.ok(reviewService.saveReplyReview(reviewId,reviewSaveRequestDto));
