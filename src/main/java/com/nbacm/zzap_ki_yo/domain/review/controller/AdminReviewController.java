@@ -9,35 +9,27 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1/reviews")
+// 관리자
+@RequestMapping("/api/v1/admin/reviews")
 @RestController
 @RequiredArgsConstructor
-public class ReviewController {
-
+public class AdminReviewController {
     private final ReviewService reviewService;
-
-    // 리뷰 등록
-    @PostMapping
-    public ResponseEntity<ReviewSaveResponseDto> saveReview (@Auth AuthUser authUser,
-                                                             @RequestBody ReviewSaveRequestDto reviewSaveRequestDto){
-        return ResponseEntity.ok(reviewService.saveReview(authUser,reviewSaveRequestDto));
-    }
 
     // 리뷰에 리뷰 등록
     @PostMapping("/{reviewId}")
     public ResponseEntity<ReviewSaveResponseDto> saveReplyReview (@Auth AuthUser authUser,
                                                                   @PathVariable Long reviewId,
                                                                   @RequestBody ReviewSaveRequestDto reviewSaveRequestDto){
-        return ResponseEntity.ok(reviewService.saveReplyReview(authUser,reviewId,reviewSaveRequestDto));
+        return ResponseEntity.ok(reviewService.saveReplyReview(reviewId,reviewSaveRequestDto));
     }
-
 
     // 리뷰 조회
     @GetMapping
     public ResponseEntity<Page<ReviewSimpleResponseDto>> getReviewList (@Auth AuthUser authUser,
                                                                         @RequestBody Long storeId,
-                                                                     @RequestParam (defaultValue = "0", required = false) int pageNo,
-                                                                     @RequestParam (defaultValue = "10", required = false) int size,
+                                                                        @RequestParam (defaultValue = "0", required = false) int pageNo,
+                                                                        @RequestParam (defaultValue = "10", required = false) int size,
                                                                         @RequestParam (defaultValue = "0", required = false) int minStarPoint,
                                                                         @RequestParam (defaultValue = "5", required = false) int maxStarPoint){
         return ResponseEntity.ok(reviewService.getReviewList(storeId,minStarPoint,maxStarPoint,pageNo,size));
