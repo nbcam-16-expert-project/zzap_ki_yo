@@ -38,7 +38,7 @@ public class Order{
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "orderStatus", nullable = false)
+    @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
