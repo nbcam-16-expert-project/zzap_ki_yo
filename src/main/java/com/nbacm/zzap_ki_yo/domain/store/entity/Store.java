@@ -1,6 +1,9 @@
 package com.nbacm.zzap_ki_yo.domain.store.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
@@ -35,10 +38,13 @@ public class Store {
 
     @Column(name = "open_time", nullable = false)
     @DateTimeFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm:ss")
+
     private LocalTime openingTime;
 
     @Column(name = "close_time", nullable = false)
     @DateTimeFormat(pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime closingTime;
 
     @Column(name = "favorite_conut", nullable = false)
@@ -53,15 +59,18 @@ public class Store {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_Id", nullable = false)
+    @JsonBackReference
     private User user;
 
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
+    @JsonManagedReference
     private List<Menu> menus;
 
     @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
+    @JsonManagedReference
     private List<Order> orders;
 
 

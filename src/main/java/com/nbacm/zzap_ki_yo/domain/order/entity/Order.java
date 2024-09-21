@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.order.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.nbacm.zzap_ki_yo.domain.review.entity.Review;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
@@ -31,6 +32,7 @@ public class Order{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
+    @JsonBackReference
     private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,7 +56,7 @@ public class Order{
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
-    private int totalPrice;
+    private Integer totalPrice;
 
     @Builder
     public Order(
@@ -64,7 +66,7 @@ public class Order{
             OrderStatus orderStatus,
             List<Review> reviews,
             List<OrderedMenu> orderedMenuList,
-            int totalPrice
+            Integer totalPrice
     ) {
         this.orderType = orderType;
         this.orderAddress = orderAddress;

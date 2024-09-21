@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.menu.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class Menu {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
+    @JsonBackReference
     private Store store;
 
     @Enumerated(EnumType.STRING)

@@ -20,6 +20,7 @@ import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.exception.UserNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AdminStoreServiceImpl implements AdminStoreService {
 
     private final StoreRepository storeRepository;
@@ -184,24 +186,39 @@ public class AdminStoreServiceImpl implements AdminStoreService {
     }
 
     @Override
+    @Transactional(readOnly = false) // 수정 작업이 필요하다면 readOnly를 false로 설정
     public StoreStatisticsResponseDto getDailyStatistics(Long storeId, String email) {
-        // 사장님 또는 관리자 권한 확인
-        validateOwnerOrAdmin(email, storeId);
-        return orderService.getDailyStatistics(storeId, LocalDate.now());
+        try {
+            // 사장님 또는 관리자 권한 확인
+            validateOwnerOrAdmin(email, storeId);
+            return orderService.getDailyStatistics(storeId, LocalDate.now());
+        } catch (Exception e) {
+            // Log the error and return a more specific response
+            log.error("Error fetching daily statistics for storeId: " + storeId, e);
+            throw e;
+        }
 
     }
 
     @Override
+    @Transactional(readOnly = false) // 수정 작업이 필요하다면 readOnly를 false로 설정
     public StoreStatisticsResponseDto getMonthlyStatistics(Long storeId, String email) {
-        // 사장님 또는 관리자 권한 확인
-        validateOwnerOrAdmin(email, storeId);
+        try {
 
-        // 월간 통계 조회: 현재 월의 시작일과 끝일을 설정
-        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate endOfMonth = LocalDate.now();
 
-        // 월간 통계 조회
-        return orderService.getMonthlyStatistics(storeId, startOfMonth, endOfMonth);
+            // 사장님 또는 관리자 권한 확인
+            validateOwnerOrAdmin(email, storeId);
+
+            // 월간 통계 조회: 현재 월의 시작일과 끝일을 설정
+            LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+            LocalDate endOfMonth = LocalDate.now();
+
+            // 월간 통계 조회
+            return orderService.getMonthlyStatistics(storeId, startOfMonth, endOfMonth);
+        }catch (Exception e){
+            log.error("Error fetching monthly statistics for storeId: " + storeId, e);
+            throw e;
+        }
     }
 
 

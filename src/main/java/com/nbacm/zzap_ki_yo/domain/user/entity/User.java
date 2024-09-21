@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nbacm.zzap_ki_yo.domain.favorite.Favorite;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
@@ -40,6 +41,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
+    @JsonManagedReference
     private List<Store> stores;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
