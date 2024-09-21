@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.user.entity;
 
+import com.nbacm.zzap_ki_yo.domain.coupon.entity.Coupon;
 import com.nbacm.zzap_ki_yo.domain.favorite.Favorite;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
@@ -53,6 +54,9 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
     private List<Favorite> favorites;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Coupon> coupons;
 
     @Builder
     public User(String email, String nickname, String name, UserRole userRole,String password) {
