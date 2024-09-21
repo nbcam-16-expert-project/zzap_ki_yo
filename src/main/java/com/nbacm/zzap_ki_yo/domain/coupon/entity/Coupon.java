@@ -54,23 +54,19 @@ public class Coupon {
 
     @Builder
     public Coupon(
-            String Id,
             Integer discountRate,
             Integer minPrice,
             Integer maxDiscount,
             CouponStatus couponStatus,
             User user,
-            LocalDateTime createdAt,
             Period expiryPeriod,
             Store store
     ){
-        this.couponName = Id;
         this.discountRate = discountRate;
         this.minPrice = minPrice;
         this.maxDiscount = maxDiscount;
         this.couponStatus = couponStatus;
         this.user = user;
-        this.createdAt = createdAt;
         this.expiryPeriod = expiryPeriod;
         this.store = store;
     }

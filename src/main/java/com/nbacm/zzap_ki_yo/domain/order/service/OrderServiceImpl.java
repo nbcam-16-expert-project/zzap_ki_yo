@@ -43,12 +43,12 @@ public class OrderServiceImpl implements OrderService {
     // 주문하기
     @Transactional
     @Override
-    public OrderSaveResponse saveOrder (String eMail, Long storeId, OrderSaveRequest orderSaveRequest) {
+    public OrderSaveResponse saveOrder (String email, Long storeId, OrderSaveRequest orderSaveRequest) {
 
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new NotFoundException("해당 가게는 없는 가게입니다."));
 
-        User user = userRepository.findByEmailOrElseThrow(eMail);
+        User user = userRepository.findByEmailOrElseThrow(email);
 
         Order order = Order.builder()
                 .orderType(OrderType.valueOf(orderSaveRequest.getOrderType()))

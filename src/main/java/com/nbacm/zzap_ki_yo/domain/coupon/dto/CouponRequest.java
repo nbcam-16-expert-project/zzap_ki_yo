@@ -11,5 +11,5 @@ public class CouponRequest {
     private Integer maxDiscount;
     private CouponStatus couponStatus;
     private Long userId;
-    private String expiryPeriod;
+    private Integer expiryPeriod;
 }
