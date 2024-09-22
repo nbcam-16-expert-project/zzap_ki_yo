@@ -3,6 +3,7 @@ package com.nbacm.zzap_ki_yo.domain.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nbacm.zzap_ki_yo.domain.user.common.util.PasswordUtil;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
@@ -24,6 +25,7 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final PasswordUtil passwordUtil;
 
     @Value("${kakao.client-id}")
     private String clientId;
@@ -104,7 +106,7 @@ public class KakaoService {
                             .nickname(nickname)
                             .name(nickname)
                             .userRole(UserRole.USER)
-                            .password("kakaoUser") // 임시 비밀번호
+                            .password(passwordUtil.encode("kakaoUser")) // 임시 비밀번호
                             .kakaoId(kakaoId) // 여기서 kakaoId를 설정합니다.
                             .build();
                     return userRepository.save(newUser);

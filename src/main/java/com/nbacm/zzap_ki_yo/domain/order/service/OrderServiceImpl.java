@@ -30,12 +30,14 @@ import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -58,6 +60,8 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final StoreStatisticsRepository storeStatisticsRepository;
     private final RedisTemplate<String, Object> redisObjectTemplate;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     private static final String REDIS_KEY_PREFIX = "store_statistics:";
 
@@ -244,6 +248,9 @@ public class OrderServiceImpl implements OrderService {
 
         String orderStatus = orderUpdateRequest.getOrderStatus();
         order.updateOrderStatus(OrderStatus.valueOf(orderStatus));
+
+        // 주문 상태 변경 후 이벤트 발행
+        eventPublisher.publishEvent(order);
     }
 
     // 주문 '취소'상태로 바꾸기
@@ -380,7 +387,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             String jsonValue = mapper.writeValueAsString(dto);
-            redisObjectTemplate.opsForValue().set(key, jsonValue);
+            redisObjectTemplate.opsForValue().set(key, jsonValue, Duration.ofHours(1));
         } catch (JsonProcessingException e) {
             log.error("Error serializing statistics to JSON", e);
         }
@@ -391,7 +398,7 @@ public class OrderServiceImpl implements OrderService {
        try {
            ObjectMapper mapper = new ObjectMapper();
            String jsonValue = mapper.writeValueAsString(dto);
-           redisObjectTemplate.opsForValue().set(key, jsonValue);
+           redisObjectTemplate.opsForValue().set(key, jsonValue,Duration.ofHours(1));
        }catch (JsonProcessingException e) {
            log.error("Error serializing statistics to JSON", e);
        }
@@ -444,7 +451,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             String jsonValue = mapper.writeValueAsString(dto);
-            redisObjectTemplate.opsForValue().set(key, jsonValue);
+            redisObjectTemplate.opsForValue().set(key, jsonValue,Duration.ofHours(1));
         } catch (JsonProcessingException e) {
             log.error("Error serializing daily statistics for all stores to JSON", e);
         }
@@ -456,7 +463,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             String jsonValue = mapper.writeValueAsString(dto);
-            redisObjectTemplate.opsForValue().set(key, jsonValue);
+            redisObjectTemplate.opsForValue().set(key, jsonValue,Duration.ofHours(1));
         } catch (JsonProcessingException e) {
             log.error("Error serializing monthly statistics for all stores to JSON", e);
         }
