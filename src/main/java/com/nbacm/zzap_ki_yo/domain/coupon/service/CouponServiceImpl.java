@@ -62,6 +62,7 @@ public class CouponServiceImpl implements CouponService {
         }
 
         Coupon coupon = Coupon.builder()
+                .couponName(couponRequest.getCouponName())
                 .discountRate(couponRequest.getDiscountRate())
                 .minPrice(couponRequest.getMinPrice())
                 .maxDiscount(couponRequest.getMaxDiscount())

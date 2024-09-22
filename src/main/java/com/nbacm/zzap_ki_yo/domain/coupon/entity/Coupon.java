@@ -62,7 +62,8 @@ public class Coupon {
             CouponStatus couponStatus,
             User user,
             Period expiryPeriod,
-            Store store
+            Store store,
+            String couponName
     ){
         this.discountRate = discountRate;
         this.minPrice = minPrice;
@@ -71,6 +72,7 @@ public class Coupon {
         this.user = user;
         this.expiryPeriod = expiryPeriod;
         this.store = store;
+        this.couponName = couponName;
     }
 
     @PrePersist
