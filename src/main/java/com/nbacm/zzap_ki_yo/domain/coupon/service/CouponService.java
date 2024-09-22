@@ -16,7 +16,7 @@ public interface CouponService {
     List<CouponResponse> getAllCoupons(String email);
 
     // 발행한 쿠폰 조회(사장)
-    CouponResponse getCouponOwner(Long couponId, String email);
+    List<CouponResponse> getAllCouponsByStoreId(String email, Long storeId);
 
     // 특정 유저가 보유한 쿠폰 조회(관리자)
     List<CouponResponse> getCouponByUser(String email, Long userId);

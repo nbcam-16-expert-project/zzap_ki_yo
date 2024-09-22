@@ -87,7 +87,7 @@ public class CouponServiceImpl implements CouponService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new NotFoundException("해당 가게는 없는 가게입니다."));
 
-        // 할인율 0~100사이인지 확인
+        // 할인율이 0~100사이의 정수인지 확인
         if(couponRequest.getDiscountRate().intValue()>100 || couponRequest.getDiscountRate().intValue()<0){
             throw new DiscountRateException("할인율(백분율)은 0에서 100 사이의 정수여야 합니다.");
         }
@@ -127,8 +127,32 @@ public class CouponServiceImpl implements CouponService {
 
     // 발행한 쿠폰 조회(사장)
     @Override
-    public CouponResponse getCouponOwner(Long couponId, String email) {
-        return null;
+    public List<CouponResponse> getAllCouponsByStoreId(String email, Long storeId) {
+
+        User owner = userRepository.findByEmailOrElseThrow(email);
+
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException("해당 가게는 없는 가게입니다."));
+
+        // 조회 요청자가 해당 가게의 사장이 맞는지 확인
+        for (Store ownstore : owner.getStores()){
+            int i = 0;
+            if(!ownstore.equals(store)){
+                i++;
+            }
+            if (owner.getStores().size() == i){
+                throw new CouponForbiddenException("해당 가게의 소유자만 쿠폰을 조회할 수 있습니다.");
+            }
+        }
+
+        List<Coupon> couponList = couponRepository.findByStoreId(storeId);
+
+        List<CouponResponse> couponResponseList = new ArrayList<>();
+        for(Coupon coupon : couponList){
+            couponResponseList.add(CouponResponse.createCouponResponse(coupon));
+        }
+
+        return couponResponseList;
     }
 
     // 특정 유저가 보유한 쿠폰 조회(관리자)

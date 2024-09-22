@@ -32,7 +32,7 @@ public class CouponController {
 
     // 보유 쿠폰 조회(유저)
     @GetMapping("/coupons")
-    public ResponseEntity<List<CouponResponse>> getAllCoupons(
+    public ResponseEntity<List<CouponResponse>> getAllCouponsByUser(
             @Auth AuthUser authUser
     ){
         String email = authUser.getEmail();
@@ -40,6 +40,14 @@ public class CouponController {
     }
 
     // 발행한 쿠폰 조회(사장)
+    @GetMapping("/stores/{storeId}/coupons")
+    public ResponseEntity<List<CouponResponse>> getAllCouponsByStoreId(
+            @Auth AuthUser authUser,
+            @PathVariable Long storeId
+    ){
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(couponServiceImpl.getAllCouponsByStoreId(email, storeId));
+    }
 
     // 특정 유저가 보유한 쿠폰 조회(관리자)
 
