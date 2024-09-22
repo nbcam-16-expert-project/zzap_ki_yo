@@ -96,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new CouponForbiddenException("사용할 수 없는 쿠폰입니다.");
             }
             // 쿠폰의 유효기간이 지나지 않았는지 확인(발급일로부터 유효기간만큼 지난 날짜(=만료일)가 오늘 이후인지 확인)
-            if(coupon.getCreatedAt().plus(coupon.getExpiryPeriod()).isAfter(LocalDate.now())){
+            if(coupon.getCreatedAt().plus(coupon.getExpiryPeriod()).isBefore(LocalDate.now())){
                 throw new CouponForbiddenException("유효기간이 지난 쿠폰입니다.");
             }
             // 쿠폰을 발행한 가게가 주문한 가게인지 확인
