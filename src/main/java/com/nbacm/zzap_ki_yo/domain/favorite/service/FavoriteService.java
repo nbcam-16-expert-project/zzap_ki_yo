@@ -2,7 +2,7 @@ package com.nbacm.zzap_ki_yo.domain.favorite.service;
 
 import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
 import com.nbacm.zzap_ki_yo.domain.exception.UnauthorizedException;
-import com.nbacm.zzap_ki_yo.domain.favorite.dto.FavoriteSaveReponseDto;
+import com.nbacm.zzap_ki_yo.domain.favorite.dto.FavoriteSaveResponseDto;
 import com.nbacm.zzap_ki_yo.domain.favorite.entity.Favorite;
 import com.nbacm.zzap_ki_yo.domain.favorite.repository.FavoriteRepository;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
@@ -23,7 +23,7 @@ public class FavoriteService {
 
     // 찜 등록
     @Transactional
-    public FavoriteSaveReponseDto saveFavorite(Long storeId, AuthUser authUser) {
+    public FavoriteSaveResponseDto saveFavorite(Long storeId, AuthUser authUser) {
 
         // 가게가 존재하는지 확인
         Store store = storeRepository.findById(storeId).
@@ -41,7 +41,7 @@ public class FavoriteService {
 
         // 찜 저장 마찬가지로 유저 정보 받게되면 수정 필요!
         favoriteRepository.save(favorite);
-        return FavoriteSaveReponseDto.builder().
+        return FavoriteSaveResponseDto.builder().
                 storeId(storeId).
                 favoriteId(favorite.getFavoriteId()).build();
     }

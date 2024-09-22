@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class FavoriteSaveReponseDto {
+public class FavoriteSaveResponseDto {
     private final long favoriteId;
     private final Long userId;
     private final Long storeId;
