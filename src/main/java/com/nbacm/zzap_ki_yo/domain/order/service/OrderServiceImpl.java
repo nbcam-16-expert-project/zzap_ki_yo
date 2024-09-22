@@ -86,41 +86,45 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 쿠폰을 사용해 할인 적용하기
-        // 쿠폰이 있는지 확인
-        Coupon coupon = couponRepository.findById(orderSaveRequest.getCouponId())
-                .orElseThrow(()-> new CouponNotFoundException("해당 쿠폰은 없는 쿠폰입니다."));
-        // 쿠폰이 사용 가능한 상태인지 확인
-        if(coupon.getCouponStatus().equals(CouponStatus.UNUSABLE)){
-            throw new CouponForbiddenException("사용할 수 없는 쿠폰입니다.");
-        }
-        // 쿠폰의 유효기간이 지나지 않았는지 확인(발급일로부터 유효기간만큼 지난 날짜(=만료일)가 오늘 이후인지 확인)
-        if(coupon.getCreatedAt().plus(coupon.getExpiryPeriod()).isAfter(LocalDate.now())){
-            throw new CouponForbiddenException("유효기간이 지난 쿠폰입니다.");
-        }
-        // 쿠폰을 발행한 가게가 주문한 가게인지 확인
-        if(!coupon.getStore().equals(store)){
-            throw new CouponForbiddenException("해당 가게에서 발급한 쿠폰이 아닙니다.");
-        }
-        // 주문자가 소유한 쿠폰이 맞는지 확인
-        if(!coupon.getUser().equals(user)){
-            throw new CouponForbiddenException("해당 쿠폰의 소유주가 아닙니다.");
-        }
-        // 쿠폰을 적용받기 위한 최소 주문 금액을 충족했는지 확인
-        if(totalPrice< coupon.getMinPrice()){
-            throw new CouponForbiddenException("주문 금액이 부족해 쿠폰을 사용할 수 없습니다.");
-        }
-        // 할인액
-        Integer discount = coupon.getDiscountRate()/100*totalPrice;
-        // 최대 할인 금액이 정해져 있으면 넘지 않도록 조정
-        if(coupon.getMaxDiscount() != null){
-            if(discount>coupon.getMaxDiscount()){
-                discount = coupon.getMaxDiscount();
+        // 쿠폰을 사용했는지 확인
+        if(orderSaveRequest.getCouponId() != null){
+            // 쿠폰이 있는지 확인
+            Coupon coupon = couponRepository.findById(orderSaveRequest.getCouponId())
+                    .orElseThrow(()-> new CouponNotFoundException("해당 쿠폰은 없는 쿠폰입니다."));
+            // 쿠폰이 사용 가능한 상태인지 확인
+            if(coupon.getCouponStatus().equals(CouponStatus.UNUSABLE)){
+                throw new CouponForbiddenException("사용할 수 없는 쿠폰입니다.");
             }
+            // 쿠폰의 유효기간이 지나지 않았는지 확인(발급일로부터 유효기간만큼 지난 날짜(=만료일)가 오늘 이후인지 확인)
+            if(coupon.getCreatedAt().plus(coupon.getExpiryPeriod()).isAfter(LocalDate.now())){
+                throw new CouponForbiddenException("유효기간이 지난 쿠폰입니다.");
+            }
+            // 쿠폰을 발행한 가게가 주문한 가게인지 확인
+            if(!coupon.getStore().equals(store)){
+                throw new CouponForbiddenException("해당 가게에서 발급한 쿠폰이 아닙니다.");
+            }
+            // 주문자가 소유한 쿠폰이 맞는지 확인
+            if(!coupon.getUser().equals(user)){
+                throw new CouponForbiddenException("해당 쿠폰의 소유주가 아닙니다.");
+            }
+            // 쿠폰을 적용받기 위한 최소 주문 금액을 충족했는지 확인
+            if(totalPrice< coupon.getMinPrice()){
+                throw new CouponForbiddenException("주문 금액이 부족해 쿠폰을 사용할 수 없습니다.");
+            }
+            // 할인액
+            Integer discount = coupon.getDiscountRate()/100*totalPrice;
+            // 최대 할인 금액이 정해져 있으면 넘지 않도록 조정
+            if(coupon.getMaxDiscount() != null){
+                if(discount>coupon.getMaxDiscount()){
+                    discount = coupon.getMaxDiscount();
+                }
+            }
+            // 할인 적용
+            totalPrice = totalPrice - discount;
+            // 사용된 쿠폰을 사용 불가로 바꾸기
+            coupon.deActivated();
         }
-        // 할인 적용
-        totalPrice = totalPrice - discount;
-        // 사용된 쿠폰을 사용 불가로 바꾸기
-        coupon.deActivated();
+
 
         Order order = Order.builder()
                 .orderType(OrderType.valueOf(orderSaveRequest.getOrderType()))
