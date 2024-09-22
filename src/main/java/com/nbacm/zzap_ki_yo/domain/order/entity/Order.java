@@ -93,12 +93,8 @@ public class Order{
             this.completedAt = LocalDateTime.now();
         }
     }
-
-
-
-
-
-
-
-
+    public String toEventData() {
+        return String.format("id:%d\ndata:{\"orderId\":%d,\"status\":\"%s\",\"storeId\":%d}\n\n",
+                this.orderId, this.orderId, this.orderStatus, this.store.getStoreId());
+    }
 }
