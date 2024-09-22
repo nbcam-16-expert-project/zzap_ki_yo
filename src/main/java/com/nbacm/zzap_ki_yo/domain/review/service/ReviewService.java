@@ -83,9 +83,14 @@ public class ReviewService {
         Review parentReview = reviewRepository.findById(reviewId).
                 orElseThrow(()-> new NotFoundException("리뷰를 찾을 수 없습니다."));
 
-        // 본인 리뷰에 본인이 답글 authUser != authUser 월요일에 확인 필요!!
-        if (parentReview.getOrder().getUser().equals(authUser)){
-            throw new UnauthorizedException("본인이 작성한 리뷰에는 답글을 작성할 수 없습니다.");
+//        // 본인 리뷰에 본인이 답글 authUser != authUser 월요일에 확인 필요!!
+//        if (parentReview.getOrder().getUser().equals(authUser)){
+//            throw new UnauthorizedException("본인이 작성한 리뷰에는 답글을 작성할 수 없습니다.");
+//        }
+
+        // 일단 사장님,짭기요만 리뷰에 답글을 등록할 수 있도록 설정
+        if (!authUser.getRole().equals(UserRole.ADMIN) && !authUser.getRole().equals(UserRole.OWNER)){
+            throw new UnauthorizedException("리뷰에 답글은 사장님 혹은 짭기요 관리자만 작성할 수 있습니다.");
         }
 
 
