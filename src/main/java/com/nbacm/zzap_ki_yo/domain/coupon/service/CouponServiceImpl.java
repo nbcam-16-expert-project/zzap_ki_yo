@@ -11,6 +11,7 @@ import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
+import com.nbacm.zzap_ki_yo.domain.user.exception.UserNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -130,13 +131,21 @@ public class CouponServiceImpl implements CouponService {
         return null;
     }
 
-
-
-
-
-
-
     // 특정 유저가 보유한 쿠폰 조회(관리자)
+    public List<CouponResponse> getCouponByUser(String email, Long userId){
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException("해당 유저는 존재하지 않습니다."));
+
+        List<Coupon> couponList = couponRepository.findByUserId(userId);
+
+        List<CouponResponse> couponResponseList = new ArrayList<>();
+        for(Coupon coupon : couponList){
+            couponResponseList.add(CouponResponse.createCouponResponse(coupon));
+        }
+
+        return couponResponseList;
+    }
 
     // 특정 가게가 발생한 쿠폰 조회(관리자)
 
@@ -144,3 +153,36 @@ public class CouponServiceImpl implements CouponService {
 
     // 쿠폰 발행취소(삭제, 관리자)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

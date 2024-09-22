@@ -19,7 +19,7 @@ public interface CouponService {
     CouponResponse getCouponOwner(Long couponId, String email);
 
     // 특정 유저가 보유한 쿠폰 조회(관리자)
-
+    List<CouponResponse> getCouponByUser(String email, Long userId);
     // 특정 가게가 발생한 쿠폰 조회(관리자)
 
     // 쿠폰 발행취소(삭제, 사장)
