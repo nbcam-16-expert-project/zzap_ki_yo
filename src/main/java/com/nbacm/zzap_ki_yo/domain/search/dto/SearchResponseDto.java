@@ -2,7 +2,6 @@ package com.nbacm.zzap_ki_yo.domain.search.dto;
 
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.MenuNamePrice;
 import lombok.Data;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 

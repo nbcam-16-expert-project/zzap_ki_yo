@@ -4,8 +4,11 @@ package com.nbacm.zzap_ki_yo.domain.search.service;
 import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.menu.repository.MenuRepository;
+import com.nbacm.zzap_ki_yo.domain.search.dto.PopularWordResponseDto;
 import com.nbacm.zzap_ki_yo.domain.search.dto.SearchResponseDto;
 import com.nbacm.zzap_ki_yo.domain.search.dto.StoreNameDto;
+import com.nbacm.zzap_ki_yo.domain.search.entity.PopularWord;
+import com.nbacm.zzap_ki_yo.domain.search.repository.PopularWordRepository;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.MenuNamePrice;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
@@ -13,7 +16,6 @@ import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,8 +32,19 @@ public class SearchService {
 
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
+    private final PopularWordRepository popularWordRepository;
 
+    @Transactional
     public SearchResponseDto search(String keyword) {
+
+        PopularWord popularWord = popularWordRepository.findByWord(keyword);
+
+        if(popularWord == null) {
+            PopularWord word = PopularWord.create(keyword, 1L);
+            popularWordRepository.save(word);
+        }else {
+            popularWord.countUp(1L);
+        }
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<Store> stores = storeRepository.findByStoreNameContainingAndStoreType(keyword,StoreType.OPENING, pageable);
@@ -56,5 +69,24 @@ public class SearchService {
         }
 
         return SearchResponseDto.build(storeNameDtos,menuNamePrices);
+    }
+
+
+    public List<PopularWordResponseDto> getPopularWord() {
+        List<PopularWord> popularWord = popularWordRepository.findTop10ByOrderByPopularityDesc();
+
+        if(popularWord.isEmpty()) {
+            throw new NotFoundException("인기 검색어가 없습니다.");
+        }
+
+        List<PopularWordResponseDto> responseDtos = new ArrayList<>();
+
+        for (PopularWord word : popularWord) {
+            PopularWordResponseDto responseDto = PopularWordResponseDto.of(word.getWord());
+
+            responseDtos.add(responseDto);
+        }
+
+        return responseDtos;
     }
 }
