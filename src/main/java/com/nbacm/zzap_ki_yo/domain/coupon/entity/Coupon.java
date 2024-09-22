@@ -36,7 +36,7 @@ public class Coupon {
     @Column(name = "coupon_status", nullable = false)
     private CouponStatus couponStatus;
 
-    @Column(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
@@ -50,7 +50,7 @@ public class Coupon {
     Period periodInMonths = Period.ofMonths(3); // 3개월
     Period periodBetween = Period.between(startDate, endDate); // 두 날짜 사이의 간격*/
 
-    @Column(name = "store_id", nullable = false)
+    @JoinColumn(name = "store_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Store store;
 
