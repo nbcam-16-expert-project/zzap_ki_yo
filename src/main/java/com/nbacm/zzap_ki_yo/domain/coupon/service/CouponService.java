@@ -25,6 +25,8 @@ public interface CouponService {
     List<CouponResponse> getAllCouponsByStoreIdAdmin (String email, Long storeId);
 
     // 쿠폰 발행취소(삭제, 사장)
+    void deleteCoupon(String email, Long storeId, Long couponId);
 
     // 쿠폰 발행취소(삭제, 관리자)
+    void deleteCouponAdmin(String email, Long couponId);
 }

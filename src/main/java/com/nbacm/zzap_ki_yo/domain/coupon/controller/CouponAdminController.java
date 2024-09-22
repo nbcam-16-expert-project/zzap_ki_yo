@@ -50,6 +50,14 @@ public class CouponAdminController {
     }
 
     // 쿠폰 삭제
+    @DeleteMapping("/stores/{storeId}/admin/coupons/{couponId}")
+    public void deleteCoupon(
+            @Auth AuthUser authUser,
+            @PathVariable Long couponId
+    ) {
+        String email = authUser.getEmail();
+        couponServiceImpl.deleteCouponAdmin(email, couponId);
+    }
 }
 
 

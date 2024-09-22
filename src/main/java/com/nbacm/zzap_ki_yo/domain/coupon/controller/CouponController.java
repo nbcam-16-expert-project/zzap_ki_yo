@@ -49,11 +49,16 @@ public class CouponController {
         return ResponseEntity.ok(couponServiceImpl.getAllCouponsByStoreId(email, storeId));
     }
 
-
-
     // 쿠폰 발행취소(삭제, 사장)
-
-    // 쿠폰 발행취소(삭제, 관리자)
+    @DeleteMapping("/stores/{storeId}/coupons/{couponId}")
+    public void deleteCoupon(
+            @Auth AuthUser authUser,
+            @PathVariable Long storeId,
+            @PathVariable Long couponId
+    ) {
+        String email = authUser.getEmail();
+        couponServiceImpl.deleteCoupon(email, storeId, couponId);
+    }
 }
 
 
