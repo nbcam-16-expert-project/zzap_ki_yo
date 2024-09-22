@@ -421,7 +421,20 @@ public class OrderServiceImpl implements OrderService {
     }
     private StoreStatisticsResponseDto getCachedMonthlyStatistics(Long storeId, LocalDate startOfMonth) {
         String key = "monthly:stats:" + storeId + ":" + YearMonth.from(startOfMonth);
-        return (StoreStatisticsResponseDto) redisObjectTemplate.opsForValue().get(key);
+        String jsonValue = (String) redisObjectTemplate.opsForValue().get(key); // String으로 가져옴
+
+        if (jsonValue != null) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                // JSON 문자열을 StoreStatisticsResponseDto로 변환
+                return mapper.readValue(jsonValue, StoreStatisticsResponseDto.class);
+            } catch (JsonProcessingException e) {
+                log.error("Error deserializing JSON to StoreStatisticsResponseDto", e);
+            }
+        }
+
+        // Redis에 캐시가 없거나 역직렬화에 실패한 경우 null 반환
+        return null;
     }
 
 

@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.domain.controller;
+package com.nbacm.zzap_ki_yo.domain.dashboard.controller;
 
 import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StoreStatisticsResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.service.AdminStoreServiceImpl;
