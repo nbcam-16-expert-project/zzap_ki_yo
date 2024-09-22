@@ -27,10 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
+
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
     private final StoreRepository storeRepository;
-
 
     // 리뷰 등록
     @Transactional
@@ -46,7 +46,7 @@ public class ReviewService {
             throw new UncompletedException("아직 완료되지 않은 주문입니다.");
         }
         // 주문한 고객이 맞는지 확인
-        if (!authUser.getRole().equals(UserRole.USER) || order.getUser().equals(authUser)){
+        if (!authUser.getRole().equals(UserRole.USER) || !order.getUser().equals(authUser)){
             throw new UnauthorizedException("주문한 고객이 아닙니다.");
         }
 
@@ -70,8 +70,9 @@ public class ReviewService {
     }
 
     // 리뷰에 답글 등록
-    public ReviewSaveResponseDto saveReplyReview(AuthUser authUser,
-                                                 Long reviewId,
+    @Transactional
+    public ReviewSaveResponseDto saveReplyReview(Long reviewId,
+                                                 AuthUser authUser,
                                                  ReviewSaveRequestDto reviewSaveRequestDto) {
 
         //주문이 있는지 확인
@@ -84,7 +85,7 @@ public class ReviewService {
 
         // 본인 리뷰에 본인이 답글
         if (parentReview.getOrder().getUser().equals(authUser)){
-            throw new UnauthorizedException("본인이 작성한 리뷰에는 댓글을 작성할 수 없습니다.");
+            throw new UnauthorizedException("본인이 작성한 리뷰에는 답글을 작성할 수 없습니다.");
         }
 
 
@@ -116,7 +117,7 @@ public class ReviewService {
         // 페이징 + 리뷰를 가장 최근에 수정한 순서대로 정렬
         Pageable pageable = PageRequest.of(pageNo,size, Sort.by("modifiedAt").descending());
 
-        // 가게에 있는 별점으로 조회할 구간 설정
+        // 가게에 있는 별점으로 조회할 구간 설정 따로 입력하지 않으면 0~5 모두 보여줌
         Page<Review> reviewList = reviewRepository.
                 findBystarPoint(storeId,minStarPoint,maxStarPoint,pageable);
 
@@ -128,14 +129,16 @@ public class ReviewService {
 
     // 리뷰수정
     @Transactional
-   public ReviewUpdateResponseDto updateReview(Long reviewId, String content) {
+   public ReviewUpdateResponseDto updateReview(Long reviewId,AuthUser authUser, String content) {
 
         // 리뷰가 있는지 확인 예외처리 관련해서 확인 필요
         Review review = reviewRepository.findById(reviewId).
                 orElseThrow(()-> new NotFoundException("리뷰를 찾을 수 없습니다."));
 
-        // 리뷰를 수정할 권한이 있는 유저인지 확인 필요 유저 받는 방법 확인 후 처리
-
+        // 수정 권한 확인
+        if(!authUser.getRole().equals(UserRole.ADMIN)){
+            throw new UnauthorizedException("리뷰 수정은 관리자만 가능합니다. 짭기요에 문의해주세요.");
+        }
         // 리뷰 수정
         review.update(content);
 
@@ -152,13 +155,16 @@ public class ReviewService {
 
     // 리뷰 삭제
     @Transactional
-    public void deleteReview(Long reviewId) {
+    public void deleteReview(Long reviewId,AuthUser authUser) {
 
         // 리뷰가 있는지 확인
         Review review = reviewRepository.findById(reviewId).
                 orElseThrow(()-> new NotFoundException("리뷰를 찾을 수 없습니다."));
 
-        // 리뷰를 삭제할 권한이 있는 유저인지 확인
+        // 리뷰를 삭제할 권한이 있는 유저인지 확인 admin only
+        if (!authUser.getRole().equals(UserRole.ADMIN)){
+            throw new UnauthorizedException("리뷰 삭제는 관리자만 가능합니다. 짭기요에 문의해주세요.");
+        }
 
         // 리뷰 삭제
         reviewRepository.delete(review);

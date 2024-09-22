@@ -9,9 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1/reviews")
+
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -25,17 +26,16 @@ public class ReviewController {
 
     // 리뷰에 리뷰 등록
     @PostMapping("/{reviewId}")
-    public ResponseEntity<ReviewSaveResponseDto> saveReplyReview (@Auth AuthUser authUser,
-                                                                  @PathVariable Long reviewId,
+    public ResponseEntity<ReviewSaveResponseDto> saveReplyReview (@PathVariable Long reviewId,
+                                                                  @Auth AuthUser authUser,
                                                                   @RequestBody ReviewSaveRequestDto reviewSaveRequestDto){
-        return ResponseEntity.ok(reviewService.saveReplyReview(authUser,reviewId,reviewSaveRequestDto));
+        return ResponseEntity.ok(reviewService.saveReplyReview(reviewId,authUser,reviewSaveRequestDto));
     }
 
 
     // 리뷰 조회
     @GetMapping
-    public ResponseEntity<Page<ReviewSimpleResponseDto>> getReviewList (@Auth AuthUser authUser,
-                                                                        @RequestBody Long storeId,
+    public ResponseEntity<Page<ReviewSimpleResponseDto>> getReviewList (@RequestBody Long storeId,
                                                                      @RequestParam (defaultValue = "0", required = false) int pageNo,
                                                                      @RequestParam (defaultValue = "10", required = false) int size,
                                                                         @RequestParam (defaultValue = "0", required = false) int minStarPoint,
@@ -48,12 +48,13 @@ public class ReviewController {
     public ResponseEntity<ReviewUpdateResponseDto> updateReview (@PathVariable Long reviewId,
                                                                  @Auth AuthUser authUser,
                                                                  @RequestBody ReviewUpdateRequestDto reviewUpdate){
-        return ResponseEntity.ok(reviewService.updateReview(reviewId,reviewUpdate.getContent()));
+        return ResponseEntity.ok(reviewService.updateReview(reviewId,authUser,reviewUpdate.getContent()));
     }
 
     // 리뷰 삭제
     @DeleteMapping("/{reviewId}")
-    public void deleteReview (@PathVariable Long reviewId){
-        reviewService.deleteReview(reviewId);
+    public void deleteReview (@PathVariable Long reviewId,
+                              @Auth AuthUser authUser){
+        reviewService.deleteReview(reviewId,authUser);
     }
 }
