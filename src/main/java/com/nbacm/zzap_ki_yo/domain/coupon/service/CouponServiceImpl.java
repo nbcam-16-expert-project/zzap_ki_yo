@@ -76,7 +76,33 @@ public class CouponServiceImpl implements CouponService {
     // 쿠폰 생성(관리자)
     @Override
     public CouponResponse saveCouponAdmin(Long storeId, CouponRequest couponRequest, String email) {
-        return null;
+
+        User user = userRepository.findById(couponRequest.getUserId())
+                .orElseThrow(() -> new NotFoundException("해당 쿠폰 발급 대상 유저는 없는 유저입니다"));
+
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException("해당 가게는 없는 가게입니다."));
+
+        // 할인율 0~100사이인지 확인
+        if(couponRequest.getDiscountRate().intValue()>100 || couponRequest.getDiscountRate().intValue()<0){
+            throw new DiscountRateException("할인율(백분율)은 0에서 100 사이의 정수여야 합니다.");
+        }
+
+        Coupon coupon = Coupon.builder()
+                .discountRate(couponRequest.getDiscountRate())
+                .minPrice(couponRequest.getMinPrice())
+                .maxDiscount(couponRequest.getMaxDiscount())
+                .couponStatus(CouponStatus.USABLE)
+                .user(user)
+                .expiryPeriod(Period.ofDays(couponRequest.getExpiryPeriod()))
+                .store(store)
+                .build();
+
+        couponRepository.save(coupon);
+
+        CouponResponse couponResponse = CouponResponse.createCouponResponse(coupon);
+
+        return couponResponse;
     }
 
     // 보유 쿠폰 조회(유저)
