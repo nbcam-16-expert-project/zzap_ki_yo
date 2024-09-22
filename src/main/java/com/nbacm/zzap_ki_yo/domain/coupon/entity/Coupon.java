@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 
@@ -23,12 +24,14 @@ public class Coupon {
 
     @Column(name = "discount_rate", nullable = false)
     private Integer discountRate;
+    // 정액 쿠폰은 할인율을 100으로 하고 최대 할인 수치를 조절하면 됨.
 
     @Column(name = "min_price", nullable = false)
     private Integer minPrice;
 
     @Column(name = "max_discount")
     private Integer maxDiscount;
+    //
 
     @Column(name = "coupon_status", nullable = false)
     private CouponStatus couponStatus;
@@ -38,19 +41,18 @@ public class Coupon {
     private User user;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "expiry_period", nullable = false)
     private Period expiryPeriod;
+    // 사용법('일' 만 사용함. 일 단위로 유효기간 받기)
+    /*Period period = Period.ofDays(10); // 10일
+    Period periodInMonths = Period.ofMonths(3); // 3개월
+    Period periodBetween = Period.between(startDate, endDate); // 두 날짜 사이의 간격*/
 
     @Column(name = "store_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Store store;
-
-    // 사용법
-    /*Period period = Period.ofDays(10); // 10일
-    Period periodInMonths = Period.ofMonths(3); // 3개월
-    Period periodBetween = Period.between(startDate, endDate); // 두 날짜 사이의 간격*/
 
     @Builder
     public Coupon(
@@ -73,6 +75,10 @@ public class Coupon {
 
     @PrePersist
     public void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDate.now();
+    }
+
+    public void deActivated(){
+        this.couponStatus = CouponStatus.UNUSABLE;
     }
 }

@@ -10,4 +10,5 @@ public class OrderSaveRequest {
     private String orderType;
     private String orderAddress;
     private List<Long> menuList;
+    private Long couponId;
 }

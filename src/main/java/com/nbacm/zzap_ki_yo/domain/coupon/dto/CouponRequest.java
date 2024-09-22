@@ -12,4 +12,6 @@ public class CouponRequest {
     private CouponStatus couponStatus;
     private Long userId;
     private Integer expiryPeriod;
+    // 유효기간은 '일' 기준
+    // 예) 12345를 넣으면 유효기간이 12,345(만 이천 삼백 사십 오)일로 설정됨
 }
