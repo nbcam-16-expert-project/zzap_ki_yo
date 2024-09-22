@@ -326,6 +326,55 @@ public class OrderServiceImpl implements OrderService {
         return monthlyStatistics;
     }
 
+    @Override
+    public StoreStatisticsResponseDto getDailyStatisticsForAllStores(LocalDate date) {
+        // Redis에서 캐시된 일간 통계 데이터를 먼저 확인
+        StoreStatisticsResponseDto cachedStatistics = getCachedDailyStatisticsForAllStores(date);
+        if (cachedStatistics != null) {
+            return cachedStatistics;
+        }
+
+        // 캐시된 데이터가 없다면 DB에서 해당 날짜의 전체 통계 조회
+        List<StoreStatistics> statisticsList = storeStatisticsRepository.findAllByDate(date);
+        if (statisticsList.isEmpty()) {
+            throw new NotFoundException("해당 날짜의 통계 데이터를 찾을 수 없습니다.");
+        }
+
+        // 통계를 합산하여 반환
+        StoreStatisticsResponseDto dailyStatistics = StoreStatisticsResponseDto.from(statisticsList);
+
+        // 조회된 통계를 Redis에 캐시 저장
+        cacheDailyStatisticsForAllStores(dailyStatistics, date);
+
+        return dailyStatistics;
+    }
+
+    @Override
+    public StoreStatisticsResponseDto getMonthlyStatisticsForAllStores(YearMonth yearMonth) {
+        LocalDate startOfMonth = yearMonth.atDay(1);
+        LocalDate endOfMonth = yearMonth.atEndOfMonth();
+
+        // Redis에서 캐시된 월간 통계 데이터를 먼저 확인
+        StoreStatisticsResponseDto cachedStatistics = getCachedMonthlyStatisticsForAllStores(yearMonth);
+        if (cachedStatistics != null) {
+            return cachedStatistics;
+        }
+
+        // 캐시된 데이터가 없다면 DB에서 해당 월의 전체 통계 조회
+        List<StoreStatistics> statisticsList = storeStatisticsRepository.findAllByDateBetween(startOfMonth, endOfMonth);
+        if (statisticsList.isEmpty()) {
+            throw new NotFoundException("해당 월의 통계 데이터를 찾을 수 없습니다.");
+        }
+
+        // 통계를 합산하여 반환
+        StoreStatisticsResponseDto monthlyStatistics = StoreStatisticsResponseDto.from(statisticsList);
+
+        // 조회된 월간 통계를 Redis에 캐시 저장
+        cacheMonthlyStatisticsForAllStores(monthlyStatistics, yearMonth);
+
+        return monthlyStatistics;
+    }
+
     private void cacheDailyStatistics(Long storeId, StoreStatisticsResponseDto dto) {
         String key = "daily:stats:" + storeId + ":" + LocalDate.now();
         try {
@@ -347,6 +396,8 @@ public class OrderServiceImpl implements OrderService {
            log.error("Error serializing statistics to JSON", e);
        }
     }
+
+
     private StoreStatisticsResponseDto getCachedDailyStatistics(Long storeId, LocalDate date) {
         String key = "daily:stats:" + storeId + ":" + date;
         Object cachedValue = redisObjectTemplate.opsForValue().get(key);
@@ -368,11 +419,88 @@ public class OrderServiceImpl implements OrderService {
 
         return null;
     }
-
     private StoreStatisticsResponseDto getCachedMonthlyStatistics(Long storeId, LocalDate startOfMonth) {
         String key = "monthly:stats:" + storeId + ":" + YearMonth.from(startOfMonth);
-        return (StoreStatisticsResponseDto) redisObjectTemplate.opsForValue().get(key);
+        String jsonValue = (String) redisObjectTemplate.opsForValue().get(key); // String으로 가져옴
+
+        if (jsonValue != null) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                // JSON 문자열을 StoreStatisticsResponseDto로 변환
+                return mapper.readValue(jsonValue, StoreStatisticsResponseDto.class);
+            } catch (JsonProcessingException e) {
+                log.error("Error deserializing JSON to StoreStatisticsResponseDto", e);
+            }
+        }
+
+        // Redis에 캐시가 없거나 역직렬화에 실패한 경우 null 반환
+        return null;
     }
+
+
+    // Redis 캐시 저장 - 전체 일간 통계
+    private void cacheDailyStatisticsForAllStores(StoreStatisticsResponseDto dto, LocalDate date) {
+        String key = "daily:stats:all:" + date;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonValue = mapper.writeValueAsString(dto);
+            redisObjectTemplate.opsForValue().set(key, jsonValue);
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing daily statistics for all stores to JSON", e);
+        }
+    }
+
+    // Redis 캐시 저장 - 전체 월간 통계
+    private void cacheMonthlyStatisticsForAllStores(StoreStatisticsResponseDto dto, YearMonth yearMonth) {
+        String key = "monthly:stats:all:" + yearMonth;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonValue = mapper.writeValueAsString(dto);
+            redisObjectTemplate.opsForValue().set(key, jsonValue);
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing monthly statistics for all stores to JSON", e);
+        }
+    }
+
+    // Redis에서 전체 일간 통계 조회
+    private StoreStatisticsResponseDto getCachedDailyStatisticsForAllStores(LocalDate date) {
+        String key = "daily:stats:all:" + date;
+        Object cachedValue = redisObjectTemplate.opsForValue().get(key);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            if (cachedValue instanceof String) {
+                return mapper.readValue((String) cachedValue, StoreStatisticsResponseDto.class);
+            }
+        } catch (Exception e) {
+            log.error("Error deserializing cached daily statistics for all stores", e);
+        }
+
+        return null;
+    }
+
+    // Redis에서 전체 월간 통계 조회
+    private StoreStatisticsResponseDto getCachedMonthlyStatisticsForAllStores(YearMonth yearMonth) {
+        String key = "monthly:stats:all:" + yearMonth;
+        Object cachedValue = redisObjectTemplate.opsForValue().get(key);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            if (cachedValue instanceof String) {
+                return mapper.readValue((String) cachedValue, StoreStatisticsResponseDto.class);
+            }
+        } catch (Exception e) {
+            log.error("Error deserializing cached monthly statistics for all stores", e);
+        }
+
+        return null;
+    }
+
+
     // Redis 캐시 무효화
     public void invalidateCache(Long storeId) {
         String dailyRedisKey = REDIS_KEY_PREFIX + storeId + ":daily:" + LocalDate.now();
@@ -381,8 +509,5 @@ public class OrderServiceImpl implements OrderService {
         String monthlyRedisKey = REDIS_KEY_PREFIX + storeId + ":monthly:" + LocalDate.now().withDayOfMonth(1) + "-" + LocalDate.now();
         redisObjectTemplate.delete(monthlyRedisKey);
     }
-
-
-
 
 }

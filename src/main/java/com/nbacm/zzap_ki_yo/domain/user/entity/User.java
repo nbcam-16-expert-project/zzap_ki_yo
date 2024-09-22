@@ -56,13 +56,16 @@ public class User {
     @BatchSize(size = 20)
     private List<Favorite> favorites;
 
+    private String kakaoId;
+
     @Builder
-    public User(String email, String nickname, String name, UserRole userRole,String password) {
+    public User(String email, String nickname, String name, UserRole userRole,String password,String kakaoId) {
         this.email = email;
         this.nickname = nickname;
         this.name = name;
         this.password = password;
         this.userRole = userRole;
+        this.kakaoId = kakaoId;
     }
 
 
@@ -93,5 +96,15 @@ public class User {
     public void deleteAccount(){
         this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
+    }
+    public static User createKakaoUser(String email, String nickname, String kakaoId) {
+        return User.builder()
+                .email(email)
+                .nickname(nickname)
+                .name(nickname)
+                .userRole(UserRole.USER)
+                .password("kakaoUser") // 임시 비밀번호
+                .kakaoId(kakaoId)
+                .build();
     }
 }
