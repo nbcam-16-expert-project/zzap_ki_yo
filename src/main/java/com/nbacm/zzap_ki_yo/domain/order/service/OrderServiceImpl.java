@@ -112,7 +112,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new CouponForbiddenException("주문 금액이 부족해 쿠폰을 사용할 수 없습니다.");
             }
             // 할인액
-            Integer discount = coupon.getDiscountRate()/100*totalPrice;
+            Integer discount = coupon.getDiscountRate()*totalPrice/100;
             // 최대 할인 금액이 정해져 있으면 넘지 않도록 조정
             if(coupon.getMaxDiscount() != null){
                 if(discount>coupon.getMaxDiscount()){
