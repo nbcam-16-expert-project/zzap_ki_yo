@@ -7,9 +7,9 @@ import lombok.Getter;
 public class CouponRequest {
     private String couponName;
     private Integer discountRate;
+    // 0~100 사이의 정수
     private Integer minPrice;
     private Integer maxDiscount;
-    private CouponStatus couponStatus;
     private Long userId;
     private Integer expiryPeriod;
     // 유효기간은 '일' 기준
