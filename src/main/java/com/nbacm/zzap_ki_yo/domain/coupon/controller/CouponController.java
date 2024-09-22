@@ -49,9 +49,7 @@ public class CouponController {
         return ResponseEntity.ok(couponServiceImpl.getAllCouponsByStoreId(email, storeId));
     }
 
-    // 특정 유저가 보유한 쿠폰 조회(관리자)
 
-    // 특정 가게가 발생한 쿠폰 조회(관리자)
 
     // 쿠폰 발행취소(삭제, 사장)
 

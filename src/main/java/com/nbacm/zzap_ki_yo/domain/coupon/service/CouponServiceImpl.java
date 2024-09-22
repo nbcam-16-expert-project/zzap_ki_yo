@@ -172,6 +172,20 @@ public class CouponServiceImpl implements CouponService {
     }
 
     // 특정 가게가 발생한 쿠폰 조회(관리자)
+    public List<CouponResponse> getAllCouponsByStoreIdAdmin (String email, Long storeId){
+
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException("해당 가게는 없는 가게입니다."));
+
+        List<Coupon> couponList = couponRepository.findByStoreId(storeId);
+
+        List<CouponResponse> couponResponseList = new ArrayList<>();
+        for(Coupon coupon : couponList){
+            couponResponseList.add(CouponResponse.createCouponResponse(coupon));
+        }
+
+        return couponResponseList;
+    }
 
     // 쿠폰 발행취소(삭제, 사장)
 

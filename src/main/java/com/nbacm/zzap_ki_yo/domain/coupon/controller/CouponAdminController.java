@@ -40,6 +40,45 @@ public class CouponAdminController {
     }
 
     // 특정 가게가 발행한 쿠폰 조회
+    @GetMapping("/stores/{storeId}/admin/coupons")
+    public ResponseEntity<List<CouponResponse>> getAllCouponsByStoreIdAdmin(
+            @Auth AuthUser authUser,
+            @PathVariable Long storeId
+    ){
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(couponServiceImpl.getAllCouponsByStoreIdAdmin(email, storeId));
+    }
 
     // 쿠폰 삭제
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
