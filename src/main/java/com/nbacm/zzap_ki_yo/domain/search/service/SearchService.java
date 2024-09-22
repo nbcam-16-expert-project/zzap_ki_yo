@@ -35,7 +35,7 @@ public class SearchService {
     private final PopularWordRepository popularWordRepository;
 
     @Transactional
-    public SearchResponseDto search(String keyword) {
+    public SearchResponseDto search(String keyword, Pageable pageable) {
 
         PopularWord popularWord = popularWordRepository.findByWord(keyword);
 
@@ -46,7 +46,6 @@ public class SearchService {
             popularWord.countUp(1L);
         }
 
-        Pageable pageable = PageRequest.of(0, 10);
         Page<Store> stores = storeRepository.findByStoreNameContainingAndStoreType(keyword,StoreType.OPENING, pageable);
 
         List<StoreNameDto> storeNameDtos = stores.stream().map(store ->
