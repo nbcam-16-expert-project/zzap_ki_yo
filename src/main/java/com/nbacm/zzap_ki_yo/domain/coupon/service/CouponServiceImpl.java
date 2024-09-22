@@ -117,7 +117,7 @@ public class CouponServiceImpl implements CouponService {
 
         User user = userRepository.findByEmailOrElseThrow(email);
 
-        List<Coupon> couponList = couponRepository.findByUserId(user.getUserId());
+        List<Coupon> couponList = couponRepository.findByUser(user);
 
         List<CouponResponse> couponResponseList = new ArrayList<>();
         for(Coupon coupon : couponList){
@@ -147,7 +147,7 @@ public class CouponServiceImpl implements CouponService {
             }
         }
 
-        List<Coupon> couponList = couponRepository.findByStoreId(storeId);
+        List<Coupon> couponList = couponRepository.findByStore(store);
 
         List<CouponResponse> couponResponseList = new ArrayList<>();
         for(Coupon coupon : couponList){
@@ -164,7 +164,7 @@ public class CouponServiceImpl implements CouponService {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException("해당 유저는 존재하지 않습니다."));
 
-        List<Coupon> couponList = couponRepository.findByUserId(userId);
+        List<Coupon> couponList = couponRepository.findByUser(user);
 
         List<CouponResponse> couponResponseList = new ArrayList<>();
         for(Coupon coupon : couponList){
@@ -181,7 +181,7 @@ public class CouponServiceImpl implements CouponService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new StoreNotFoundException("해당 가게는 없는 가게입니다."));
 
-        List<Coupon> couponList = couponRepository.findByStoreId(storeId);
+        List<Coupon> couponList = couponRepository.findByStore(store);
 
         List<CouponResponse> couponResponseList = new ArrayList<>();
         for(Coupon coupon : couponList){
