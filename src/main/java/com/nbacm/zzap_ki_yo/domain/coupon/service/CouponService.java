@@ -3,6 +3,8 @@ package com.nbacm.zzap_ki_yo.domain.coupon.service;
 import com.nbacm.zzap_ki_yo.domain.coupon.dto.CouponRequest;
 import com.nbacm.zzap_ki_yo.domain.coupon.dto.CouponResponse;
 
+import java.util.List;
+
 public interface CouponService {
     // 쿠폰 생성(사장)
     CouponResponse saveCoupon(Long storeId, CouponRequest couponRequest, String email);
@@ -11,7 +13,7 @@ public interface CouponService {
     CouponResponse saveCouponAdmin(Long storeId, CouponRequest couponRequest, String email);
 
     // 보유 쿠폰 조회(유저)
-    CouponResponse getCoupon(Long couponId, String email);
+    List<CouponResponse> getAllCoupons(String email);
 
     // 발행한 쿠폰 조회(사장)
     CouponResponse getCouponOwner(Long couponId, String email);

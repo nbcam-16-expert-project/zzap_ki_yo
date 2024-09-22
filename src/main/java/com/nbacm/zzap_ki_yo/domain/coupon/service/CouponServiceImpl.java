@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -74,6 +76,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     // 쿠폰 생성(관리자)
+    @Transactional
     @Override
     public CouponResponse saveCouponAdmin(Long storeId, CouponRequest couponRequest, String email) {
 
@@ -107,8 +110,18 @@ public class CouponServiceImpl implements CouponService {
 
     // 보유 쿠폰 조회(유저)
     @Override
-    public CouponResponse getCoupon(Long couponId, String email) {
-        return null;
+    public List<CouponResponse> getAllCoupons(String email) {
+
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        List<Coupon> couponList = couponRepository.findByUserId(user.getUserId());
+
+        List<CouponResponse> couponResponseList = new ArrayList<>();
+        for(Coupon coupon : couponList){
+            couponResponseList.add(CouponResponse.createCouponResponse(coupon));
+        }
+
+        return couponResponseList;
     }
 
     // 발행한 쿠폰 조회(사장)

@@ -10,15 +10,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/stores/{storeId}/coupons")
+@RequestMapping("/api/v1")
 public class CouponController {
 
     private final CouponServiceImpl couponServiceImpl;
 
     // 쿠폰 생성(사장)
-    @PostMapping
+    @PostMapping("/stores/{storeId}/coupons")
     public ResponseEntity<CouponResponse> saveCoupon(
             @PathVariable Long storeId,
             @RequestBody CouponRequest couponRequest,
@@ -28,9 +30,14 @@ public class CouponController {
         return ResponseEntity.ok(couponServiceImpl.saveCoupon(storeId, couponRequest, email));
     }
 
-    // 쿠폰 생성(관리자)
-
     // 보유 쿠폰 조회(유저)
+    @GetMapping("/coupons")
+    public ResponseEntity<List<CouponResponse>> getAllCoupons(
+            @Auth AuthUser authUser
+    ){
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(couponServiceImpl.getAllCoupons(email));
+    }
 
     // 발행한 쿠폰 조회(사장)
 
