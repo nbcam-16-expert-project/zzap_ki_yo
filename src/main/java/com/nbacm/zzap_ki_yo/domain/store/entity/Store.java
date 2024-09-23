@@ -58,7 +58,7 @@ public class Store {
     @Column(name = "order_min_price" , nullable = false)
     private Integer orderMinPrice;
     //가게 공지
-    @Column(nullable = false)
+    @Column(name = "store_notice")
     private String storeNotice;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -79,7 +79,7 @@ public class Store {
 
      //Enum 을 리스트로 받기 위해 converter 사용
     @Convert(converter = CategoryListConverter.class)
-    @Column(name = "catagory", nullable = false)
+    @Column(name = "category")
     private List<Category> categoryList;
 
 
