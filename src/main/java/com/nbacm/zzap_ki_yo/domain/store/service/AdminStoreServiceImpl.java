@@ -105,7 +105,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
                 new StoreNotFoundException("가게를 찾을 수 없습니다."));
 
         if(store.getStoreType().equals(StoreType.CLOSING)){
-            throw new UnauthorizedException("폐업한 가게는 조회할 수 없습니다.");
+            throw new StoreForbiddenException("폐업한 가게는 조회할 수 없습니다.");
         }
 
         List<Menu> menus = store.getMenus();
