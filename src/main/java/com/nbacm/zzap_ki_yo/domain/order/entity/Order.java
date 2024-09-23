@@ -40,7 +40,7 @@ public class Order{
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "orderStatus", nullable = false)
+    @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
@@ -93,12 +93,8 @@ public class Order{
             this.completedAt = LocalDateTime.now();
         }
     }
-
-
-
-
-
-
-
-
+    public String toEventData() {
+        return String.format("id:%d\ndata:{\"orderId\":%d,\"status\":\"%s\",\"storeId\":%d}\n\n",
+                this.orderId, this.orderId, this.orderStatus, this.store.getStoreId());
+    }
 }

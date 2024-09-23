@@ -6,13 +6,12 @@ import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveResponse;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderUpdateRequest;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 public interface OrderService {
 
     OrderSaveResponse saveOrder (String eMail, Long storeId, OrderSaveRequest orderSaveRequest);
-
-    List<OrderSaveResponse> getOrdersByUser (String email);
 
     List<OrderSaveResponse> getOrdersByUserAdmin (String email, Long userId);
 
@@ -27,5 +26,11 @@ public interface OrderService {
     StoreStatisticsResponseDto getDailyStatistics(Long storeId, LocalDate date);
 
     StoreStatisticsResponseDto getMonthlyStatistics(Long storeId, LocalDate startOfMonth, LocalDate endOfMonth);
+
+    StoreStatisticsResponseDto getDailyStatisticsForAllStores(LocalDate date);
+
+    StoreStatisticsResponseDto getMonthlyStatisticsForAllStores(YearMonth yearMonth);
+
+
 
     }

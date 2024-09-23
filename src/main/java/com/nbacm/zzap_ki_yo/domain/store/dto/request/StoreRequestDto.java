@@ -1,11 +1,9 @@
 package com.nbacm.zzap_ki_yo.domain.store.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalTime;
 
-@AllArgsConstructor
 @Data
 public class StoreRequestDto {
 

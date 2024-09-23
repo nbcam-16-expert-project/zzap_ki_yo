@@ -17,5 +17,7 @@ public interface UserService {
 
     void deleteUser(String email,String password);
 
+    String kakaoLogin(String code);
+
 
 }

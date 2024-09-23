@@ -31,6 +31,10 @@ server:
 file:
   upload-dir: upload/images
 
+kakao:
+  client-id: ${client_id}
+  redirect-uri: ${url}
+  client-secret: ${secretKey}
 
 logging:
   level:

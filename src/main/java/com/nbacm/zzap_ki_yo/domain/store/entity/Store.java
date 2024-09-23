@@ -40,7 +40,6 @@ public class Store {
     @Column(name = "open_time", nullable = false)
     @DateTimeFormat(pattern = "HH:mm")
     @JsonFormat(pattern = "HH:mm:ss")
-
     private LocalTime openingTime;
 
     @Column(name = "close_time", nullable = false)
@@ -48,7 +47,7 @@ public class Store {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime closingTime;
 
-    @Column(name = "favorite_conut", nullable = false)
+    @Column(name = "favorite_count", nullable = false)
     private Integer favoriteCount;
 
     @Column(name = "store_type", nullable = false)
@@ -111,5 +110,20 @@ public class Store {
 
     public void closingStore(StoreType storeType){
         this.storeType = storeType;
+    }
+
+    public static Store createStore(StoreRequestDto dto, User user){
+        return Store.builder()
+                .storeName(dto.getStoreName())
+                .storeAddress(dto.getStoreAddress())
+                .storeNumber(dto.getStoreNumber())
+                .openingTime(dto.getOpeningTime())
+                .closingTime(dto.getClosingTime())
+                .orderMinPrice(dto.getOrderMinPrice())
+                .favoriteCount(0)
+                .user(user)
+                .storeType(StoreType.OPENING)
+                .build();
+
     }
 }
