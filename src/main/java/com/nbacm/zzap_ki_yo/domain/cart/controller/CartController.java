@@ -47,11 +47,4 @@ public class CartController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/remove/{menuId}")
-    public ResponseEntity<CartResponseDto> removeCartItem(
-            @Auth AuthUser authUser,
-            @PathVariable Long menuId) {
-        CartResponseDto response = cartRedisService.removeCartItem(authUser.getEmail(), menuId);
-        return ResponseEntity.ok(response);
-    }
 }
