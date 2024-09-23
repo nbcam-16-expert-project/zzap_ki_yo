@@ -7,6 +7,7 @@ import com.nbacm.zzap_ki_yo.domain.store.dto.response.*;
 import com.nbacm.zzap_ki_yo.domain.store.service.AdminStoreServiceImpl;
 import com.nbacm.zzap_ki_yo.domain.user.common.Auth;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class AdminStoreController {
     }
 
     @PatchMapping(value = "/stores/{storeId}")
-    public ResponseEntity<ClosingStoreResponseDto> closingStore(@Auth AuthUser authUser, @PathVariable Long storeId, @RequestBody ClosingStoreRequestDto requestDto){
+    public ResponseEntity<ClosingStoreResponseDto> closingStore(@Auth AuthUser authUser, @PathVariable Long storeId, @Valid @RequestBody ClosingStoreRequestDto requestDto){
         ClosingStoreResponseDto responseDto = adminStoreServiceImpl.closingStore(authUser, storeId, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }

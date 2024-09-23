@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ClosingStoreRequestDto {
-    @NotBlank(message = "\"페업합니다\" 를 입력 해주세요")
+    @NotBlank(message = "\"페업합니다\"를 입력 해주세요")
     private String message;
 }

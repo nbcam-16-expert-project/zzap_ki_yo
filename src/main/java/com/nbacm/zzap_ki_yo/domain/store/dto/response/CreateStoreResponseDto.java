@@ -3,6 +3,7 @@ package com.nbacm.zzap_ki_yo.domain.store.dto.response;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class CreateStoreResponseDto {
     private String storeNumber;
     private Integer orderMinPrice;
 
+    @Builder
     private CreateStoreResponseDto(Long storeId, String storeName, StoreType storeType, String storeAddress, String storeNumber
     ,Integer orderMinPrice) {
         this.storeId = storeId;
