@@ -43,8 +43,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
     @Transactional
     @Override
     public CreateStoreResponseDto createStore(AuthUser authUser, StoreRequestDto storeRequestDto) {
-
-       roleAdminCheck(authUser);
+        roleAdminCheck(authUser);
 
         if(storeRequestDto.getStoreAddress() == null
                 || storeRequestDto.getStoreNumber() == null
@@ -54,17 +53,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
 
         User user = userRepository.findByEmailOrElseThrow(authUser.getEmail());
 
-        Store store = Store.builder()
-                .storeAddress(storeRequestDto.getStoreAddress())
-                .storeNumber(storeRequestDto.getStoreNumber())
-                .storeName(storeRequestDto.getStoreName())
-                .favoriteCount(0)
-                .orderMinPrice(storeRequestDto.getOrderMinPrice())
-                .user(user)
-                .storeType(StoreType.OPENING)
-                .openingTime(storeRequestDto.getOpeningTime())
-                .closingTime(storeRequestDto.getClosingTime())
-                .build();
+        Store store = Store.createStore(storeRequestDto, user);
 
         List<Store> stores = storeRepository.findAllByUserAndStoreType(store.getUser(), StoreType.OPENING);
 
