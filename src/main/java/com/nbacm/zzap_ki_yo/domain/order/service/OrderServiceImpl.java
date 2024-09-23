@@ -25,9 +25,11 @@ import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.order.entity.OrderedMenu;
 import com.nbacm.zzap_ki_yo.domain.order.exception.ClosedStoreException;
 import com.nbacm.zzap_ki_yo.domain.order.exception.NotEnoughPriceException;
+import com.nbacm.zzap_ki_yo.domain.order.exception.OrderNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderRepository;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderedMenuRepository;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
+import com.nbacm.zzap_ki_yo.domain.store.exception.StoreNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
@@ -192,25 +194,6 @@ public class OrderServiceImpl implements OrderService {
         return orderSaveResponse;
     }
 
-    // 로그인 중인 유저 id를 기준으로 해당되는 모든 주문 조회 = 삭제하기
-    @Override
-    public List<OrderSaveResponse> getOrdersByUser (String email) {
-
-        User user = userRepository.findByEmailOrElseThrow(email);
-        Long userId = user.getUserId();
-
-        List<Order> orderList = orderRepository.findAllByUserId(userId);
-
-        List<OrderSaveResponse> orderSaveResponseList = new ArrayList<>();
-        for (Order order : orderList) {
-            List<Long> menuIdList = orderedMenuRepository.findMenuIdsByOrder(order);
-            OrderSaveResponse orderSaveResponse = OrderSaveResponse.createOrderResponse(order, menuIdList);
-            orderSaveResponseList.add(orderSaveResponse);
-        }
-
-        return orderSaveResponseList;
-    }
-
     // 특정 유저 id를 기준으로 해당되는 모든 주문 조회(유저 본인 혹은 관리자 권한 필요)
     @Override
     public List<OrderSaveResponse> getOrdersByUserAdmin (String email, Long userId) {
@@ -248,10 +231,10 @@ public class OrderServiceImpl implements OrderService {
         Long userId = user.getUserId();
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new NotFoundException("해당 주문은 없는 주문입니다."));
+                .orElseThrow(()-> new OrderNotFoundException("해당 주문은 없는 주문입니다."));
 
         if(!order.getUser().getUserRole().equals(UserRole.ADMIN) && !order.getUser().getUserId().equals(userId)){
-            throw new ForbiddenException("다른 사용자의 주문은 조회할 수 없습니다.");
+            throw new InvalidRoleException("다른 사용자의 주문은 조회할 수 없습니다.");
         }
 
         List<Long> menuIdList = orderedMenuRepository.findMenuIdsByOrder(order);
@@ -270,10 +253,10 @@ public class OrderServiceImpl implements OrderService {
         Long userId = user.getUserId();
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new NotFoundException("해당 주문은 없는 주문입니다."));
+                .orElseThrow(()-> new OrderNotFoundException("해당 주문은 없는 주문입니다."));
 
         if(!order.getUser().getUserRole().equals(UserRole.ADMIN) && !order.getUser().getUserId().equals(userId)){
-            throw new ForbiddenException("다른 사용자의 주문은 삭제할 수 없습니다.");
+            throw new InvalidRoleException("다른 사용자의 주문은 삭제할 수 없습니다.");
         }
 
         orderRepository.delete(order);
@@ -289,15 +272,15 @@ public class OrderServiceImpl implements OrderService {
             String email
     ) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new NotFoundException("해당 주문은 없는 주문입니다."));
+                .orElseThrow(()-> new OrderNotFoundException("해당 주문은 없는 주문입니다."));
 
         User user = userRepository.findByEmailOrElseThrow(email);
 
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(()-> new NotFoundException("해당 가게는 없는 가게입니다."));
+                .orElseThrow(()-> new StoreNotFoundException("해당 가게는 없는 가게입니다."));
 
         if(!user.getUserId().equals(store.getUser().getUserId()) && !user.getUserRole().equals(UserRole.ADMIN)){
-            throw new ForbiddenException("주문을 받은 가게가 아닙니다.");
+            throw new InvalidRoleException("주문을 받은 가게가 아닙니다.");
         }
 
         String orderStatus = orderUpdateRequest.getOrderStatus();
@@ -312,7 +295,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(Long orderId){
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new NotFoundException("해당 주문은 없는 주문입니다."));
+                .orElseThrow(()-> new OrderNotFoundException("해당 주문은 없는 주문입니다."));
 
         order.updateOrderStatus(OrderStatus.CANCELLED);
     }
