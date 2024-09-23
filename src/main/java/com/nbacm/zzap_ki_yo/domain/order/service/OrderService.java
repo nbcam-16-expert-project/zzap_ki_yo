@@ -13,8 +13,6 @@ public interface OrderService {
 
     OrderSaveResponse saveOrder (String eMail, Long storeId, OrderSaveRequest orderSaveRequest);
 
-    List<OrderSaveResponse> getOrdersByUser (String email);
-
     List<OrderSaveResponse> getOrdersByUserAdmin (String email, Long userId);
 
     OrderSaveResponse getOrderById(Long orderId,String email);

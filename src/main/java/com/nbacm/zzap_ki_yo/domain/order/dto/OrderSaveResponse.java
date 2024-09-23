@@ -15,15 +15,17 @@ public class OrderSaveResponse {
     private final Long storeId;
     private final Long userId;
     private final OrderStatus orderStatus;
+    private final Integer totalprice;
     private final List<Long> menuIds;
 
-    private OrderSaveResponse(Long id, OrderType orderType, String orderAddress, Long storeId, Long userId, OrderStatus orderStatus, List<Long> menuIds) {
+    private OrderSaveResponse(Long id, OrderType orderType, String orderAddress, Long storeId, Long userId, OrderStatus orderStatus, Integer totalprice,List<Long> menuIds) {
         this.id = id;
         this.orderType = orderType;
         this.orderAddress = orderAddress;
         this.storeId = storeId;
         this.userId = userId;
         this.orderStatus = orderStatus;
+        this.totalprice = totalprice;
         this.menuIds = menuIds;
     }
 
@@ -35,6 +37,7 @@ public class OrderSaveResponse {
                 order.getStore().getStoreId(),
                 order.getUser().getUserId(),
                 order.getOrderStatus(),
+                order.getTotalPrice(),
                 menuIds
         );
     }
