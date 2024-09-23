@@ -14,6 +14,7 @@ import com.nbacm.zzap_ki_yo.domain.dashboard.repository.StoreStatisticsRepositor
 import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
 import com.nbacm.zzap_ki_yo.domain.exception.ForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
+import com.nbacm.zzap_ki_yo.domain.menu.exception.MenuNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.menu.repository.MenuRepository;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.order.entity.OrderStatus;
@@ -76,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderSaveResponse saveOrder (String email, Long storeId, OrderSaveRequest orderSaveRequest) {
 
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new NotFoundException("해당 가게는 없는 가게입니다."));
+                .orElseThrow(() -> new StoreNotFoundException("해당 가게는 없는 가게입니다."));
 
         User user = userRepository.findByEmailOrElseThrow(email);
 
@@ -84,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
         // 요청의 메뉴id 리스트에 있는 메뉴들의 가격을 전부 더하고, 그 값이 가게의 최소 주문 금액보다 작으면 예외처리.
         Integer totalPrice = orderSaveRequest.getMenuList().stream().map(menuId -> {
             Menu menu = menuRepository.findById(menuId)
-                    .orElseThrow(()-> new NotFoundException("해당 메뉴는 없는 메뉴입니다."));
+                    .orElseThrow(()-> new MenuNotFoundException("해당 메뉴는 없는 메뉴입니다."));
             return menu.getPrice();
         }).reduce(0, Integer::sum);
         if(totalPrice < store.getOrderMinPrice()){
