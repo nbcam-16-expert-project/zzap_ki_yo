@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @BatchSize(size = 20)
-public class StoreStatistics {
+public class Statistics {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long statId;
 
@@ -28,7 +28,7 @@ public class StoreStatistics {
     private int customerCount; // 고객 수
 
     @Builder
-    public StoreStatistics(Store store, LocalDate date, int totalSales, int customerCount) {
+    public Statistics(Store store, LocalDate date, int totalSales, int customerCount) {
         this.store = store;
         this.date = date;
         this.totalSales = totalSales;

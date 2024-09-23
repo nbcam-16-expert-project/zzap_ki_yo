@@ -1,6 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.store.service;
 
-import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StoreStatisticsResponseDto;
+import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StatisticsResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.ClosingStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.*;
@@ -23,11 +23,11 @@ public interface AdminStoreService {
 
     ClosingStoreResponseDto closingStore(AuthUser authUser, Long storeId, ClosingStoreRequestDto requestDto);
 
-    StoreStatisticsResponseDto getDailyStatistics(Long storeId, String email);
+    StatisticsResponseDto getDailyStatistics(Long storeId, String email);
 
-    StoreStatisticsResponseDto getMonthlyStatistics(Long storeId, String email);
+    StatisticsResponseDto getMonthlyStatistics(Long storeId, String email);
 
-    StoreStatisticsResponseDto getDailyAllStatistics(String email);
+    StatisticsResponseDto getDailyAllStatistics(String email);
 
-    StoreStatisticsResponseDto getMonthlyAllStatistics(String email);
+    StatisticsResponseDto getMonthlyAllStatistics(String email);
 }

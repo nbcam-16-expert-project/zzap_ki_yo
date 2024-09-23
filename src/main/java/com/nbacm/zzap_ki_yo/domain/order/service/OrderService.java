@@ -1,6 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.order.service;
 
-import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StoreStatisticsResponseDto;
+import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StatisticsResponseDto;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveRequest;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveResponse;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderUpdateRequest;
@@ -23,13 +23,13 @@ public interface OrderService {
 
     void cancelOrder(Long orderId);
 
-    StoreStatisticsResponseDto getDailyStatistics(Long storeId, LocalDate date);
+    StatisticsResponseDto getDailyStatistics(Long storeId, LocalDate date);
 
-    StoreStatisticsResponseDto getMonthlyStatistics(Long storeId, LocalDate startOfMonth, LocalDate endOfMonth);
+    StatisticsResponseDto getMonthlyStatistics(Long storeId, LocalDate startOfMonth, LocalDate endOfMonth);
 
-    StoreStatisticsResponseDto getDailyStatisticsForAllStores(LocalDate date);
+    StatisticsResponseDto getDailyStatisticsForAllStores(LocalDate date);
 
-    StoreStatisticsResponseDto getMonthlyStatisticsForAllStores(YearMonth yearMonth);
+    StatisticsResponseDto getMonthlyStatisticsForAllStores(YearMonth yearMonth);
 
 
 

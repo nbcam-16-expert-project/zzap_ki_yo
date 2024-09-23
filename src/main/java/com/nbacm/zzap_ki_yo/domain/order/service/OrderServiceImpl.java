@@ -8,11 +8,10 @@ import com.nbacm.zzap_ki_yo.domain.coupon.entity.CouponStatus;
 import com.nbacm.zzap_ki_yo.domain.coupon.exception.CouponForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.coupon.exception.CouponNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.coupon.repository.CouponRepository;
-import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StoreStatisticsResponseDto;
-import com.nbacm.zzap_ki_yo.domain.dashboard.entity.StoreStatistics;
+import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StatisticsResponseDto;
+import com.nbacm.zzap_ki_yo.domain.dashboard.entity.Statistics;
 import com.nbacm.zzap_ki_yo.domain.dashboard.repository.StoreStatisticsRepository;
 import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
-import com.nbacm.zzap_ki_yo.domain.exception.ForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
 import com.nbacm.zzap_ki_yo.domain.menu.exception.MenuNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.menu.repository.MenuRepository;
@@ -47,7 +46,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Period;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -303,10 +301,10 @@ public class OrderServiceImpl implements OrderService {
 
     public void updateStoreStatistics(Store store, int totalPrice) {
         LocalDate today = LocalDate.now();
-        StoreStatistics statistics = storeStatisticsRepository.findByStoreIdAndDateBetween(store.getStoreId(), today, today)
+        Statistics statistics = storeStatisticsRepository.findByStoreIdAndDateBetween(store.getStoreId(), today, today)
                 .stream()
                 .findFirst()
-                .orElseGet(() -> StoreStatistics.builder()
+                .orElseGet(() -> Statistics.builder()
                         .store(store)
                         .date(today)
                         .totalSales(0)
@@ -317,8 +315,8 @@ public class OrderServiceImpl implements OrderService {
 
         storeStatisticsRepository.save(statistics);
 
-        // StoreStatisticsResponseDto 생성
-        StoreStatisticsResponseDto dto = StoreStatisticsResponseDto.fromEntity(statistics);
+        // StatisticsResponseDto 생성
+        StatisticsResponseDto dto = StatisticsResponseDto.fromEntity(statistics);
 
         // 일간 및 월간 통계 캐시 저장
         invalidateCache(store.getStoreId());
@@ -328,18 +326,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public StoreStatisticsResponseDto getDailyStatistics(Long storeId, LocalDate date) {
+    public StatisticsResponseDto getDailyStatistics(Long storeId, LocalDate date) {
         // Redis에서 캐시된 일간 통계 데이터를 먼저 확인
-        StoreStatisticsResponseDto cachedStatistics = getCachedDailyStatistics(storeId, date);
+        StatisticsResponseDto cachedStatistics = getCachedDailyStatistics(storeId, date);
         if (cachedStatistics != null) {
             return cachedStatistics;
         }
 
         // 캐시된 데이터가 없다면 DB에서 해당 날짜의 통계 조회
-        StoreStatistics statistics = storeStatisticsRepository.findByStoreIdAndDate(storeId, date)
+        Statistics statistics = storeStatisticsRepository.findByStoreIdAndDate(storeId, date)
                 .orElseThrow(() -> new NotFoundException("해당 날짜의 통계 데이터를 찾을 수 없습니다."));
 
-        StoreStatisticsResponseDto dto = StoreStatisticsResponseDto.fromEntity(statistics);
+        StatisticsResponseDto dto = StatisticsResponseDto.fromEntity(statistics);
 
         // 조회된 통계를 Redis에 캐시 저장
         cacheDailyStatistics(storeId, dto);
@@ -349,21 +347,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public StoreStatisticsResponseDto getMonthlyStatistics(Long storeId, LocalDate startOfMonth, LocalDate endOfMonth) {
+    public StatisticsResponseDto getMonthlyStatistics(Long storeId, LocalDate startOfMonth, LocalDate endOfMonth) {
         // Redis에서 캐시된 월간 통계 데이터를 먼저 확인
-        StoreStatisticsResponseDto cachedStatistics = getCachedMonthlyStatistics(storeId, startOfMonth);
+        StatisticsResponseDto cachedStatistics = getCachedMonthlyStatistics(storeId, startOfMonth);
         if (cachedStatistics != null) {
             return cachedStatistics;
         }
 
         // 캐시된 데이터가 없다면 DB에서 해당 기간의 통계 조회
-        List<StoreStatistics> statisticsList = storeStatisticsRepository.findByStoreIdAndDateBetween(storeId, startOfMonth, endOfMonth);
+        List<Statistics> statisticsList = storeStatisticsRepository.findByStoreIdAndDateBetween(storeId, startOfMonth, endOfMonth);
         if (statisticsList.isEmpty()) {
             throw new NotFoundException("해당 월의 통계 데이터를 찾을 수 없습니다.");
         }
 
         // 월간 통계를 합산하여 반환
-        StoreStatisticsResponseDto monthlyStatistics = StoreStatisticsResponseDto.from(statisticsList);
+        StatisticsResponseDto monthlyStatistics = StatisticsResponseDto.from(statisticsList);
 
         // 조회된 월간 통계를 Redis에 캐시 저장
         cacheMonthlyStatistics(storeId, monthlyStatistics);
@@ -372,21 +370,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public StoreStatisticsResponseDto getDailyStatisticsForAllStores(LocalDate date) {
+    public StatisticsResponseDto getDailyStatisticsForAllStores(LocalDate date) {
         // Redis에서 캐시된 일간 통계 데이터를 먼저 확인
-        StoreStatisticsResponseDto cachedStatistics = getCachedDailyStatisticsForAllStores(date);
+        StatisticsResponseDto cachedStatistics = getCachedDailyStatisticsForAllStores(date);
         if (cachedStatistics != null) {
             return cachedStatistics;
         }
 
         // 캐시된 데이터가 없다면 DB에서 해당 날짜의 전체 통계 조회
-        List<StoreStatistics> statisticsList = storeStatisticsRepository.findAllByDate(date);
+        List<Statistics> statisticsList = storeStatisticsRepository.findAllByDate(date);
         if (statisticsList.isEmpty()) {
             throw new NotFoundException("해당 날짜의 통계 데이터를 찾을 수 없습니다.");
         }
 
         // 통계를 합산하여 반환
-        StoreStatisticsResponseDto dailyStatistics = StoreStatisticsResponseDto.from(statisticsList);
+        StatisticsResponseDto dailyStatistics = StatisticsResponseDto.from(statisticsList);
 
         // 조회된 통계를 Redis에 캐시 저장
         cacheDailyStatisticsForAllStores(dailyStatistics, date);
@@ -395,24 +393,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public StoreStatisticsResponseDto getMonthlyStatisticsForAllStores(YearMonth yearMonth) {
+    public StatisticsResponseDto getMonthlyStatisticsForAllStores(YearMonth yearMonth) {
         LocalDate startOfMonth = yearMonth.atDay(1);
         LocalDate endOfMonth = yearMonth.atEndOfMonth();
 
         // Redis에서 캐시된 월간 통계 데이터를 먼저 확인
-        StoreStatisticsResponseDto cachedStatistics = getCachedMonthlyStatisticsForAllStores(yearMonth);
+        StatisticsResponseDto cachedStatistics = getCachedMonthlyStatisticsForAllStores(yearMonth);
         if (cachedStatistics != null) {
             return cachedStatistics;
         }
 
         // 캐시된 데이터가 없다면 DB에서 해당 월의 전체 통계 조회
-        List<StoreStatistics> statisticsList = storeStatisticsRepository.findAllByDateBetween(startOfMonth, endOfMonth);
+        List<Statistics> statisticsList = storeStatisticsRepository.findAllByDateBetween(startOfMonth, endOfMonth);
         if (statisticsList.isEmpty()) {
             throw new NotFoundException("해당 월의 통계 데이터를 찾을 수 없습니다.");
         }
 
         // 통계를 합산하여 반환
-        StoreStatisticsResponseDto monthlyStatistics = StoreStatisticsResponseDto.from(statisticsList);
+        StatisticsResponseDto monthlyStatistics = StatisticsResponseDto.from(statisticsList);
 
         // 조회된 월간 통계를 Redis에 캐시 저장
         cacheMonthlyStatisticsForAllStores(monthlyStatistics, yearMonth);
@@ -420,7 +418,7 @@ public class OrderServiceImpl implements OrderService {
         return monthlyStatistics;
     }
 
-    private void cacheDailyStatistics(Long storeId, StoreStatisticsResponseDto dto) {
+    private void cacheDailyStatistics(Long storeId, StatisticsResponseDto dto) {
         String key = "daily:stats:" + storeId + ":" + LocalDate.now();
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -431,7 +429,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void cacheMonthlyStatistics(Long storeId, StoreStatisticsResponseDto dto) {
+    private void cacheMonthlyStatistics(Long storeId, StatisticsResponseDto dto) {
         String key = "monthly:stats:" + storeId + ":" + YearMonth.now();
        try {
            ObjectMapper mapper = new ObjectMapper();
@@ -443,7 +441,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    private StoreStatisticsResponseDto getCachedDailyStatistics(Long storeId, LocalDate date) {
+    private StatisticsResponseDto getCachedDailyStatistics(Long storeId, LocalDate date) {
         String key = "daily:stats:" + storeId + ":" + date;
         Object cachedValue = redisObjectTemplate.opsForValue().get(key);
 
@@ -451,12 +449,12 @@ public class OrderServiceImpl implements OrderService {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         try {
-            if (cachedValue instanceof StoreStatisticsResponseDto) {
-                return (StoreStatisticsResponseDto) cachedValue;
+            if (cachedValue instanceof StatisticsResponseDto) {
+                return (StatisticsResponseDto) cachedValue;
             } else if (cachedValue instanceof String) {
-                return mapper.readValue((String) cachedValue, StoreStatisticsResponseDto.class);
+                return mapper.readValue((String) cachedValue, StatisticsResponseDto.class);
             } else if (cachedValue instanceof Map) {
-                return mapper.convertValue(cachedValue, StoreStatisticsResponseDto.class);
+                return mapper.convertValue(cachedValue, StatisticsResponseDto.class);
             }
         } catch (Exception e) {
             log.error("Error deserializing cached value", e);
@@ -464,7 +462,7 @@ public class OrderServiceImpl implements OrderService {
 
         return null;
     }
-    private StoreStatisticsResponseDto getCachedMonthlyStatistics(Long storeId, LocalDate startOfMonth) {
+    private StatisticsResponseDto getCachedMonthlyStatistics(Long storeId, LocalDate startOfMonth) {
         String key = "monthly:stats:" + storeId + ":" + YearMonth.from(startOfMonth);
         String jsonValue = (String) redisObjectTemplate.opsForValue().get(key); // String으로 가져옴
 
@@ -472,9 +470,9 @@ public class OrderServiceImpl implements OrderService {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 // JSON 문자열을 StoreStatisticsResponseDto로 변환
-                return mapper.readValue(jsonValue, StoreStatisticsResponseDto.class);
+                return mapper.readValue(jsonValue, StatisticsResponseDto.class);
             } catch (JsonProcessingException e) {
-                log.error("Error deserializing JSON to StoreStatisticsResponseDto", e);
+                log.error("Error deserializing JSON to StatisticsResponseDto", e);
             }
         }
 
@@ -484,7 +482,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     // Redis 캐시 저장 - 전체 일간 통계
-    private void cacheDailyStatisticsForAllStores(StoreStatisticsResponseDto dto, LocalDate date) {
+    private void cacheDailyStatisticsForAllStores(StatisticsResponseDto dto, LocalDate date) {
         String key = "daily:stats:all:" + date;
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -496,7 +494,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // Redis 캐시 저장 - 전체 월간 통계
-    private void cacheMonthlyStatisticsForAllStores(StoreStatisticsResponseDto dto, YearMonth yearMonth) {
+    private void cacheMonthlyStatisticsForAllStores(StatisticsResponseDto dto, YearMonth yearMonth) {
         String key = "monthly:stats:all:" + yearMonth;
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -508,7 +506,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // Redis에서 전체 일간 통계 조회
-    private StoreStatisticsResponseDto getCachedDailyStatisticsForAllStores(LocalDate date) {
+    private StatisticsResponseDto getCachedDailyStatisticsForAllStores(LocalDate date) {
         String key = "daily:stats:all:" + date;
         Object cachedValue = redisObjectTemplate.opsForValue().get(key);
 
@@ -517,7 +515,7 @@ public class OrderServiceImpl implements OrderService {
 
         try {
             if (cachedValue instanceof String) {
-                return mapper.readValue((String) cachedValue, StoreStatisticsResponseDto.class);
+                return mapper.readValue((String) cachedValue, StatisticsResponseDto.class);
             }
         } catch (Exception e) {
             log.error("Error deserializing cached daily statistics for all stores", e);
@@ -527,7 +525,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // Redis에서 전체 월간 통계 조회
-    private StoreStatisticsResponseDto getCachedMonthlyStatisticsForAllStores(YearMonth yearMonth) {
+    private StatisticsResponseDto getCachedMonthlyStatisticsForAllStores(YearMonth yearMonth) {
         String key = "monthly:stats:all:" + yearMonth;
         Object cachedValue = redisObjectTemplate.opsForValue().get(key);
 
@@ -536,7 +534,7 @@ public class OrderServiceImpl implements OrderService {
 
         try {
             if (cachedValue instanceof String) {
-                return mapper.readValue((String) cachedValue, StoreStatisticsResponseDto.class);
+                return mapper.readValue((String) cachedValue, StatisticsResponseDto.class);
             }
         } catch (Exception e) {
             log.error("Error deserializing cached monthly statistics for all stores", e);
