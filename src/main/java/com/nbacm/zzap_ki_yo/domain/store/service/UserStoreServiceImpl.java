@@ -27,9 +27,9 @@ public class UserStoreServiceImpl implements UserStoreService{
 
 
     @Override
-    public SelectStoreResponseDto selectStore(Long storeId) {
+    public SelectStoreResponseDto selectStore(String storeName) {
 
-        Store store = storeRepository.findById(storeId).orElseThrow(() ->
+        Store store = storeRepository.findByStoreName(storeName).orElseThrow(() ->
                 new StoreNotFoundException("가게를 찾을 수 없습니다.")
         );
 
@@ -60,6 +60,4 @@ public class UserStoreServiceImpl implements UserStoreService{
                 .map(SelectAllStoreResponseDto::selectAllStore)
                 .toList();
     }
-
-
 }

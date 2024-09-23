@@ -117,7 +117,7 @@ public class Store {
                 .favoriteCount(0)
                 .user(user)
                 .storeType(StoreType.OPENING)
-                .adType(dto.getAdType())
+
                 .build();
 
     }
