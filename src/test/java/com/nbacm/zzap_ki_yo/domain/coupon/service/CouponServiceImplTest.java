@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,7 +53,13 @@ class CouponServiceImplTest {
 
         User user = new User();
         Store store = new Store();
-        setField(publisher, "store", store);
+        setField(store, "storeId", storeId);
+
+        List<Store> stores = new ArrayList<>();
+        stores.add(store);
+        setField(publisher, "stores", stores);
+
+
 
         given(userRepository.findByEmailOrElseThrow(email)).willReturn(publisher);
         given(userRepository.findById(couponRequest.getUserId())).willReturn(Optional.of(user));
