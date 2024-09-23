@@ -20,9 +20,9 @@ public class UserStoreController {
 
     private final UserStoreServiceImpl userStoreServiceImpl;
 
-    @GetMapping("/stores/{storeId}")
-    public ResponseEntity<SelectStoreResponseDto> selectStore(@PathVariable Long storeId) {
-        SelectStoreResponseDto responseDto = userStoreServiceImpl.selectStore(storeId);
+    @GetMapping("/stores/{storeName}")
+    public ResponseEntity<SelectStoreResponseDto> selectStore(@PathVariable String storeName) {
+        SelectStoreResponseDto responseDto = userStoreServiceImpl.selectStore(storeName);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
