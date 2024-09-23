@@ -147,9 +147,15 @@ public class AdminStoreServiceImpl implements AdminStoreService {
         User user = userRepository.findByEmailOrElseThrow(authUser.getEmail());
 
         Store store = findByStoreIdAndUser(storeId,user);
+
+        if(store.getStoreType().equals(StoreType.CLOSING)){
+            throw new StoreForbiddenException("이미 폐업 되었습니다.");
+        }
+
         if(requestDto.getMessage().equals("폐업합니다")) {
             store.closingStore(StoreType.CLOSING);
         }
+
         return ClosingStoreResponseDto.builder()
                 .storeName(store.getStoreName())
                 .storeType(store.getStoreType())

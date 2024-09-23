@@ -8,6 +8,7 @@ import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectAllStoreResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectStoreResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
+import com.nbacm.zzap_ki_yo.domain.store.exception.StoreForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.store.exception.StoreNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class UserStoreServiceImpl implements UserStoreService{
         );
 
         if(store.getStoreType().equals(StoreType.CLOSING)){
-            throw new UnauthorizedException("폐업한 가게는 조회할 수 없습니다.");
+            throw new StoreForbiddenException("폐업한 가게는 조회할 수 없습니다.");
         }
 
         List<Menu> menus = store.getMenus();
