@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.user.entity;
 
+import com.nbacm.zzap_ki_yo.domain.coupon.entity.Coupon;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nbacm.zzap_ki_yo.domain.favorite.Favorite;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
@@ -56,6 +57,8 @@ public class User {
     @BatchSize(size = 20)
     private List<Favorite> favorites;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Coupon> coupons;
     private String kakaoId;
 
     @Builder
