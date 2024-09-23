@@ -40,11 +40,12 @@ public class OrderController {
         return ResponseEntity.ok(orderServiceImpl.saveOrder(email, storeId, orderSaveRequest));
     }
 
-    // 주문 내역 조회
+    // 주문 내역 조회(본인)
     @GetMapping("/orders")
     public ResponseEntity<List<OrderSaveResponse>> getOrders(@Auth AuthUser authUser) {
         String email = authUser.getEmail();
-        return ResponseEntity.ok(orderServiceImpl.getOrdersByUser(email));
+        Long userId = null;
+        return ResponseEntity.ok(orderServiceImpl.getOrdersByUserAdmin(email, userId));
     }
 
     // 주문 내역 조회(관리자)
