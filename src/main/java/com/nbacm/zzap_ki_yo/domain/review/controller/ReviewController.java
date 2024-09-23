@@ -21,7 +21,8 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<ReviewSaveResponseDto> saveReview (@Auth AuthUser authUser,
                                                              @RequestBody ReviewSaveRequestDto reviewSaveRequestDto){
-        return ResponseEntity.ok(reviewService.saveReview(authUser,reviewSaveRequestDto));
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(reviewService.saveReview(email,reviewSaveRequestDto));
     }
 
     // 리뷰에 리뷰 등록
@@ -29,7 +30,8 @@ public class ReviewController {
     public ResponseEntity<ReviewSaveResponseDto> saveReplyReview (@PathVariable Long reviewId,
                                                                   @Auth AuthUser authUser,
                                                                   @RequestBody ReviewSaveRequestDto reviewSaveRequestDto){
-        return ResponseEntity.ok(reviewService.saveReplyReview(reviewId,authUser,reviewSaveRequestDto));
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(reviewService.saveReplyReview(reviewId,email,reviewSaveRequestDto));
     }
 
 
@@ -48,13 +50,15 @@ public class ReviewController {
     public ResponseEntity<ReviewUpdateResponseDto> updateReview (@PathVariable Long reviewId,
                                                                  @Auth AuthUser authUser,
                                                                  @RequestBody ReviewUpdateRequestDto reviewUpdate){
-        return ResponseEntity.ok(reviewService.updateReview(reviewId,authUser,reviewUpdate.getContent()));
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(reviewService.updateReview(reviewId,email,reviewUpdate.getContent()));
     }
 
     // 리뷰 삭제
     @DeleteMapping("/{reviewId}")
     public void deleteReview (@PathVariable Long reviewId,
                               @Auth AuthUser authUser){
-        reviewService.deleteReview(reviewId,authUser);
+        String email = authUser.getEmail();
+        reviewService.deleteReview(reviewId,email);
     }
 }

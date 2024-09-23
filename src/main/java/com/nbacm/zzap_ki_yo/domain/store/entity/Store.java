@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
+import com.nbacm.zzap_ki_yo.domain.store.converter.CategoryListConverter;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -76,10 +77,15 @@ public class Store {
     @JsonManagedReference
     private List<Order> orders;
 
+     //Enum 을 리스트로 받기 위해 converter 사용
+    @Convert(converter = CategoryListConverter.class)
+    @Column(name = "catagory", nullable = false)
+    private List<Category> categoryList;
+
 
     @Builder
     public Store(String storeName, String storeAddress, String storeNumber,String storeNotice, Integer favoriteCount,StoreType storeType, User user,
-            Integer orderMinPrice,  LocalTime openingTime, LocalTime closingTime) {
+            Integer orderMinPrice,  LocalTime openingTime, LocalTime closingTime,List<Category> categoryList) {
         this.storeName = storeName;
         this.storeAddress = storeAddress;
         this.storeNumber = storeNumber;
@@ -90,6 +96,7 @@ public class Store {
         this.orderMinPrice = orderMinPrice;
         this.openingTime = openingTime;
         this.closingTime = closingTime;
+        this.categoryList = categoryList;
     }
 
     public void updateStore(StoreRequestDto dto) {

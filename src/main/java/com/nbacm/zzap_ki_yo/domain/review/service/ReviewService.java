@@ -12,10 +12,15 @@ import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewSaveResponseDto;
 import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewSimpleResponseDto;
 import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewUpdateResponseDto;
 import com.nbacm.zzap_ki_yo.domain.review.entity.Review;
+import com.nbacm.zzap_ki_yo.domain.review.exception.ReviewNotFoundException;
+import com.nbacm.zzap_ki_yo.domain.review.exception.ReviewUnauthorizedException;
 import com.nbacm.zzap_ki_yo.domain.review.repository.ReviewRepository;
+import com.nbacm.zzap_ki_yo.domain.store.exception.StoreNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
+import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
+import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,22 +36,24 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
     private final StoreRepository storeRepository;
+    private final UserRepository userRepository;
 
     // 리뷰 등록
     @Transactional
-    public ReviewSaveResponseDto saveReview(AuthUser authUser,
+    public ReviewSaveResponseDto saveReview(String email,
                                             ReviewSaveRequestDto reviewSaveRequestDto) {
+        // email 정보로 유저 객체 추출
+        User authUser = userRepository.findByEmailOrElseThrow(email);
 
         // 해당 주문이 존재하는지 확인
-        Order order = orderRepository.findById(reviewSaveRequestDto.getOrderId()).
-                orElseThrow(()-> new NotFoundException("주문을 찾을 수 없습니다."));
+        Order order = orderRepository.findByOrderOrElseThrow(reviewSaveRequestDto.getOrderId());
 
         // 주문 상태 확인
         if (!order.getOrderStatus().equals(OrderStatus.COMPLETE)){
             throw new UncompletedException("아직 완료되지 않은 주문입니다.");
         }
         // 주문한 고객이 맞는지 확인 authUser != authUser 월요일에 확인 필요!!
-        if (!authUser.getRole().equals(UserRole.USER) || !order.getUser().equals(authUser)){
+        if (!authUser.getUserRole().equals(UserRole.USER) || !order.getUser().equals(authUser)){
             throw new UnauthorizedException("주문한 고객이 아닙니다.");
         }
 
@@ -72,8 +79,10 @@ public class ReviewService {
     // 리뷰에 답글 등록
     @Transactional
     public ReviewSaveResponseDto saveReplyReview(Long reviewId,
-                                                 AuthUser authUser,
+                                                 String email,
                                                  ReviewSaveRequestDto reviewSaveRequestDto) {
+        // email 정보로 유저 객체 추출
+        User authUser = userRepository.findByEmailOrElseThrow(email);
 
         //주문이 있는지 확인
         Order order = orderRepository.findById(reviewSaveRequestDto.getOrderId()).
@@ -81,7 +90,7 @@ public class ReviewService {
 
         // 리뷰가 있는지 확인 (부모 리뷰)
         Review parentReview = reviewRepository.findById(reviewId).
-                orElseThrow(()-> new NotFoundException("리뷰를 찾을 수 없습니다."));
+                orElseThrow(()-> new ReviewNotFoundException("리뷰를 찾을 수 없습니다."));
 
 //        // 본인 리뷰에 본인이 답글 authUser != authUser 월요일에 확인 필요!!
 //        if (parentReview.getOrder().getUser().equals(authUser)){
@@ -89,8 +98,8 @@ public class ReviewService {
 //        }
 
         // 일단 사장님,짭기요만 리뷰에 답글을 등록할 수 있도록 설정
-        if (!authUser.getRole().equals(UserRole.ADMIN) && !authUser.getRole().equals(UserRole.OWNER)){
-            throw new UnauthorizedException("리뷰에 답글은 사장님 혹은 짭기요 관리자만 작성할 수 있습니다.");
+        if (!authUser.getUserRole().equals(UserRole.ADMIN) && !authUser.getUserRole().equals(UserRole.OWNER)){
+            throw new ReviewUnauthorizedException("리뷰에 답글은 사장님 혹은 짭기요 관리자만 작성할 수 있습니다.");
         }
 
 
@@ -117,7 +126,7 @@ public class ReviewService {
                                                        int maxStarPoint) {
         // 가게가 존재하는지 확인
         storeRepository.findById(storeId).
-                orElseThrow(()-> new NotFoundException("가게가 존재하지 않습니다."));
+                orElseThrow(()-> new StoreNotFoundException("가게가 존재하지 않습니다."));
 
         // 페이징 + 리뷰를 가장 최근에 수정한 순서대로 정렬
         Pageable pageable = PageRequest.of(pageNo,size, Sort.by("modifiedAt").descending());
@@ -133,16 +142,19 @@ public class ReviewService {
 
 
     // 리뷰수정
-    @Transactional
-   public ReviewUpdateResponseDto updateReview(Long reviewId,AuthUser authUser, String content) {
+   @Transactional
+   public ReviewUpdateResponseDto updateReview(Long reviewId,String email, String content) {
+
+       // email 정보로 유저 객체 추출
+       User authUser = userRepository.findByEmailOrElseThrow(email);
 
         // 리뷰가 있는지 확인 예외처리 관련해서 확인 필요
         Review review = reviewRepository.findById(reviewId).
-                orElseThrow(()-> new NotFoundException("리뷰를 찾을 수 없습니다."));
+                orElseThrow(()-> new ReviewNotFoundException("리뷰를 찾을 수 없습니다."));
 
         // 수정 권한 확인
-        if(!authUser.getRole().equals(UserRole.ADMIN)){
-            throw new UnauthorizedException("리뷰 수정은 관리자만 가능합니다. 짭기요에 문의해주세요.");
+        if(!authUser.getUserRole().equals(UserRole.ADMIN)){
+            throw new ReviewUnauthorizedException("리뷰 수정은 관리자만 가능합니다. 짭기요에 문의해주세요.");
         }
         // 리뷰 수정
         review.update(content);
@@ -160,15 +172,18 @@ public class ReviewService {
 
     // 리뷰 삭제
     @Transactional
-    public void deleteReview(Long reviewId,AuthUser authUser) {
+    public void deleteReview(Long reviewId,String email) {
+
+        // email 정보로 유저 객체 추출
+        User authUser = userRepository.findByEmailOrElseThrow(email);
 
         // 리뷰가 있는지 확인
         Review review = reviewRepository.findById(reviewId).
-                orElseThrow(()-> new NotFoundException("리뷰를 찾을 수 없습니다."));
+                orElseThrow(()-> new ReviewNotFoundException("리뷰를 찾을 수 없습니다."));
 
         // 리뷰를 삭제할 권한이 있는 유저인지 확인 admin only
-        if (!authUser.getRole().equals(UserRole.ADMIN)){
-            throw new UnauthorizedException("리뷰 삭제는 관리자만 가능합니다. 짭기요에 문의해주세요.");
+        if (!authUser.getUserRole().equals(UserRole.ADMIN)){
+            throw new ReviewUnauthorizedException("리뷰 삭제는 관리자만 가능합니다. 짭기요에 문의해주세요.");
         }
 
         // 리뷰 삭제
