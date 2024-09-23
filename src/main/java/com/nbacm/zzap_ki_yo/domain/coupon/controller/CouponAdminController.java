@@ -19,14 +19,14 @@ public class CouponAdminController {
     private final CouponServiceImpl couponServiceImpl;
 
     // 쿠폰 생성
-    @PostMapping("/stores/{storeId}/coupons/admin")
+    @PostMapping("/admin/stores/{storeId}/coupons")
     public ResponseEntity<CouponResponse> saveCouponAdmin(
             @PathVariable Long storeId,
             @RequestBody CouponRequest couponRequest,
             @Auth AuthUser authUser
     ) {
         String email = authUser.getEmail();
-        return ResponseEntity.ok(couponServiceImpl.saveCouponAdmin(storeId, couponRequest, email));
+        return ResponseEntity.ok(couponServiceImpl.saveCoupon(storeId, couponRequest, email));
     }
 
     // 특정 유저가 보유한 쿠폰 조회

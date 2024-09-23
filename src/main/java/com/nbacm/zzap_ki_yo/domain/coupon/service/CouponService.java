@@ -9,9 +9,6 @@ public interface CouponService {
     // 쿠폰 생성(사장)
     CouponResponse saveCoupon(Long storeId, CouponRequest couponRequest, String email);
 
-    // 쿠폰 생성(관리자)
-    CouponResponse saveCouponAdmin(Long storeId, CouponRequest couponRequest, String email);
-
     // 보유 쿠폰 조회(유저)
     List<CouponResponse> getAllCoupons(String email);
 
