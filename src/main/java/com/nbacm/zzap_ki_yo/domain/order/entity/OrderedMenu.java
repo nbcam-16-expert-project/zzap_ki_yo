@@ -28,10 +28,4 @@ public class OrderedMenu {
         this.menu = menu;
     }
 
-    /*public static OrderedMenu create(Order order, Menu menu) {
-        OrderedMenu orderedMenu = new OrderedMenu();
-        orderedMenu.order = order;
-        orderedMenu.menu = menu;
-        return orderedMenu;
-    }*/
 }

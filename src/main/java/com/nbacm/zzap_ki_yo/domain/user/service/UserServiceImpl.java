@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordUtil passwordUtil;
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtUtils jwtUtils;
+    private final KakaoService kakaoService;
 
 
     @Transactional
@@ -65,6 +66,25 @@ public class UserServiceImpl implements UserService {
                 TimeUnit.MILLISECONDS
         );
         return accessToken;
+    }
+    @Transactional
+    @Override
+    public String kakaoLogin(String code) {
+        String accessToken = kakaoService.getKakaoAccessToken(code);
+        User user = kakaoService.getKakaoUserInfo(accessToken);
+
+        String token = jwtUtils.generateToken(user.getEmail(), user.getUserRole());
+        String refreshToken = jwtUtils.generateRefreshToken(user.getEmail(), user.getUserRole());
+
+        redisTemplate.opsForValue().set(
+                "RT:" + user.getEmail(),
+                refreshToken,
+                jwtUtils.getRefreshTokenExpirationTime(),
+                TimeUnit.MILLISECONDS
+        );
+
+        log.info("카카오 로그인 성공. 생성된 토큰: {}", token);
+        return token;
     }
 
     @Override

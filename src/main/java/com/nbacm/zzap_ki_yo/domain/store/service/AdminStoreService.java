@@ -26,4 +26,8 @@ public interface AdminStoreService {
     StoreStatisticsResponseDto getDailyStatistics(Long storeId, String email);
 
     StoreStatisticsResponseDto getMonthlyStatistics(Long storeId, String email);
+
+    StoreStatisticsResponseDto getDailyAllStatistics(String email);
+
+    StoreStatisticsResponseDto getMonthlyAllStatistics(String email);
 }
