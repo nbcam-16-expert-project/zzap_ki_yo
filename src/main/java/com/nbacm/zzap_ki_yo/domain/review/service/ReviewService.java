@@ -17,7 +17,6 @@ import com.nbacm.zzap_ki_yo.domain.review.exception.ReviewUnauthorizedException;
 import com.nbacm.zzap_ki_yo.domain.review.repository.ReviewRepository;
 import com.nbacm.zzap_ki_yo.domain.store.exception.StoreNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
-import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
@@ -67,6 +66,7 @@ public class ReviewService {
         }
 
         reviewRepository.save(newReview);
+
         return  ReviewSaveResponseDto.builder().
                 orderId(newReview.getOrder().getOrderId()).
                 reviewId(newReview.getReviewId()).
@@ -103,11 +103,12 @@ public class ReviewService {
         }
 
 
-        // 부모 리뷰에 다는 리뷰
+        // 답글 (리뷰에 작성하는 리뷰)
         Review newReview = Review.builder(order,reviewSaveRequestDto.getContent()).
                 parentReview(parentReview).build();
 
         reviewRepository.save(newReview);
+
         return ReviewSaveResponseDto.builder().
                 orderId(newReview.getOrder().getOrderId()).
                 reviewId(newReview.getReviewId()).
