@@ -22,5 +22,11 @@ public interface StoreStatisticsRepository extends JpaRepository<StoreStatistics
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<StoreStatistics> findByStoreIdAndDate(Long storeId, LocalDate date);
 
+    // 특정 날짜의 모든 통계 조회 (Store와 함께 페치 조인)
+    @Query("SELECT ss FROM StoreStatistics ss JOIN FETCH ss.store WHERE ss.date = :date")
+    List<StoreStatistics> findAllByDate(LocalDate date);
 
+    // 특정 기간(월간)의 모든 통계 조회 (Store와 함께 페치 조인)
+    @Query("SELECT ss FROM StoreStatistics ss JOIN FETCH ss.store WHERE ss.date BETWEEN :startOfMonth AND :endOfMonth")
+    List<StoreStatistics> findAllByDateBetween(LocalDate startOfMonth, LocalDate endOfMonth);
 }
