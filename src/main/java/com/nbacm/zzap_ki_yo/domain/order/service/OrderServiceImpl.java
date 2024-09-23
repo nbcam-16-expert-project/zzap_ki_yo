@@ -31,6 +31,8 @@ import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
+import com.nbacm.zzap_ki_yo.domain.user.exception.InvalidRoleException;
+import com.nbacm.zzap_ki_yo.domain.user.exception.UserNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -190,7 +192,7 @@ public class OrderServiceImpl implements OrderService {
         return orderSaveResponse;
     }
 
-    // 로그인 중인 유저 id를 기준으로 해당되는 모든 주문 조회
+    // 로그인 중인 유저 id를 기준으로 해당되는 모든 주문 조회 = 삭제하기
     @Override
     public List<OrderSaveResponse> getOrdersByUser (String email) {
 
@@ -209,9 +211,22 @@ public class OrderServiceImpl implements OrderService {
         return orderSaveResponseList;
     }
 
-    // 특정 유저 id를 기준으로 해당되는 모든 주문 조회(관리자 권한 필요)
+    // 특정 유저 id를 기준으로 해당되는 모든 주문 조회(유저 본인 혹은 관리자 권한 필요)
     @Override
     public List<OrderSaveResponse> getOrdersByUserAdmin (String email, Long userId) {
+
+        User user = userRepository.findByEmailOrElseThrow(email);
+
+        if(userId == null){
+            userId = user.getUserId();
+        }
+
+        User serchedUser = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException("해당 유저는 없는 유저입니다."));
+
+        if(!user.getUserRole().equals(UserRole.ADMIN) && !user.equals(serchedUser)){
+            throw new InvalidRoleException("다른 유저의 정보는 관리자만 조회할 수 있습니다.");
+        }
 
         List<Order> orderList = orderRepository.findAllByUserId(userId);
 
