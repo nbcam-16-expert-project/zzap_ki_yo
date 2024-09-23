@@ -3,6 +3,7 @@ package com.nbacm.zzap_ki_yo.store;
 
 import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
 import com.nbacm.zzap_ki_yo.domain.exception.UnauthorizedException;
+import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.CreateStoreResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectStoreResponseDto;
@@ -229,6 +230,7 @@ public class AdminStoreServiceTest {
             );
             Store store = new Store(requestDto.getStoreName(),
                     "123","123",12,StoreType.CLOSING,user1,1,requestDto.getOpeningTime(),requestDto.getClosingTime()
+                    ,new ArrayList<>(), new ArrayList<>()
             );
 
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
@@ -277,6 +279,7 @@ public class AdminStoreServiceTest {
             );
             Store store = new Store(requestDto.getStoreName(),
                     "123","123",12,StoreType.OPENING,user1,1,requestDto.getOpeningTime(),requestDto.getClosingTime()
+                    ,new ArrayList<>(), new ArrayList<>()
             );
 
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
@@ -313,7 +316,7 @@ public class AdminStoreServiceTest {
         void 가게_삭제_테스트_정상(){
             AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
             User user1 = new User("qwe","qwe","qwe",UserRole.ADMIN,"asd","asd");
-            Store store = new Store("qwe","qwe","qwe",1,StoreType.OPENING,user1,1,LocalTime.MIN,LocalTime.MAX);
+            Store store = new Store("qwe","qwe","qwe",1,StoreType.OPENING,user1,1,LocalTime.MIN,LocalTime.MAX,new ArrayList<>(), new ArrayList<>());
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
             given(storeRepository.findByStoreIdAndUser(anyLong(),any(User.class))).willReturn(store);
 
@@ -391,7 +394,7 @@ public class AdminStoreServiceTest {
             User user1 = new User("qwe","qwe","qwe",UserRole.OWNER,"asd","asd");
             lenient().when(userRepository.findByEmailOrElseThrow(anyString())).thenReturn(user1);
 
-            Store store = new Store("qwe","qwe","qwe",12,StoreType.CLOSING,user1,1,LocalTime.MIN,LocalTime.MAX);
+            Store store = new Store("qwe","qwe","qwe",12,StoreType.CLOSING,user1,1,LocalTime.MIN,LocalTime.MAX,new ArrayList<>(), new ArrayList<>());
 
             given(storeRepository.findById(anyLong())).willReturn(Optional.of(store));
 
@@ -408,7 +411,18 @@ public class AdminStoreServiceTest {
             User user1 = new User("qwe","qwe","qwe",UserRole.OWNER,"asd","asd");
             lenient().when(userRepository.findByEmailOrElseThrow(anyString())).thenReturn(user1);
 
-            Store store = new Store("qwe","qwe","qwe",12,StoreType.OPENING,user1,1,LocalTime.MIN,LocalTime.MAX);
+
+            List<Menu> menus = new ArrayList<>();
+            Menu menu = Menu.builder()
+                    .store(new Store())
+                    .menuName("qw")
+                    .price(12)
+                    .build();
+
+            menus.add(menu);
+
+            Store store = new Store("qwe","qwe","qwe",12,StoreType.OPENING,user1,1,LocalTime.MIN,LocalTime.MAX,
+                    menus, new ArrayList<>());
 
             given(storeRepository.findById(anyLong())).willReturn(Optional.of(store));
 
@@ -418,8 +432,9 @@ public class AdminStoreServiceTest {
             assertNotNull(responseDto.getStoreName());
             assertNotNull(responseDto.getStoreAddress());
             assertNotNull(responseDto.getStoreNumber());
-            assertNotNull(responseDto.getMenus());
             assertNotNull(responseDto.getFavoriteCount());
+            assertNotNull(responseDto.getMenus().get(0).getMenuName());
+            assertNotNull(responseDto.getMenus().get(0).getPrice());
         }
 
 
