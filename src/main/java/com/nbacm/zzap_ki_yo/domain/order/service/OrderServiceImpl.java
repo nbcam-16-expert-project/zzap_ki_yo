@@ -47,8 +47,6 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,8 +63,6 @@ public class OrderServiceImpl implements OrderService {
     private final RedisTemplate<String, Object> redisObjectTemplate;
     private final CouponRepository couponRepository;
     private final ApplicationEventPublisher eventPublisher;
-
-
     private static final String REDIS_KEY_PREFIX = "store_statistics:";
 
 
@@ -559,8 +555,5 @@ public class OrderServiceImpl implements OrderService {
         String monthlyRedisKey = REDIS_KEY_PREFIX + storeId + ":monthly:" + LocalDate.now().withDayOfMonth(1) + "-" + LocalDate.now();
         redisObjectTemplate.delete(monthlyRedisKey);
     }
-
-
-
 
 }

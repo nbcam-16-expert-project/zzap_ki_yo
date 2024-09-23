@@ -59,7 +59,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Coupon> coupons;
-
     private String kakaoId;
 
     @Builder
