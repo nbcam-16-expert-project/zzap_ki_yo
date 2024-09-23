@@ -13,6 +13,7 @@ import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.exception.StoreNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
+import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.exception.UserNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,12 @@ public class CouponServiceImpl implements CouponService {
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
 
-    // 쿠폰 생성(사장)
+    // 쿠폰 생성(사장, 관리자)
     @Transactional
     @Override
     public CouponResponse saveCoupon(Long storeId, CouponRequest couponRequest, String email){
 
-        User owner = userRepository.findByEmailOrElseThrow(email);
+        User publisher = userRepository.findByEmailOrElseThrow(email);
 
         User user = userRepository.findById(couponRequest.getUserId())
                 .orElseThrow(() -> new NotFoundException("해당 쿠폰 발급 대상 유저는 없는 유저입니다"));
@@ -45,13 +46,13 @@ public class CouponServiceImpl implements CouponService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new StoreNotFoundException("해당 가게는 없는 가게입니다."));
 
-        // 발행자가 해당 가게의 사장이 맞는지 확인
-        for (Store ownstore : owner.getStores()){
+        // 발행자가 해당 가게의 사장이 맞는지 혹은 관리자인지 확인
+        for (Store ownstore : publisher.getStores()){
             int i = 0;
             if(!ownstore.equals(store)){
                 i++;
             }
-            if (owner.getStores().size() == i){
+            if ((publisher.getStores().size() == i) && publisher.getUserRole().equals(UserRole.ADMIN)){
                 throw new CouponForbiddenException("해당 가게의 소유자만 쿠폰을 발행할 수 있습니다.");
             }
         }
@@ -79,7 +80,7 @@ public class CouponServiceImpl implements CouponService {
         return couponResponse;
     }
 
-    // 쿠폰 생성(관리자)
+    /*// 쿠폰 생성(관리자)
     @Transactional
     @Override
     public CouponResponse saveCouponAdmin(Long storeId, CouponRequest couponRequest, String email) {
@@ -110,7 +111,7 @@ public class CouponServiceImpl implements CouponService {
         CouponResponse couponResponse = CouponResponse.createCouponResponse(coupon);
 
         return couponResponse;
-    }
+    }*/
 
     // 보유 쿠폰 조회(유저)
     @Override
