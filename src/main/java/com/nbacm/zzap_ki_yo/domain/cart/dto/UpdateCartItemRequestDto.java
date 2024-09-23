@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.cart.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -17,8 +18,10 @@ public class UpdateCartItemRequestDto {
     @Min(value = 0, message = "수량은 0 이상이어야 합니다.")
     private  Integer quantity;
 
-
-    public UpdateCartItemRequestDto(Long menuId, Integer quantity) {
+    @JsonCreator
+    public UpdateCartItemRequestDto(
+            Long menuId,
+            Integer quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
     }

@@ -140,18 +140,46 @@ public class CartRedisServiceImpl implements CartRedisService {
             throw new StoreNotFoundException("장바구니를 찾을 수 없습니다.");
         }
 
-        List<CartItemResponseDto> updatedItems = cart.getItems().stream()
-                .map(item -> {
-                    if (item.getMenuId().equals(requestDto.getMenuId())) {
-                        return CartItemResponseDto.builder()
-                                .menuId(item.getMenuId())
-                                .menuName(item.getMenuName())
-                                .price(item.getPrice())
-                                .quantity(requestDto.getQuantity())
-                                .build();
-                    }
-                    return item;
-                })
+        List<CartItemResponseDto> updatedItems = new ArrayList<>();
+        boolean itemFound = false;
+
+        for (CartItemResponseDto item : cart.getItems()) {
+            if (item.getMenuId().equals(requestDto.getMenuId())) {
+                // 기존 아이템 업데이트
+                updatedItems.add(CartItemResponseDto.builder()
+                        .menuId(item.getMenuId())
+                        .menuName(item.getMenuName())
+                        .price(item.getPrice())
+                        .quantity(requestDto.getQuantity())
+                        .build());
+                itemFound = true;
+            } else {
+                // 다른 아이템은 그대로 유지
+                updatedItems.add(item);
+            }
+        }
+
+        if (!itemFound) {
+            // 새로운 메뉴 아이템 추가 로직
+            Menu menu = menuRepository.findById(requestDto.getMenuId())
+                    .orElseThrow(() -> new MenuNotFoundException("메뉴를 찾을 수 없습니다."));
+
+            // 장바구니의 가게 ID와 메뉴의 가게 ID가 일치하는지 확인
+            if (!cart.getStoreId().equals(menu.getStore().getStoreId())) {
+                throw new IllegalArgumentException("다른 가게의 메뉴를 추가할 수 없습니다.");
+            }
+
+            updatedItems.add(CartItemResponseDto.builder()
+                    .menuId(menu.getMenuId())
+                    .menuName(menu.getMenuName())
+                    .price(menu.getPrice())
+                    .quantity(requestDto.getQuantity())
+                    .build());
+        }
+
+        // 수량이 0인 아이템 제거
+        updatedItems = updatedItems.stream()
+                .filter(item -> item.getQuantity() > 0)
                 .collect(Collectors.toList());
 
         CartResponseDto updatedCart = CartResponseDto.builder()
