@@ -43,8 +43,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
     @Transactional
     @Override
     public CreateStoreResponseDto createStore(AuthUser authUser, StoreRequestDto storeRequestDto) {
-
-       roleAdminCheck(authUser);
+        roleAdminCheck(authUser);
 
         if(storeRequestDto.getStoreAddress() == null
                 || storeRequestDto.getStoreNumber() == null
@@ -52,19 +51,9 @@ public class AdminStoreServiceImpl implements AdminStoreService {
             throw new BadRequestException("등록할 가게 이름, 주소, 번호가 없으면 안 됩니다.");
         }
 
-       User user = findByEmail(authUser);
+        User user = userRepository.findByEmailOrElseThrow(authUser.getEmail());
 
-        Store store = Store.builder()
-                .storeAddress(storeRequestDto.getStoreAddress())
-                .storeNumber(storeRequestDto.getStoreNumber())
-                .storeName(storeRequestDto.getStoreName())
-                .favoriteCount(0)
-                .orderMinPrice(storeRequestDto.getOrderMinPrice())
-                .user(user)
-                .storeType(StoreType.OPENING)
-                .openingTime(storeRequestDto.getOpeningTime())
-                .closingTime(storeRequestDto.getClosingTime())
-                .build();
+        Store store = Store.createStore(storeRequestDto, user);
 
         List<Store> stores = storeRepository.findAllByUserAndStoreType(store.getUser(), StoreType.OPENING);
 
@@ -82,7 +71,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
     public UpdateStoreResponseDto updateStore(AuthUser authUser, Long storeId, StoreRequestDto request) {
 
         roleAdminCheck(authUser);
-        User user = findByEmail(authUser);
+        User user = userRepository.findByEmailOrElseThrow(authUser.getEmail());
 
         Store store = findByStoreIdAndUser(storeId, user);
 
@@ -100,7 +89,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
     @Override
     public void deleteStore(AuthUser authUser, Long storeId) {
         roleAdminCheck(authUser);
-        User user = findByEmail(authUser);
+        User user = userRepository.findByEmailOrElseThrow(authUser.getEmail());
 
         Store store = findByStoreIdAndUser(storeId, user);
 
@@ -155,7 +144,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
     @Override
     public ClosingStoreResponseDto closingStore(AuthUser authUser, Long storeId, ClosingStoreRequestDto requestDto) {
         roleAdminCheck(authUser);
-        User user = findByEmail(authUser);
+        User user = userRepository.findByEmailOrElseThrow(authUser.getEmail());
 
         Store store = findByStoreIdAndUser(storeId,user);
         if(requestDto.getMessage().equals("폐업합니다")) {
@@ -167,10 +156,6 @@ public class AdminStoreServiceImpl implements AdminStoreService {
                 .build();
     }
 
-    private User findByEmail(AuthUser authUser){
-        String email = authUser.getEmail();
-        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-    }
 
     private void roleAdminCheck(AuthUser authUser){
         UserRole role = authUser.getRole();
