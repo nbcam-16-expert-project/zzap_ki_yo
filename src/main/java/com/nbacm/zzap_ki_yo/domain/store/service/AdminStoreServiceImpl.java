@@ -97,10 +97,10 @@ public class AdminStoreServiceImpl implements AdminStoreService {
 
 
     @Override
-    public SelectStoreResponseDto selectStore(AuthUser authUser, Long storeId) {
+    public SelectStoreResponseDto selectStore(AuthUser authUser, String storeName) {
         roleAdminCheck(authUser);
 
-        Store store = storeRepository.findById(storeId).orElseThrow(() ->
+        Store store = storeRepository.findByStoreName(storeName).orElseThrow(() ->
                 new StoreNotFoundException("가게를 찾을 수 없습니다."));
 
         if(store.getStoreType().equals(StoreType.CLOSING)){

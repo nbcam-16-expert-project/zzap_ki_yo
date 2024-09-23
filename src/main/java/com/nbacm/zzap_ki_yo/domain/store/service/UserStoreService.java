@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserStoreService {
 
-    SelectStoreResponseDto selectStore(Long storeId);
+    SelectStoreResponseDto selectStore(String storeName);
 
     List<SelectAllStoreResponseDto> selectAllStore();
 

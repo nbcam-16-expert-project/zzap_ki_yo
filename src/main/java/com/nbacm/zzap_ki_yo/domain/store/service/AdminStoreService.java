@@ -17,7 +17,7 @@ public interface AdminStoreService {
 
     void deleteStore(AuthUser authUser, Long storeId);
 
-    SelectStoreResponseDto selectStore(AuthUser authUser, Long storeId);
+    SelectStoreResponseDto selectStore(AuthUser authUser, String storeName);
 
     List<SelectAllStoreResponseDto> selectAllStore(AuthUser authUser);
 
