@@ -26,4 +26,9 @@ public class MenuUpdateRequestDto {
         this.price = price;
         this.status = status;
     }
+    public MenuUpdateRequestDto(String menuName, Integer price, MenuStatus status) {
+        this.menuName = menuName;
+        this.price = price;
+        this.status = status;
+    }
 }
