@@ -35,6 +35,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (jwtUtils.validateToken(token)) {
                     String email = jwtUtils.getUserEmailFromToken(token);
                     UserRole role = UserRole.valueOf(jwtUtils.getUserRoleFromToken(token));
+                    log.info("role : {}", role);
+                    log.info("email : {}", email);
                     // RefreshToken 존재 여부 확인
                     String refreshToken = redisTemplate.opsForValue().get("RT:" + email);
                     if (refreshToken == null) {
@@ -78,14 +80,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
     private boolean isExcludedPath(String path) {
-        return "/api/v1/users/login".equalsIgnoreCase(path) || "/api/v1/users".equalsIgnoreCase(path) || "/api/v1/users/oauth2/kakao".equalsIgnoreCase(path)
-                ||"/api/test/kakao".equalsIgnoreCase(path)||"/api/test/kakao/auth".equalsIgnoreCase(path);
+        return "/api/v1/users/login".equalsIgnoreCase(path) || "/api/v1/users".equalsIgnoreCase(path) || "/api/v1/users/oauth2/kakao".equalsIgnoreCase(path);
+
     }
     private boolean isAdminPath(String path) {
         // 정규 표현식을 사용하여 /api/v1/{anything}/admin 패턴 확인
-        return Pattern.matches("/api/v1/[^/]+/admin.*", path);
+        return Pattern.matches("/api/v1/admin.*", path);
     }
     private boolean isStorePath(String path) {
-        return Pattern.matches("/api/v1/[^/]+/store.*", path);
+        return Pattern.matches("/api/v1/store.*", path);
     }
 }

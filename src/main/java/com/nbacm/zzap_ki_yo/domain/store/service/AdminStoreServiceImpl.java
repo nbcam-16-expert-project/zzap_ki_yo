@@ -1,7 +1,7 @@
 package com.nbacm.zzap_ki_yo.domain.store.service;
 
 
-import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StoreStatisticsResponseDto;
+import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StatisticsResponseDto;
 import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
 import com.nbacm.zzap_ki_yo.domain.exception.UnauthorizedException;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
@@ -18,7 +18,6 @@ import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import com.nbacm.zzap_ki_yo.domain.user.exception.InvalidRoleException;
-import com.nbacm.zzap_ki_yo.domain.user.exception.UserNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,10 +97,10 @@ public class AdminStoreServiceImpl implements AdminStoreService {
 
 
     @Override
-    public SelectStoreResponseDto selectStore(AuthUser authUser, Long storeId) {
+    public SelectStoreResponseDto selectStore(AuthUser authUser, String storeName) {
         roleAdminCheck(authUser);
 
-        Store store = storeRepository.findById(storeId).orElseThrow(() ->
+        Store store = storeRepository.findByStoreName(storeName).orElseThrow(() ->
                 new StoreNotFoundException("가게를 찾을 수 없습니다."));
 
         if(store.getStoreType().equals(StoreType.CLOSING)){
@@ -174,7 +173,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
 
     @Override
     @Transactional(readOnly = false) // 수정 작업이 필요하다면 readOnly를 false로 설정
-    public StoreStatisticsResponseDto getDailyStatistics(Long storeId, String email) {
+    public StatisticsResponseDto getDailyStatistics(Long storeId, String email) {
         try {
             // 사장님 또는 관리자 권한 확인
             validateOwnerOrAdmin(email, storeId);
@@ -189,7 +188,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
 
     @Override
     @Transactional(readOnly = false) // 수정 작업이 필요하다면 readOnly를 false로 설정
-    public StoreStatisticsResponseDto getMonthlyStatistics(Long storeId, String email) {
+    public StatisticsResponseDto getMonthlyStatistics(Long storeId, String email) {
         try {
             // 사장님 또는 관리자 권한 확인
             validateOwnerOrAdmin(email, storeId);
@@ -208,7 +207,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
 
     @Override
     @Transactional(readOnly = false)
-    public StoreStatisticsResponseDto getDailyAllStatistics(String email){
+    public StatisticsResponseDto getDailyAllStatistics(String email){
         try {
             validatieAdmin(email);
             return orderService.getDailyStatisticsForAllStores( LocalDate.now());
@@ -220,7 +219,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
 
     @Override
     @Transactional(readOnly = false)
-    public StoreStatisticsResponseDto getMonthlyAllStatistics(String email) {
+    public StatisticsResponseDto getMonthlyAllStatistics(String email) {
         try {
             // 사장님 또는 관리자 권한 확인
             validatieAdmin(email);

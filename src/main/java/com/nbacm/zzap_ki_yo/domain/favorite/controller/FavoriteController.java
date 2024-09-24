@@ -8,24 +8,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-//찜 컨트롤러
+// 즐겨찾기 컨트롤러
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class FavoriteController {
     private final FavoriteService favoriteService;
 
-    // 찜 등록
+    // 즐겨찾기 등록
     @PostMapping("favorites/{storeId}")
     public ResponseEntity<FavoriteSaveResponseDto> saveFavorite (@PathVariable Long storeId,
                                                                  @Auth AuthUser authUser){
-        return ResponseEntity.ok(favoriteService.saveFavorite(storeId,authUser));
+        String email = authUser.getEmail();
+        return ResponseEntity.ok(favoriteService.saveFavorite(storeId,email));
     }
 
-    // 찜 취소(삭제)
+    // 즐겨찾기 취소(삭제)
     @DeleteMapping("favorites/{favoriteId}")
     public void deleteFavorite (@PathVariable Long favoriteId,
                                 @Auth AuthUser authUser){
-        favoriteService.deleteFavorite(favoriteId,authUser);
+        String email = authUser.getEmail();
+        favoriteService.deleteFavorite(favoriteId,email);
     }
 }

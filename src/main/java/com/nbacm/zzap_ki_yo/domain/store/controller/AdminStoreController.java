@@ -48,9 +48,9 @@ public class AdminStoreController {
     }
 
 
-    @GetMapping("/stores/{storeId}")
-    public ResponseEntity<SelectStoreResponseDto> selectStore(@Auth AuthUser authUser, @PathVariable Long storeId){
-        SelectStoreResponseDto responseDto = adminStoreServiceImpl.selectStore(authUser,storeId);
+    @GetMapping("/stores/{storeName}")
+    public ResponseEntity<SelectStoreResponseDto> selectStore(@Auth AuthUser authUser, @PathVariable String storeName){
+        SelectStoreResponseDto responseDto = adminStoreServiceImpl.selectStore(authUser,storeName);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 

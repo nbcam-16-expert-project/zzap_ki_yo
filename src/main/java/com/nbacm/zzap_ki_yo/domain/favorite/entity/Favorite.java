@@ -6,10 +6,10 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+// 즐겨찾기 (찜)
 @Entity
 @Getter
-@Table(name = "favorites")
+@Table(name = "favorite")
 @NoArgsConstructor
 public class Favorite {
     @Id
@@ -18,7 +18,7 @@ public class Favorite {
     private Long favoriteId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_Id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)

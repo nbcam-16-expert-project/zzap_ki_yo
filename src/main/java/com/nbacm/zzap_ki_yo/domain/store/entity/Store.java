@@ -47,8 +47,9 @@ public class Store {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime closingTime;
 
-    @Column(name = "favorite_count", nullable = false)
-    private Integer favoriteCount;
+    // 즐겨찾기
+    @Column(name = "favorite_count")
+    private Integer favoriteCount =0;
 
     @Column(name = "store_type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -57,8 +58,11 @@ public class Store {
     @Column(name = "order_min_price" , nullable = false)
     private Integer orderMinPrice;
     //가게 공지
-    @Column(name = "store_notice", nullable = true)
+    @Column(name = "store_notice")
     private String storeNotice;
+
+    @Enumerated(EnumType.STRING)
+    AdType adType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_Id", nullable = false)
@@ -82,10 +86,15 @@ public class Store {
     @Column(name = "category")
     private List<Category> categoryList = new ArrayList<>();
 
+    // 즐겨찾기(찜) 추가시 +1
+    public void plusFavoriteCount (){
+        this.favoriteCount++;
+    }
+
 
     @Builder
     public Store(String storeName, String storeAddress, String storeNumber,String storeNotice, Integer favoriteCount,StoreType storeType, User user,
-            Integer orderMinPrice,  LocalTime openingTime, LocalTime closingTime,List<Category> categoryList) {
+            Integer orderMinPrice,  LocalTime openingTime, LocalTime closingTime,List<Category> categoryList,AdType adType) {
         this.storeName = storeName;
         this.storeAddress = storeAddress;
         this.storeNumber = storeNumber;
@@ -97,6 +106,7 @@ public class Store {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
         this.categoryList = categoryList;
+        this.adType = adType;
     }
 
     public void updateStore(StoreRequestDto dto) {
@@ -107,6 +117,9 @@ public class Store {
         this.closingTime = dto.getClosingTime();
         this.orderMinPrice = dto.getOrderMinPrice();
         this.storeNotice = dto.getStoreNotice();
+        this.categoryList = dto.getCategoryList();
+        this.adType = dto.getAdType();
+        this.favoriteCount =dto.getFavoriteCount();
     }
 
 
@@ -122,10 +135,12 @@ public class Store {
                 .openingTime(dto.getOpeningTime())
                 .closingTime(dto.getClosingTime())
                 .orderMinPrice(dto.getOrderMinPrice())
-                .favoriteCount(0)
+                .favoriteCount(dto.getFavoriteCount())
                 .user(user)
                 .storeType(StoreType.OPENING)
                 .storeNotice(dto.getStoreNotice())
+                .categoryList(dto.getCategoryList())
+                .adType(dto.getAdType())
                 .build();
 
     }

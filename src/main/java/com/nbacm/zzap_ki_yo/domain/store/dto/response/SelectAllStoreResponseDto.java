@@ -1,9 +1,14 @@
 package com.nbacm.zzap_ki_yo.domain.store.dto.response;
 
+import com.nbacm.zzap_ki_yo.domain.favorite.entity.Favorite;
+import com.nbacm.zzap_ki_yo.domain.store.entity.AdType;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.Length;
+
+import java.util.List;
 
 @Data
 public class SelectAllStoreResponseDto {
@@ -13,17 +18,19 @@ public class SelectAllStoreResponseDto {
     private String storeNumber;
     private StoreType storeType;
     private Integer favoriteCount;
+    private AdType adType;
 
 
     @Builder
     public SelectAllStoreResponseDto(Long storeId, String storeName, String storeAddress, String storeNumber,
-                                     StoreType storeType, Integer favoriteCount){
+                                     StoreType storeType, Integer favoriteCount, AdType adType) {
         this.storeId = storeId;
         this.storeName = storeName;
         this.storeAddress = storeAddress;
         this.storeNumber = storeNumber;
         this.storeType = storeType;
         this.favoriteCount = favoriteCount;
+        this.adType = adType;
     }
 
 
@@ -35,6 +42,7 @@ public class SelectAllStoreResponseDto {
                 .storeNumber(store.getStoreNumber())
                 .storeType(store.getStoreType())
                 .favoriteCount(store.getFavoriteCount())
+                .adType(store.getAdType())
                 .build();
     }
 }

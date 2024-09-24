@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.store.dto.request;
 
+import com.nbacm.zzap_ki_yo.domain.store.entity.AdType;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Category;
 import lombok.Data;
 
@@ -17,5 +18,7 @@ public class StoreRequestDto {
     private LocalTime closingTime;
     private String storeNotice;
     private List<Category> categoryList;
+    private AdType adType;
+    private Integer favoriteCount;
 }
 

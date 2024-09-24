@@ -22,9 +22,15 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     Optional<Store> findById(Long storeId);
 
+    Optional<Store> findByStoreName(String storeName);
+
     @Query("SELECT s FROM Store s JOIN FETCH s.user WHERE s.storeId = :storeId")
     Optional<Store> findByIdWithUser(@Param("storeId") Long storeId);
 
     Page<Store> findByStoreNameContainingAndStoreType(String name, StoreType storeType, Pageable pageable);
+
+    @Query("SELECT s FROM Store s WHERE s.storeType = :storeType ORDER BY " +
+            "CASE WHEN s.adType = 'AD' THEN 0 ELSE 1 END, s.storeId")
+    List<Store> findAllByStoreTypeOrderByAdTypeAndId(@Param("storeType") StoreType storeType);
 }
 

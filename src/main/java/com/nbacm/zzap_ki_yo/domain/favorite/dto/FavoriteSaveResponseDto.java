@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-//찜 등록 반환값
+// 즐겨찾기 등록 반환값
 @Getter
 @Builder
 @AllArgsConstructor
