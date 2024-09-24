@@ -93,8 +93,9 @@ public class Store {
 
 
     @Builder
-    public Store(String storeName, String storeAddress, String storeNumber,String storeNotice, Integer favoriteCount,StoreType storeType, User user,
-            Integer orderMinPrice,  LocalTime openingTime, LocalTime closingTime,List<Category> categoryList,AdType adType) {
+    public Store(String storeName, String storeAddress, String storeNumber, Integer favoriteCount,StoreType storeType, User user,
+            Integer orderMinPrice,  LocalTime openingTime, LocalTime closingTime,AdType adType, String storeNotice, List<Category> categoryList
+    ,List<Menu> menus, List<Order> orders) {
         this.storeName = storeName;
         this.storeAddress = storeAddress;
         this.storeNumber = storeNumber;
@@ -107,6 +108,8 @@ public class Store {
         this.closingTime = closingTime;
         this.categoryList = categoryList;
         this.adType = adType;
+        this.menus = menus;
+        this.orders = orders;
     }
 
     public void updateStore(StoreRequestDto dto) {

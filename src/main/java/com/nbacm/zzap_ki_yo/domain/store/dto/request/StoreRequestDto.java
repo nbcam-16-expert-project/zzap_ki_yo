@@ -20,5 +20,18 @@ public class StoreRequestDto {
     private List<Category> categoryList;
     private AdType adType;
     private Integer favoriteCount;
+
+
+
+    public void testData(String storeName, String storeAddress, String storeNumber, Integer orderMinPrice,
+                                LocalTime openingTime, LocalTime closingTime, AdType adType){
+        this.storeName = storeName;
+        this.storeAddress = storeAddress;
+        this.storeNumber = storeNumber;
+        this.orderMinPrice = orderMinPrice;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
+        this.adType = adType;
+    }
 }
 

@@ -17,10 +17,6 @@ public interface AdminStoreService {
 
     void deleteStore(AuthUser authUser, Long storeId);
 
-    SelectStoreResponseDto selectStore(AuthUser authUser, String storeName);
-
-    List<SelectAllStoreResponseDto> selectAllStore(AuthUser authUser);
-
     ClosingStoreResponseDto closingStore(AuthUser authUser, Long storeId, ClosingStoreRequestDto requestDto);
 
     StatisticsResponseDto getDailyStatistics(Long storeId, String email);

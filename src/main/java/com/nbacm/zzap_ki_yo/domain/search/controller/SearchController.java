@@ -4,6 +4,7 @@ import com.nbacm.zzap_ki_yo.domain.search.dto.PopularWordResponseDto;
 import com.nbacm.zzap_ki_yo.domain.search.dto.SearchResponseDto;
 import com.nbacm.zzap_ki_yo.domain.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,8 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping("/search")
-    public ResponseEntity<SearchResponseDto> search(@RequestParam String keyword, @PageableDefault Pageable pageable){
+    public ResponseEntity<SearchResponseDto> search(@RequestParam String keyword, @RequestParam int page, @RequestParam int size){
+        Pageable pageable = PageRequest.of(page, size);
         SearchResponseDto responseDto = searchService.search(keyword, pageable);
         return ResponseEntity.ok(responseDto);
     }
