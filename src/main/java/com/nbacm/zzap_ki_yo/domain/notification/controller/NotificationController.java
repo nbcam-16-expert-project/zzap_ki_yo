@@ -1,6 +1,6 @@
-package com.nbacm.zzap_ki_yo.domain.notifiaction.controller;
+package com.nbacm.zzap_ki_yo.domain.notification.controller;
 
-import com.nbacm.zzap_ki_yo.domain.notifiaction.common.OrderEventHandler;
+import com.nbacm.zzap_ki_yo.domain.notification.common.OrderEventHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

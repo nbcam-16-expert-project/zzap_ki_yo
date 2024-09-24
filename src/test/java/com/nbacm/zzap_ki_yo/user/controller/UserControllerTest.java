@@ -73,6 +73,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(token));
     }
+
     @Test
     void logout_success() throws Exception {
         // Given
@@ -87,6 +88,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(expiredToken));
     }
+
     @Test
     void update_success() throws Exception {
         // Given

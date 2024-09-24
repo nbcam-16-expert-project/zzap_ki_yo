@@ -1,6 +1,7 @@
-package com.nbacm.zzap_ki_yo.domain.notifiaction.common;
+package com.nbacm.zzap_ki_yo.domain.notification.common;
 
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
+import lombok.Getter;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
+@Getter
 public class OrderEventHandler {
 
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
