@@ -152,6 +152,43 @@ class CouponServiceImplTest {
     }
 
     @Test
+    void getAllCouponsByStoreId(){
+
+        Long storeId = 1L;
+        Store store = new Store();
+        setField(store, "storeId", storeId);
+        List<Store> stores = new ArrayList<>();
+        stores.add(store);
+
+        String email = "test@test.com";
+        User user = new User();
+        setField(user, "email", email);
+        setField(user, "stores", stores);
+        setField(user, "userRole", UserRole.OWNER);
+
+        Coupon coupon = new Coupon();
+        setField(coupon, "couponName", "Test Coupon");
+        setField(coupon, "discountRate", 20);
+        setField(coupon, "minPrice", 1000);
+        setField(coupon, "maxDiscount", 5000);
+        setField(coupon, "user", user);
+        setField(coupon, "expiryPeriod", Period.ofDays(30));
+        setField(coupon, "store", store);
+
+        List<Coupon> coupons = new ArrayList<>();
+        coupons.add(coupon);
+
+        given(storeRepository.findById(storeId)).willReturn(Optional.of(store));
+        given(userRepository.findByEmailOrElseThrow(email)).willReturn(user);
+
+        //w
+        List<CouponResponse> responseList = service.getAllCouponsByStoreId(email, storeId);
+
+        //t
+        assertNotNull(responseList);
+    }
+
+    @Test
     void deleteCoupon() {
         //g
         Long storeId = 1L;
