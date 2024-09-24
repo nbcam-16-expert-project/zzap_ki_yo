@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -26,9 +27,9 @@ public class UserStoreServiceImpl implements UserStoreService{
 
 
     @Override
-    public SelectStoreResponseDto selectStore(Long storeId) {
+    public SelectStoreResponseDto selectStore(String storeName) {
 
-        Store store = storeRepository.findById(storeId).orElseThrow(() ->
+        Store store = storeRepository.findByStoreName(storeName).orElseThrow(() ->
                 new StoreNotFoundException("가게를 찾을 수 없습니다.")
         );
 
@@ -53,21 +54,10 @@ public class UserStoreServiceImpl implements UserStoreService{
 
     @Override
     public List<SelectAllStoreResponseDto> selectAllStore() {
-        List<Store> storeList = storeRepository.findAllByStoreType(StoreType.OPENING).stream().toList();
-        if(storeList.isEmpty()){
-            throw new StoreNotFoundException("가게를 찾지 못했습니다.");
-        }
-        List<SelectAllStoreResponseDto> selectAllStoreResponseDtos = new ArrayList<>();
-        for (Store store : storeList) {
-            SelectAllStoreResponseDto responseDto = SelectAllStoreResponseDto.selectAllStore(store);
+        List<Store> stores = storeRepository.findAllByStoreTypeOrderByAdTypeAndId(StoreType.OPENING);
 
-            selectAllStoreResponseDtos.add(responseDto);
-        }
-
-        return selectAllStoreResponseDtos;
+        return stores.stream()
+                .map(SelectAllStoreResponseDto::selectAllStore)
+                .toList();
     }
-
-
-
-
 }
