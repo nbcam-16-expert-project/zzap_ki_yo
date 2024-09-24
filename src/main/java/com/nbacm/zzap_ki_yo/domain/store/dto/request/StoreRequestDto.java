@@ -7,7 +7,6 @@ import lombok.Data;
 import java.time.LocalTime;
 
 @Data
-@AllArgsConstructor
 public class StoreRequestDto {
 
     private String storeName;
@@ -17,5 +16,18 @@ public class StoreRequestDto {
     private LocalTime openingTime;
     private LocalTime closingTime;
     private AdType adType;
+
+
+
+    public void testData(String storeName, String storeAddress, String storeNumber, Integer orderMinPrice,
+                                LocalTime openingTime, LocalTime closingTime, AdType adType){
+        this.storeName = storeName;
+        this.storeAddress = storeAddress;
+        this.storeNumber = storeNumber;
+        this.orderMinPrice = orderMinPrice;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
+        this.adType = adType;
+    }
 }
 

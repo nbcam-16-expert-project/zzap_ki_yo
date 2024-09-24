@@ -48,17 +48,4 @@ public class AdminStoreController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
-
-    @GetMapping("/stores/{storeName}")
-    public ResponseEntity<SelectStoreResponseDto> selectStore(@Auth AuthUser authUser, @PathVariable String storeName){
-        SelectStoreResponseDto responseDto = adminStoreServiceImpl.selectStore(authUser,storeName);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-    }
-
-
-    @GetMapping("/stores")
-    public ResponseEntity<List<SelectAllStoreResponseDto>> selectAllStores(@Auth AuthUser authUser) {
-        List<SelectAllStoreResponseDto> responseDtos = adminStoreServiceImpl.selectAllStore(authUser);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDtos);
-    }
 }

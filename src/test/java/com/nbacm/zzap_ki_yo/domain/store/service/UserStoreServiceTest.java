@@ -3,6 +3,7 @@ package com.nbacm.zzap_ki_yo.domain.store.service;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectAllStoreResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectStoreResponseDto;
+import com.nbacm.zzap_ki_yo.domain.store.entity.AdType;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
 import com.nbacm.zzap_ki_yo.domain.store.exception.StoreForbiddenException;
@@ -41,11 +42,9 @@ public class UserStoreServiceTest {
     class SelectStore{
         @Test
         void 가게_조회_가게_오류_테스트(){
-            AuthUser authUser = new AuthUser("email@mail.com", UserRole.OWNER);
-            long storeId = 1L;
 
             StoreNotFoundException exception = assertThrows(StoreNotFoundException.class, () ->
-                    userStoreService.selectStore(storeId)
+                    userStoreService.selectStore("q")
             );
 
             assertEquals("가게를 찾을 수 없습니다.", exception.getMessage());
@@ -54,12 +53,13 @@ public class UserStoreServiceTest {
         @Test
         void 가게_조회_폐업_오류_테스트(){
 
-            Store store = new Store("qwe","qwe","qwe",12, StoreType.CLOSING,new User(),1, LocalTime.MIN,LocalTime.MAX,new ArrayList<>(), new ArrayList<>());
+            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.CLOSING, new User(), 1,
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
 
-            given(storeRepository.findById(anyLong())).willReturn(Optional.of(store));
+            given(storeRepository.findByStoreName(anyString())).willReturn(Optional.of(store));
 
             StoreForbiddenException exception = assertThrows(StoreForbiddenException.class, () ->
-                    userStoreService.selectStore(1L)
+                    userStoreService.selectStore("qwe")
             );
 
             assertEquals("폐업한 가게는 조회할 수 없습니다.", exception.getMessage());
@@ -77,11 +77,11 @@ public class UserStoreServiceTest {
             menus.add(menu);
 
             Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, menus, new ArrayList<>());
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, menus, new ArrayList<>());
 
-            given(storeRepository.findById(anyLong())).willReturn(Optional.of(store));
+            given(storeRepository.findByStoreName(anyString())).willReturn(Optional.of(store));
 
-            SelectStoreResponseDto responseDto = userStoreService.selectStore(1L);
+            SelectStoreResponseDto responseDto = userStoreService.selectStore("qwe");
 
             assertNotNull(responseDto);
             assertNotNull(responseDto.getStoreName());
@@ -98,21 +98,15 @@ public class UserStoreServiceTest {
     class SelectAllStore{
 
         @Test
-        void 모든가게_조회_가게_오류_테스트(){
-
-            StoreNotFoundException exception = assertThrows(StoreNotFoundException.class, () ->
-                    userStoreService.selectAllStore()
-            );
-
-            assertEquals("가게를 찾지 못했습니다.", exception.getMessage());
-        }
-
-        @Test
         void 모든가게_조회_테스트_정상(){
-            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, new ArrayList<>(), new ArrayList<>());
+            Menu menu = new Menu("asd",123,new Store());
+            List<Menu> menus = new ArrayList<>();
+            menus.add(menu);
 
-            given(storeRepository.findAllByStoreType(any(StoreType.class))).willReturn(List.of(store));
+            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, menus, new ArrayList<>());
+
+            given(storeRepository.findAllByStoreTypeOrderByAdTypeAndId(any())).willReturn(List.of(store));
 
             List<SelectAllStoreResponseDto> responseDtos = userStoreService.selectAllStore();
 

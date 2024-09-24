@@ -7,6 +7,7 @@ import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.ClosingStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.*;
+import com.nbacm.zzap_ki_yo.domain.store.entity.AdType;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
 import com.nbacm.zzap_ki_yo.domain.store.exception.StoreForbiddenException;
@@ -54,17 +55,11 @@ public class AdminStoreServiceTest {
 
             AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
 
-            StoreRequestDto createStoreRequestDto = new StoreRequestDto(
-                    "name",
-                    "address",
-                    null,
-                    10000,
-                    LocalTime.of(9,0),
-                    LocalTime.of(18,0)
-            );
+            StoreRequestDto requestDto = new StoreRequestDto();
+            requestDto.testData("ads","asd",null,1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
 
             BadRequestException exception = assertThrows(BadRequestException.class, () ->
-                    adminStoreServiceImpl.createStore(user,createStoreRequestDto)
+                    adminStoreServiceImpl.createStore(user,requestDto)
             );
 
             assertEquals("등록할 가게 이름, 주소, 번호가 없으면 안 됩니다.", exception.getMessage());
@@ -74,16 +69,10 @@ public class AdminStoreServiceTest {
         void 가게_등록_이름_null오류_테스트(){
 
             AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
-            StoreRequestDto createStoreRequestDto = new StoreRequestDto(
-                    null,
-                    "address",
-                    "number",
-                    10000,
-                    LocalTime.of(9,0),
-                    LocalTime.of(18,0)
-            );
+            StoreRequestDto requestDto = new StoreRequestDto();
+            requestDto.testData(null,"asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
             BadRequestException exception = assertThrows(BadRequestException.class, () ->
-                    adminStoreServiceImpl.createStore(user,createStoreRequestDto)
+                    adminStoreServiceImpl.createStore(user,requestDto)
             );
 
             assertEquals("등록할 가게 이름, 주소, 번호가 없으면 안 됩니다.", exception.getMessage());
@@ -93,16 +82,10 @@ public class AdminStoreServiceTest {
         void 가게_등록_주소_null오류_테스트(){
 
             AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
-            StoreRequestDto createStoreRequestDto = new StoreRequestDto(
-                    "name",
-                    null,
-                    "number",
-                    10000,
-                    LocalTime.of(9,0),
-                    LocalTime.of(18,0)
-            );
+            StoreRequestDto requestDto = new StoreRequestDto();
+            requestDto.testData("ads",null,"asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
             BadRequestException exception = assertThrows(BadRequestException.class, () ->
-                    adminStoreServiceImpl.createStore(user,createStoreRequestDto)
+                    adminStoreServiceImpl.createStore(user,requestDto)
             );
 
             assertEquals("등록할 가게 이름, 주소, 번호가 없으면 안 됩니다.", exception.getMessage());
@@ -119,20 +102,14 @@ public class AdminStoreServiceTest {
             stores.add(new Store());
             stores.add(new Store());
             stores.add(new Store());
-            StoreRequestDto createStoreRequestDto = new StoreRequestDto(
-                    "name",
-                    "address",
-                    "number",
-                    10000,
-                    LocalTime.of(9,0),
-                    LocalTime.of(18,0)
-            );
+            StoreRequestDto requestDto = new StoreRequestDto();
+            requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
 
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
             given(storeRepository.findAllByUserAndStoreType(any(User.class), any(StoreType.class))).willReturn(stores);
 
             StoreForbiddenException exception = assertThrows(StoreForbiddenException.class, () ->
-                    adminStoreServiceImpl.createStore(user,createStoreRequestDto)
+                    adminStoreServiceImpl.createStore(user,requestDto)
             );
 
             assertEquals("가게는 3개까지 운영 가능합니다.", exception.getMessage());
@@ -150,23 +127,17 @@ public class AdminStoreServiceTest {
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
             given(storeRepository.findAllByUserAndStoreType(any(User.class), any(StoreType.class))).willReturn(stores);
 
-            StoreRequestDto createStoreRequestDto = new StoreRequestDto(
-                    "name",
-                    "address",
-                    "number",
-                    10000,
-                    LocalTime.of(9,0),
-                    LocalTime.of(18,0)
-            );
+            StoreRequestDto requestDto = new StoreRequestDto();
+            requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
 
             Store store = Store.builder()
-                    .storeName(createStoreRequestDto.getStoreName())
-                    .storeAddress(createStoreRequestDto.getStoreAddress())
-                    .storeNumber(createStoreRequestDto.getStoreNumber())
+                    .storeName(requestDto.getStoreName())
+                    .storeAddress(requestDto.getStoreAddress())
+                    .storeNumber(requestDto.getStoreNumber())
                     .user(user1)
                     .build();
             given(storeRepository.save(any(Store.class))).willReturn(store);
-            CreateStoreResponseDto createStoreResponseDto = adminStoreServiceImpl.createStore(user,createStoreRequestDto);
+            CreateStoreResponseDto createStoreResponseDto = adminStoreServiceImpl.createStore(user,requestDto);
 
             assertNotNull(createStoreResponseDto);
 
@@ -175,17 +146,11 @@ public class AdminStoreServiceTest {
         @Test
         void 가게_등록_일반사용자_오류_테스트(){
             AuthUser user = new AuthUser("email@mail.com", UserRole.USER);
-            StoreRequestDto createStoreRequestDto = new StoreRequestDto(
-                    "name",
-                    "address",
-                    "number",
-                    10000,
-                    LocalTime.of(9,0),
-                    LocalTime.of(18,0)
-            );
+            StoreRequestDto requestDto = new StoreRequestDto();
+            requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
 
             UnauthorizedException exception = assertThrows(UnauthorizedException.class, () ->
-                    adminStoreServiceImpl.createStore(user,createStoreRequestDto)
+                    adminStoreServiceImpl.createStore(user,requestDto)
                     );
 
             assertEquals("어드민 사용자만 이용할 수 있습니다.", exception.getMessage());
@@ -197,14 +162,8 @@ public class AdminStoreServiceTest {
         @Test
         void 가게_수정_가게_오류_테스트(){
             AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
-            StoreRequestDto requestDto = new StoreRequestDto(
-                    "storeName",
-                    "aaa",
-                    "aaa",
-                    123345687,
-                    LocalTime.of(1,0),
-                    LocalTime.of(12,0)
-            );
+            StoreRequestDto requestDto = new StoreRequestDto();
+            requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
 
             StoreNotFoundException exception = assertThrows(StoreNotFoundException.class, () ->
                     adminStoreServiceImpl.updateStore(user,1L,requestDto)
@@ -218,18 +177,10 @@ public class AdminStoreServiceTest {
         void 가게_수정_폐업_오류_테스트(){
             AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
             User user1 = new User("qwe","qwe","qwe",UserRole.OWNER,"asd","asd");
-            StoreRequestDto requestDto = new StoreRequestDto(
-                    "storeName",
-                    "aaa",
-                    "aaa",
-                    123345687,
-                    LocalTime.of(1,0),
-                    LocalTime.of(12,0)
-            );
-            Store store = new Store(requestDto.getStoreName(),
-                    "123","123",12,StoreType.CLOSING,user1,1,requestDto.getOpeningTime(),requestDto.getClosingTime()
-                    ,new ArrayList<>(), new ArrayList<>()
-            );
+            StoreRequestDto requestDto = new StoreRequestDto();
+            requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
+            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.CLOSING, new User(), 1,
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
 
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
             given(storeRepository.findByStoreIdAndUser(anyLong(),any(User.class))).willReturn(store);
@@ -244,14 +195,8 @@ public class AdminStoreServiceTest {
         @Test
         void 가게_수정_유저_오류_테스트(){
             AuthUser authUser = new AuthUser("email@mail.com", UserRole.OWNER);
-            StoreRequestDto requestDto = new StoreRequestDto(
-                    "storeName",
-                    "aaa",
-                    "aaa",
-                    123345687,
-                    LocalTime.of(1,0),
-                    LocalTime.of(12,0)
-            );
+            StoreRequestDto requestDto = new StoreRequestDto();
+            requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
 
             given(userRepository.findByEmailOrElseThrow(anyString()))
                     .willThrow(new UserNotFoundException("유저를 찾을수 없습니다"));
@@ -267,18 +212,10 @@ public class AdminStoreServiceTest {
         void 가게_수정_테스트_정상(){
             AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
             User user1 = new User("qwe","qwe","qwe",UserRole.OWNER,"asd","asd");
-            StoreRequestDto requestDto = new StoreRequestDto(
-                    "storeName",
-                    "aaa",
-                    "aaa",
-                    123345687,
-                    LocalTime.of(1,0),
-                    LocalTime.of(12,0)
-            );
-            Store store = new Store(requestDto.getStoreName(),
-                    "123","123",12,StoreType.OPENING,user1,1,requestDto.getOpeningTime(),requestDto.getClosingTime()
-                    ,new ArrayList<>(), new ArrayList<>()
-            );
+            StoreRequestDto requestDto = new StoreRequestDto();
+            requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
+            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
 
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
             given(storeRepository.findByStoreIdAndUser(anyLong(),any(User.class))).willReturn(store);
@@ -314,7 +251,8 @@ public class AdminStoreServiceTest {
         void 가게_삭제_테스트_정상(){
             AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
             User user1 = new User("qwe","qwe","qwe",UserRole.ADMIN,"asd","asd");
-            Store store = new Store("qwe","qwe","qwe",1,StoreType.OPENING,user1,1,LocalTime.MIN,LocalTime.MAX,new ArrayList<>(), new ArrayList<>());
+            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
             given(storeRepository.findByStoreIdAndUser(anyLong(),any(User.class))).willReturn(store);
 
@@ -362,136 +300,19 @@ public class AdminStoreServiceTest {
         }
     }
 
-    @Nested
-    class SelectStore{
-        @Test
-        void 가게_조회_가게_오류_테스트(){
-            AuthUser authUser = new AuthUser("email@mail.com", UserRole.OWNER);
-            long storeId = 1L;
-
-            StoreNotFoundException exception = assertThrows(StoreNotFoundException.class, () ->
-                adminStoreServiceImpl.selectStore(authUser,storeId)
-            );
-
-            assertEquals("가게를 찾을 수 없습니다.", exception.getMessage());
-        }
-
-        @Test
-        void 가게_조회_일반_사용자_오류_테스트(){
-            AuthUser user = new AuthUser("email@mail.com", UserRole.USER);
-
-            UnauthorizedException exception = assertThrows(UnauthorizedException.class, () ->
-                    adminStoreServiceImpl.selectStore(user,1L)
-            );
-
-            assertEquals("어드민 사용자만 이용할 수 있습니다.", exception.getMessage());
-        }
-        @Test
-        void 가게_조회_폐업_오류_테스트(){
-            AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
-            User user1 = new User("qwe","qwe","qwe",UserRole.OWNER,"asd","asd");
-            lenient().when(userRepository.findByEmailOrElseThrow(anyString())).thenReturn(user1);
-
-            Store store = new Store("qwe","qwe","qwe",12,StoreType.CLOSING,user1,1,LocalTime.MIN,LocalTime.MAX,new ArrayList<>(), new ArrayList<>());
-
-            given(storeRepository.findById(anyLong())).willReturn(Optional.of(store));
-
-            StoreForbiddenException exception = assertThrows(StoreForbiddenException.class, () ->
-                    adminStoreServiceImpl.selectStore(user,1L)
-                    );
-
-            assertEquals("폐업한 가게는 조회할 수 없습니다.", exception.getMessage());
-        }
-
-        @Test
-        void 가게_조회_테스트_정상() {
-            AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
-            User user1 = new User("qwe", "qwe", "qwe", UserRole.OWNER, "asd", "asd");
-            lenient().when(userRepository.findByEmailOrElseThrow(anyString())).thenReturn(user1);
-
-            List<Menu> menus = new ArrayList<>();
-            Menu menu = Menu.builder()
-                    .store(new Store())
-                    .menuName("qw")
-                    .price(12)
-                    .build();
-            menus.add(menu);
-
-            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, user1, 1,
-                    LocalTime.MIN, LocalTime.MAX, menus, new ArrayList<>());
-
-            given(storeRepository.findById(anyLong())).willReturn(Optional.of(store));
-
-            SelectStoreResponseDto responseDto = adminStoreServiceImpl.selectStore(user, 1L);
-
-            assertNotNull(responseDto);
-            assertNotNull(responseDto.getStoreName());
-            assertNotNull(responseDto.getStoreAddress());
-            assertNotNull(responseDto.getStoreNumber());
-            assertNotNull(responseDto.getFavoriteCount());
-            assertNotNull(responseDto.getMenus().get(0).getMenuName());
-            assertNotNull(responseDto.getMenus().get(0).getPrice());
-        }
-    }
-
-
-    @Nested
-    class SelectAllStore{
-
-        @Test
-        void 모든가게_조회_일반_사용자_오류_테스트(){
-            AuthUser authUser = new AuthUser("email@mail.com", UserRole.USER);
-
-            UnauthorizedException exception = assertThrows(UnauthorizedException.class,() ->
-                    adminStoreServiceImpl.selectAllStore(authUser)
-                    );
-
-            assertEquals("어드민 사용자만 이용할 수 있습니다.", exception.getMessage());
-        }
-
-        @Test
-        void 모든가게_조회_가게_오류_테스트(){
-            AuthUser authUser = new AuthUser("email@mail.com", UserRole.OWNER);
-
-            StoreNotFoundException exception = assertThrows(StoreNotFoundException.class, () ->
-                    adminStoreServiceImpl.selectAllStore(authUser)
-                    );
-
-            assertEquals("가게를 찾지 못했습니다.", exception.getMessage());
-        }
-
-        @Test
-        void 모든가게_조회_테스트_정상(){
-            AuthUser authUser = new AuthUser("email@mail.com", UserRole.OWNER);
-            User user1 = new User("asd","asd","asd",UserRole.OWNER,"asd","asd");
-            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, user1, 1,
-                    LocalTime.MIN, LocalTime.MAX, new ArrayList<>(), new ArrayList<>());
-
-            given(storeRepository.findAllByStoreType(any(StoreType.class))).willReturn(List.of(store));
-
-            List<SelectAllStoreResponseDto> responseDtos = adminStoreServiceImpl.selectAllStore(authUser);
-
-            assertNotNull(responseDtos);
-            assertNotNull(responseDtos.get(0).getStoreName());
-            assertNotNull(responseDtos.get(0).getStoreAddress());
-            assertNotNull(responseDtos.get(0).getStoreNumber());
-            assertNotNull(responseDtos.get(0).getFavoriteCount());
-            assertNotNull(responseDtos.get(0).getStoreType());
-        }
-    }
-
 
     @Nested
     class ClosingStoreTest{
         @Test
         void 가게_폐업_이미_폐업_오류_테스트(){
-            ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto("폐업합니다");
+            ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto();
+            requestDto.testData("폐업합니다");
 
             AuthUser authUser = new AuthUser("email@mail.com", UserRole.OWNER);
             User user1 = new User("asd","asd","asd",UserRole.OWNER,"asd","asd");
             long storeId = 1L;
-            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.CLOSING, user1, 1,
-                    LocalTime.MIN, LocalTime.MAX, new ArrayList<>(), new ArrayList<>());
+            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.CLOSING, new User(), 1,
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
             lenient().when(userRepository.findByEmailOrElseThrow(anyString())).thenReturn(user1);
 
             given(storeRepository.findByStoreIdAndUser(anyLong(), any(User.class))).willReturn(store);
@@ -507,7 +328,8 @@ public class AdminStoreServiceTest {
         @Test
         void 가게_폐업_일반_사용자_오류_테스트(){
             AuthUser authUser = new AuthUser("email@mail.com", UserRole.USER);
-            ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto("폐업합니다");
+            ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto();
+            requestDto.testData("폐업합니다");
 
             UnauthorizedException exception = assertThrows(UnauthorizedException.class,() ->
                     adminStoreServiceImpl.closingStore(authUser,1L,requestDto)
@@ -518,7 +340,8 @@ public class AdminStoreServiceTest {
         @Test
         void 가게_폐업_유저_오류_테스트(){
             AuthUser authUser = new AuthUser("email@mail.com", UserRole.OWNER);
-            ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto("폐업합니다");
+            ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto();
+            requestDto.testData("폐업합니다");
 
             given(userRepository.findByEmailOrElseThrow(anyString()))
                     .willThrow(new UserNotFoundException("유저를 찾을수 없습니다"));
@@ -532,13 +355,14 @@ public class AdminStoreServiceTest {
 
         @Test
         void 가게_폐업_테스트_정상(){
-            ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto("폐업합니다");
+            ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto();
+            requestDto.testData("폐업합니다");
 
             AuthUser authUser = new AuthUser("email@mail.com", UserRole.OWNER);
             User user1 = new User("asd","asd","asd",UserRole.OWNER,"asd","asd");
             long storeId = 1L;
-            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, user1, 1,
-                    LocalTime.MIN, LocalTime.MAX, new ArrayList<>(), new ArrayList<>());
+            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
             lenient().when(userRepository.findByEmailOrElseThrow(anyString())).thenReturn(user1);
 
             given(storeRepository.findByStoreIdAndUser(anyLong(), any(User.class))).willReturn(store);
@@ -552,13 +376,14 @@ public class AdminStoreServiceTest {
 
         @Test
         void 가게_페업_테스트_실패(){
-            ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto("안 함");
+            ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto();
+            requestDto.testData("ㅇ");
 
             AuthUser authUser = new AuthUser("email@mail.com", UserRole.OWNER);
             User user1 = new User("asd","asd","asd",UserRole.OWNER,"asd","asd");
             long storeId = 1L;
-            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, user1, 1,
-                    LocalTime.MIN, LocalTime.MAX, new ArrayList<>(), new ArrayList<>());
+            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
             lenient().when(userRepository.findByEmailOrElseThrow(anyString())).thenReturn(user1);
 
             given(storeRepository.findByStoreIdAndUser(anyLong(), any(User.class))).willReturn(store);

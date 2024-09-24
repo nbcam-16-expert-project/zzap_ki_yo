@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nbacm.zzap_ki_yo.domain.advice.ControllerAdvice;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.ClosingStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
-import com.nbacm.zzap_ki_yo.domain.store.dto.response.*;
+import com.nbacm.zzap_ki_yo.domain.store.dto.response.ClosingStoreResponseDto;
+import com.nbacm.zzap_ki_yo.domain.store.dto.response.CreateStoreResponseDto;
+import com.nbacm.zzap_ki_yo.domain.store.dto.response.UpdateStoreResponseDto;
+import com.nbacm.zzap_ki_yo.domain.store.entity.AdType;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
 import com.nbacm.zzap_ki_yo.domain.store.service.AdminStoreServiceImpl;
 import com.nbacm.zzap_ki_yo.domain.user.common.config.AuthUserArgumentResolver;
@@ -15,6 +18,8 @@ import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,8 +28,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -37,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AdminStoreController.class)
 public class AdminStoreControllerTest {
 
+    private static final Logger log = LoggerFactory.getLogger(AdminStoreControllerTest.class);
     @Autowired
     private MockMvc mockMvc;
 
@@ -69,7 +73,8 @@ public class AdminStoreControllerTest {
 
     @Test
     void 가게_저장_테스트() throws Exception {
-        StoreRequestDto requestDto = new StoreRequestDto("qwe","qwe","qwe",1, LocalTime.MIN,LocalTime.MAX);
+        StoreRequestDto requestDto = new StoreRequestDto();
+        requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
         CreateStoreResponseDto responseDto = CreateStoreResponseDto.builder()
                 .storeId(1L)
                 .orderMinPrice(1)
@@ -90,8 +95,9 @@ public class AdminStoreControllerTest {
 
 
     @Test
-    void 가게_수정_태스트() throws Exception {
-        StoreRequestDto requestDto = new StoreRequestDto("qwe","qwe","qwe",1, LocalTime.MIN,LocalTime.MAX);
+    void 가게_수정_테스트() throws Exception {
+        StoreRequestDto requestDto = new StoreRequestDto();
+        requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
         UpdateStoreResponseDto responseDto = UpdateStoreResponseDto.builder()
                 .storeNumber("asd")
                 .closingTime(LocalTime.MAX)
@@ -112,13 +118,17 @@ public class AdminStoreControllerTest {
 
     @Test
     void 가게_폐업_테스트() throws Exception {
-        ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto("페업합니다");
-        ClosingStoreResponseDto responseDto = new ClosingStoreResponseDto("asd",StoreType.CLOSING);
+        ClosingStoreRequestDto requestDto = new ClosingStoreRequestDto();
+        requestDto.testData("폐업합니다");
+        ClosingStoreResponseDto responseDto = ClosingStoreResponseDto.builder()
+                .storeType(StoreType.CLOSING)
+                .storeName("asd").build();
+        long storeId = 1L;
 
-        given(adminStoreService.closingStore(any(AuthUser.class),anyLong(),any(ClosingStoreRequestDto.class)))
-                .willReturn(responseDto);
+        when(adminStoreService.closingStore(any(AuthUser.class), any(Long.class), any(ClosingStoreRequestDto.class)))
+                .thenReturn(responseDto);
 
-        mockMvc.perform(patch("/api/v1/admin/stores/{storeId}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/stores/{storeId}", storeId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk());
@@ -130,40 +140,6 @@ public class AdminStoreControllerTest {
 
         mockMvc.perform(delete("/api/v1/admin/stores/{storeId}", 1L)).
                 andExpect(status().isNoContent());
-    }
-
-    @Test
-    void 가게_조회_테스트() throws Exception {
-        SelectStoreResponseDto responseDto = SelectStoreResponseDto.builder()
-                .menus(new ArrayList<>())
-                .storeId(1L)
-                .storeNumber("Asd")
-                .favoriteCount(1)
-                .storeAddress("aasd")
-                .storeName("Asd")
-                .build();
-
-        given(adminStoreService.selectStore(any(),anyLong())).willReturn(responseDto);
-
-        mockMvc.perform(get("/api/v1/admin/stores/{storeId}", 1L)
-                ).andExpect(status().isOk());
-    }
-
-    @Test
-    void 모든_가게_조회_테스트() throws Exception {
-        SelectAllStoreResponseDto responseDto = SelectAllStoreResponseDto.builder()
-                .storeType(StoreType.OPENING)
-                .storeId(1L)
-                .storeAddress("asd")
-                .storeName("asd")
-                .favoriteCount(1)
-                .storeNumber("asd")
-                .build();
-
-        given(adminStoreService.selectAllStore(any())).willReturn(List.of(responseDto));
-
-        mockMvc.perform(get("/api/v1/admin/stores")
-        ).andExpect(status().isOk());
     }
 
 

@@ -11,8 +11,10 @@ import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.*;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
+import com.nbacm.zzap_ki_yo.domain.store.exception.StoreBadRequestException;
 import com.nbacm.zzap_ki_yo.domain.store.exception.StoreForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.store.exception.StoreNotFoundException;
+import com.nbacm.zzap_ki_yo.domain.store.exception.StoreUnauthorizedException;
 import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
@@ -47,7 +49,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
         if(storeRequestDto.getStoreAddress() == null
                 || storeRequestDto.getStoreNumber() == null
                 || storeRequestDto.getStoreName() == null){
-            throw new BadRequestException("등록할 가게 이름, 주소, 번호가 없으면 안 됩니다.");
+            throw new StoreBadRequestException("등록할 가게 이름, 주소, 번호가 없으면 안 됩니다.");
         }
 
         User user = userRepository.findByEmailOrElseThrow(authUser.getEmail());
@@ -96,49 +98,6 @@ public class AdminStoreServiceImpl implements AdminStoreService {
     }
 
 
-    @Override
-    public SelectStoreResponseDto selectStore(AuthUser authUser, String storeName) {
-        roleAdminCheck(authUser);
-
-        Store store = storeRepository.findByStoreName(storeName).orElseThrow(() ->
-                new StoreNotFoundException("가게를 찾을 수 없습니다."));
-
-        if(store.getStoreType().equals(StoreType.CLOSING)){
-            throw new StoreForbiddenException("폐업한 가게는 조회할 수 없습니다.");
-        }
-
-        List<Menu> menus = store.getMenus();
-
-        List<MenuNamePrice> menuNamePrices = new ArrayList<>();
-        for (Menu menu : menus) {
-            MenuNamePrice menuNamePrice = MenuNamePrice.builder()
-                    .menuName(menu.getMenuName())
-                    .price(menu.getPrice())
-                    .build();
-
-            menuNamePrices.add(menuNamePrice);
-        }
-
-        return SelectStoreResponseDto.selectStore(store, menuNamePrices);
-    }
-
-    @Override
-    public List<SelectAllStoreResponseDto> selectAllStore(AuthUser authUser) {
-        roleAdminCheck(authUser);
-        List<Store> storeList = storeRepository.findAllByStoreType(StoreType.OPENING).stream().toList();
-        if(storeList.isEmpty()){
-            throw new StoreNotFoundException("가게를 찾지 못했습니다.");
-        }
-        List<SelectAllStoreResponseDto> selectAllStoreResponseDtos = new ArrayList<>();
-        for (Store store : storeList) {
-            SelectAllStoreResponseDto responseDto = SelectAllStoreResponseDto.selectAllStore(store);
-
-            selectAllStoreResponseDtos.add(responseDto);
-        }
-
-        return selectAllStoreResponseDtos;
-    }
-
     @Transactional
     @Override
     public ClosingStoreResponseDto closingStore(AuthUser authUser, Long storeId, ClosingStoreRequestDto requestDto) {
@@ -165,7 +124,7 @@ public class AdminStoreServiceImpl implements AdminStoreService {
     private void roleAdminCheck(AuthUser authUser){
         UserRole role = authUser.getRole();
         if(role.equals(UserRole.USER)){
-           throw new UnauthorizedException("어드민 사용자만 이용할 수 있습니다.");
+           throw new StoreUnauthorizedException("어드민 사용자만 이용할 수 있습니다.");
         }
     }
 
