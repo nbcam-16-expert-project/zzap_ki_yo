@@ -1,10 +1,14 @@
 package com.nbacm.zzap_ki_yo.domain.store.dto.response;
 
+import com.nbacm.zzap_ki_yo.domain.favorite.entity.Favorite;
 import com.nbacm.zzap_ki_yo.domain.store.entity.AdType;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.Length;
+
+import java.util.List;
 
 @Data
 public class SelectAllStoreResponseDto {

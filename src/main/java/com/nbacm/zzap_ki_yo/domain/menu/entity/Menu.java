@@ -31,6 +31,8 @@ public class Menu {
     @Enumerated(EnumType.STRING)
     private MenuStatus status = MenuStatus.AVAILABLE;
 
+    
+
     @Builder
     public Menu(String menuName, Integer price, Store store) {
         this.menuName = menuName;
