@@ -1,13 +1,14 @@
 package com.nbacm.zzap_ki_yo.domain.search.service;
 
 
-import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.menu.repository.MenuRepository;
 import com.nbacm.zzap_ki_yo.domain.search.dto.PopularWordResponseDto;
 import com.nbacm.zzap_ki_yo.domain.search.dto.SearchResponseDto;
 import com.nbacm.zzap_ki_yo.domain.search.dto.StoreNameDto;
 import com.nbacm.zzap_ki_yo.domain.search.entity.PopularWord;
+import com.nbacm.zzap_ki_yo.domain.search.exception.SearchWordBadRequestException;
+import com.nbacm.zzap_ki_yo.domain.search.exception.SearchNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.search.repository.PopularWordRepository;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.MenuNamePrice;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
@@ -16,7 +17,6 @@ import com.nbacm.zzap_ki_yo.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +38,10 @@ public class SearchService {
     public SearchResponseDto search(String keyword, Pageable pageable) {
 
         PopularWord popularWord = popularWordRepository.findByWord(keyword);
+
+        if(keyword.equals(" ")){
+            throw new SearchWordBadRequestException("공백은 검색 할 수 없습니다.");
+        }
 
         if(popularWord == null) {
             PopularWord word = PopularWord.create(keyword, 1L);
@@ -64,7 +68,7 @@ public class SearchService {
         }
 
         if(storeNameDtos.isEmpty() && menuNamePrices.isEmpty()) {
-            throw new NotFoundException("검색 결과가 없습니다.");
+            throw new SearchNotFoundException("검색 결과가 없습니다.");
         }
 
         return SearchResponseDto.build(storeNameDtos,menuNamePrices);
@@ -75,7 +79,7 @@ public class SearchService {
         List<PopularWord> popularWord = popularWordRepository.findTop10ByOrderByPopularityDesc();
 
         if(popularWord.isEmpty()) {
-            throw new NotFoundException("인기 검색어가 없습니다.");
+            throw new SearchNotFoundException("인기 검색어가 없습니다.");
         }
 
         List<PopularWordResponseDto> responseDtos = new ArrayList<>();
