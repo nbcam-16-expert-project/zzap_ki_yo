@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
-import com.nbacm.zzap_ki_yo.domain.store.converter.CategoryListConverter;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -17,6 +16,7 @@ import org.hibernate.annotations.BatchSize;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -57,7 +57,7 @@ public class Store {
     @Column(name = "order_min_price" , nullable = false)
     private Integer orderMinPrice;
     //가게 공지
-    @Column(name = "store_notice")
+    @Column(name = "store_notice", nullable = true)
     private String storeNotice;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -76,10 +76,11 @@ public class Store {
     @JsonManagedReference
     private List<Order> orders;
 
-     //Enum 을 리스트로 받기 위해 converter 사용
-    @Convert(converter = CategoryListConverter.class)
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "store_categories", joinColumns = @JoinColumn(name = "store_id"))
     @Column(name = "category")
-    private List<Category> categoryList;
+    private List<Category> categoryList = new ArrayList<>();
 
 
     @Builder
@@ -105,6 +106,7 @@ public class Store {
         this.openingTime = dto.getOpeningTime();
         this.closingTime = dto.getClosingTime();
         this.orderMinPrice = dto.getOrderMinPrice();
+        this.storeNotice = dto.getStoreNotice();
     }
 
 
@@ -123,6 +125,7 @@ public class Store {
                 .favoriteCount(0)
                 .user(user)
                 .storeType(StoreType.OPENING)
+                .storeNotice(dto.getStoreNotice())
                 .build();
 
     }

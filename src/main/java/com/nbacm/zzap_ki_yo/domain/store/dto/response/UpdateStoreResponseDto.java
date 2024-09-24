@@ -16,22 +16,24 @@ public class UpdateStoreResponseDto {
     private Integer orderMinPrice;
     private LocalTime openingTime;
     private LocalTime closingTime;
+    private String storeNotice;
 
 
     @Builder
     private UpdateStoreResponseDto(String storeName, String storeAddress, String storeNumber
-    , Integer orderMinPrice, LocalTime openingTime, LocalTime closingTime) {
+    , Integer orderMinPrice, LocalTime openingTime, LocalTime closingTime, String storeNotice) {
         this.storeName = storeName;
         this.storeAddress = storeAddress;
         this.storeNumber = storeNumber;
         this.orderMinPrice = orderMinPrice;
         this.openingTime = openingTime;
         this.closingTime = closingTime;
+        this.storeNotice = storeNotice;
     }
 
     public static UpdateStoreResponseDto updateStoreName(Store store) {
         return new UpdateStoreResponseDto(store.getStoreName(), store.getStoreAddress(), store.getStoreNumber()
-        , store.getOrderMinPrice(), store.getOpeningTime(), store.getClosingTime());
+        , store.getOrderMinPrice(), store.getOpeningTime(), store.getClosingTime(), store.getStoreNotice());
     }
 
 }

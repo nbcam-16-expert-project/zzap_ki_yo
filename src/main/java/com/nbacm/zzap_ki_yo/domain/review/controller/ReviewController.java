@@ -29,20 +29,20 @@ public class ReviewController {
     @PostMapping("/{reviewId}")
     public ResponseEntity<ReviewSaveResponseDto> saveReplyReview (@PathVariable Long reviewId,
                                                                   @Auth AuthUser authUser,
-                                                                  @RequestBody ReviewSaveRequestDto reviewSaveRequestDto){
+                                                                  @RequestBody ReviewCommentDto reviewCommentDto){
         String email = authUser.getEmail();
-        return ResponseEntity.ok(reviewService.saveReplyReview(reviewId,email,reviewSaveRequestDto));
+        return ResponseEntity.ok(reviewService.saveReplyReview(reviewId,email,reviewCommentDto));
     }
 
 
     // 리뷰 조회
-    @GetMapping
-    public ResponseEntity<Page<ReviewSimpleResponseDto>> getReviewList (@RequestBody Long storeId,
-                                                                     @RequestParam (defaultValue = "0", required = false) int pageNo,
-                                                                     @RequestParam (defaultValue = "10", required = false) int size,
+    @GetMapping("{storeId}")
+    public ResponseEntity<Page<ReviewSimpleResponseDto>> getReviewList (@PathVariable Long storeId,
+                                                                        @RequestParam (defaultValue = "0", required = false) int pageNo,
+                                                                        @RequestParam (defaultValue = "10", required = false) int size,
                                                                         @RequestParam (defaultValue = "0", required = false) int minStarPoint,
                                                                         @RequestParam (defaultValue = "5", required = false) int maxStarPoint){
-        return ResponseEntity.ok(reviewService.getReviewList(storeId,minStarPoint,maxStarPoint,pageNo,size));
+        return ResponseEntity.ok(reviewService.getReviewList(storeId,pageNo,size,minStarPoint,maxStarPoint));
     }
 
     // 리뷰 수정

@@ -13,7 +13,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o WHERE o.user.userId = :userId")
     List<Order> findAllByUserId(@Param("userId") Long userId);
 
-    default Order findByOrderOrElseThrow(Long OrderId){
+    default Order findByOrderIdOrElseThrow(Long OrderId){
         return this.findById(OrderId).orElseThrow(()-> new NotFoundException("주문을 찾을 수 없습니다."));
     }
+
 }

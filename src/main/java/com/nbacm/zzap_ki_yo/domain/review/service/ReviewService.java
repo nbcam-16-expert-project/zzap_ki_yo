@@ -1,16 +1,12 @@
 package com.nbacm.zzap_ki_yo.domain.review.service;
 
 
-import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
 import com.nbacm.zzap_ki_yo.domain.exception.UnauthorizedException;
 import com.nbacm.zzap_ki_yo.domain.exception.UncompletedException;
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import com.nbacm.zzap_ki_yo.domain.order.entity.OrderStatus;
 import com.nbacm.zzap_ki_yo.domain.order.repository.OrderRepository;
-import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewSaveRequestDto;
-import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewSaveResponseDto;
-import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewSimpleResponseDto;
-import com.nbacm.zzap_ki_yo.domain.review.dto.ReviewUpdateResponseDto;
+import com.nbacm.zzap_ki_yo.domain.review.dto.*;
 import com.nbacm.zzap_ki_yo.domain.review.entity.Review;
 import com.nbacm.zzap_ki_yo.domain.review.exception.ReviewNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.review.exception.ReviewUnauthorizedException;
@@ -45,7 +41,7 @@ public class ReviewService {
         User authUser = userRepository.findByEmailOrElseThrow(email);
 
         // 해당 주문이 존재하는지 확인
-        Order order = orderRepository.findByOrderOrElseThrow(reviewSaveRequestDto.getOrderId());
+        Order order = orderRepository.findByOrderIdOrElseThrow(reviewSaveRequestDto.getOrderId());
 
         // 주문 상태 확인
         if (!order.getOrderStatus().equals(OrderStatus.COMPLETE)){
@@ -80,31 +76,26 @@ public class ReviewService {
     @Transactional
     public ReviewSaveResponseDto saveReplyReview(Long reviewId,
                                                  String email,
-                                                 ReviewSaveRequestDto reviewSaveRequestDto) {
+                                                 ReviewCommentDto reviewCommentDto) {
         // email 정보로 유저 객체 추출
         User authUser = userRepository.findByEmailOrElseThrow(email);
 
         //주문이 있는지 확인
-        Order order = orderRepository.findById(reviewSaveRequestDto.getOrderId()).
-                orElseThrow(()-> new NotFoundException("주문을 찾을 수 없습니다."));
+        Order order = orderRepository.findByOrderIdOrElseThrow(reviewCommentDto.getOrderId());
 
         // 리뷰가 있는지 확인 (부모 리뷰)
         Review parentReview = reviewRepository.findById(reviewId).
                 orElseThrow(()-> new ReviewNotFoundException("리뷰를 찾을 수 없습니다."));
 
-//        // 본인 리뷰에 본인이 답글 authUser != authUser 월요일에 확인 필요!!
-//        if (parentReview.getOrder().getUser().equals(authUser)){
-//            throw new UnauthorizedException("본인이 작성한 리뷰에는 답글을 작성할 수 없습니다.");
-//        }
 
         // 일단 사장님,짭기요만 리뷰에 답글을 등록할 수 있도록 설정
-        if (!authUser.getUserRole().equals(UserRole.ADMIN) && !authUser.getUserRole().equals(UserRole.OWNER)){
+        if (authUser.getUserRole().equals(UserRole.USER)){
             throw new ReviewUnauthorizedException("리뷰에 답글은 사장님 혹은 짭기요 관리자만 작성할 수 있습니다.");
         }
 
 
         // 답글 (리뷰에 작성하는 리뷰)
-        Review newReview = Review.builder(order,reviewSaveRequestDto.getContent()).
+        Review newReview = Review.builder(order,reviewCommentDto.getContent()).
                 parentReview(parentReview).build();
 
         reviewRepository.save(newReview);
@@ -113,8 +104,8 @@ public class ReviewService {
                 orderId(newReview.getOrder().getOrderId()).
                 reviewId(newReview.getReviewId()).
                 parentReviewId(newReview.getParentReview().getReviewId()).
+                starPoint(parentReview.getStarPoint()).
                 content(newReview.getContent()).
-                starPoint(newReview.getStarPoint()).
                 createdAt(newReview.getCreatedAt()).
                 modifiedAt(newReview.getModifiedAt()).build();
     }
@@ -132,9 +123,11 @@ public class ReviewService {
         // 페이징 + 리뷰를 가장 최근에 수정한 순서대로 정렬
         Pageable pageable = PageRequest.of(pageNo,size, Sort.by("modifiedAt").descending());
 
+
         // 가게에 있는 별점으로 조회할 구간 설정 따로 입력하지 않으면 0~5 모두 보여줌
         Page<Review> reviewList = reviewRepository.
-                findBystarPoint(storeId,minStarPoint,maxStarPoint,pageable);
+                findReviewsByStoreIdAndStarPointRange(storeId,minStarPoint,maxStarPoint,pageable);
+
 
         // 찾은 리뷰를 Dto 에 담아서 리턴
         return reviewList.map(ReviewSimpleResponseDto::new);
