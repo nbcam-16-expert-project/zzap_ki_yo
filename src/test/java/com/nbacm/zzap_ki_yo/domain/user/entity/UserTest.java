@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.user.entity;
+package com.nbacm.zzap_ki_yo.domain.user.entity;
 
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;

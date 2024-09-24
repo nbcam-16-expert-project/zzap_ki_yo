@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.cart.service;
+package com.nbacm.zzap_ki_yo.domain.cart.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
