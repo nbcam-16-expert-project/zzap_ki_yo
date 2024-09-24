@@ -1,10 +1,11 @@
 package com.nbacm.zzap_ki_yo.domain.store.dto.request;
 
-import lombok.AllArgsConstructor;
 import com.nbacm.zzap_ki_yo.domain.store.entity.AdType;
+import com.nbacm.zzap_ki_yo.domain.store.entity.Category;
 import lombok.Data;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 public class StoreRequestDto {
@@ -15,7 +16,10 @@ public class StoreRequestDto {
     private Integer orderMinPrice;
     private LocalTime openingTime;
     private LocalTime closingTime;
+    private String storeNotice;
+    private List<Category> categoryList;
     private AdType adType;
+    private Integer favoriteCount;
 
 
 
