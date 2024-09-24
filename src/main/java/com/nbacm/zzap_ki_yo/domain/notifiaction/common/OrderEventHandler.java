@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.domain.order.common;
+package com.nbacm.zzap_ki_yo.domain.notifiaction.common;
 
 import com.nbacm.zzap_ki_yo.domain.order.entity.Order;
 import org.springframework.context.event.EventListener;
@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
 public class OrderEventHandler {
+
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
     public SseEmitter createEmitter() {
