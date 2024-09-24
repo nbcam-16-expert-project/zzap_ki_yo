@@ -139,6 +139,7 @@ class CouponServiceImplTest {
         setField(coupon, "user", user);
         setField(coupon, "expiryPeriod", Period.ofDays(30));
         setField(coupon, "store", store);
+
         List<Coupon> coupons = new ArrayList<>();
         coupons.add(coupon);
 
@@ -148,6 +149,32 @@ class CouponServiceImplTest {
         List<CouponResponse> responseList = service.getAllCoupons(email);
         // t
         assertNotNull(responseList);
+    }
+
+    @Test
+    void deleteCoupon() {
+        //g
+        Long storeId = 1L;
+        Store store = new Store();
+        setField(store, "storeId", storeId);
+        List<Store> stores = new ArrayList<>();
+        stores.add(store);
+
+        String email = "test@test.com";
+        User user = new User();
+        setField(user, "email", email);
+        setField(user, "stores", stores);
+
+        Long couponId = 1L;
+        Coupon coupon = new Coupon();
+        setField(coupon, "id", couponId);
+
+        //w
+        couponRepository.save(coupon);
+        couponRepository.delete(coupon);
+
+        //t
+        assertEquals(0, couponRepository.count());
     }
 }
 

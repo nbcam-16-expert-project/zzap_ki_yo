@@ -74,7 +74,7 @@ public class CouponServiceImpl implements CouponService {
         return couponResponse;
     }
 
-    // 보유 쿠폰 조회(유저, 관리자)
+    // 보유 쿠폰 조회(유저)
     @Override
     public List<CouponResponse> getAllCoupons(String email) {
 
@@ -131,7 +131,7 @@ public class CouponServiceImpl implements CouponService {
         return couponResponseList;
     }
 
-    // 쿠폰 발행취소(삭제, 사장)
+    // 쿠폰 발행취소(삭제, 사장, 관리자)
     @Override
     public void deleteCoupon(
             String email,
