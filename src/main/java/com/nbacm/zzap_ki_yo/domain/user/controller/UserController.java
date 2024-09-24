@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1")
 @RestController
 @Slf4j
 public class UserController {
@@ -24,19 +24,19 @@ public class UserController {
     private final JwtUtils jwtUtils;
 
 
-    @PostMapping
+    @PostMapping("/users")
     public ResponseEntity<UserResponseDto> signUp(@RequestBody @Valid UserRequestDto userRequestDto) {
         UserResponseDto user = userService.signUp(userRequestDto);
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/users/login")
     public ResponseEntity<String> login(@RequestBody UserRequestDto userRequestDto) {
         String token = userService.login(userRequestDto);
         return ResponseEntity.ok(token);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/users/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
         String expiredToken = userService.logout(token.replace(JwtUtils.BEARER_PREFIX,""));
         return ResponseEntity.ok()
@@ -44,7 +44,7 @@ public class UserController {
                 .body(expiredToken);
     }
 
-    @PostMapping("/update")
+    @PutMapping ("/users/update")
     public ResponseEntity<UserResponseDto> update(@RequestBody UserRequestDto userRequestDto, @Auth AuthUser authUser) {
         String email = authUser.getEmail();
         log.info("email:{}",email);
@@ -53,7 +53,7 @@ public class UserController {
         return ResponseEntity.ok(updateUser);
     }
 
-    @PostMapping("/admin/update")
+    @PutMapping("/admin/update")
     public ResponseEntity<UserResponseDto> updateAdmin(@RequestBody UserRequestDto userRequestDto, @Auth AuthUser authUser) {
         try {
             String email = authUser.getEmail();
@@ -65,13 +65,15 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/users/delete")
     public ResponseEntity<String> deleteAccount(@RequestBody UserRequestDto userRequestDto,@Auth AuthUser authUser) {
         String email  = authUser.getEmail();
         userService.deleteUser(email,userRequestDto.getPassword());
         return ResponseEntity.noContent().build();
     }
-    @GetMapping(value = "/oauth2/kakao", produces = "application/json;charset=UTF-8")
+
+
+    @GetMapping(value = "/users/oauth2/kakao", produces = "application/json;charset=UTF-8")
     public ResponseEntity<String> kakaoLogin(@RequestParam("code") String code) {
         log.info("Received Kakao auth code: {}", code);
         try {

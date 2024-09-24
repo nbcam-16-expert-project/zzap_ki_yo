@@ -1,6 +1,5 @@
 package com.nbacm.zzap_ki_yo.domain.order.controller;
 
-import com.nbacm.zzap_ki_yo.domain.order.common.OrderEventHandler;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveRequest;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderSaveResponse;
 import com.nbacm.zzap_ki_yo.domain.order.dto.OrderUpdateRequest;
@@ -8,10 +7,8 @@ import com.nbacm.zzap_ki_yo.domain.order.service.OrderServiceImpl;
 import com.nbacm.zzap_ki_yo.domain.user.common.Auth;
 import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -21,13 +18,6 @@ import java.util.List;
 public class OrderController {
 
     private final OrderServiceImpl orderServiceImpl;
-    private final OrderEventHandler orderEventHandler;
-
-
-    @GetMapping(value = "/orders/stream", produces = {MediaType.TEXT_EVENT_STREAM_VALUE, MediaType.ALL_VALUE})
-    public SseEmitter streamOrders() {
-        return orderEventHandler.createEmitter();
-    }
 
     // 주문하기.
     @PostMapping("/stores/{storeId}/orders")
