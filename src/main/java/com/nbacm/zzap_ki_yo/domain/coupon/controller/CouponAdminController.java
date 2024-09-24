@@ -46,17 +46,18 @@ public class CouponAdminController {
             @PathVariable Long storeId
     ){
         String email = authUser.getEmail();
-        return ResponseEntity.ok(couponServiceImpl.getAllCouponsByStoreIdAdmin(email, storeId));
+        return ResponseEntity.ok(couponServiceImpl.getAllCouponsByStoreId(email, storeId));
     }
 
     // 쿠폰 삭제
     @DeleteMapping("/stores/{storeId}/admin/coupons/{couponId}")
     public void deleteCoupon(
             @Auth AuthUser authUser,
+            @PathVariable Long storeId,
             @PathVariable Long couponId
     ) {
         String email = authUser.getEmail();
-        couponServiceImpl.deleteCouponAdmin(email, couponId);
+        couponServiceImpl.deleteCoupon(email, storeId, couponId);
     }
 }
 

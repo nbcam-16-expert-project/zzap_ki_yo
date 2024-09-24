@@ -74,40 +74,7 @@ public class CouponServiceImpl implements CouponService {
         return couponResponse;
     }
 
-    /*// 쿠폰 생성(관리자)
-    @Transactional
-    @Override
-    public CouponResponse saveCouponAdmin(Long storeId, CouponRequest couponRequest, String email) {
-
-        User user = userRepository.findById(couponRequest.getUserId())
-                .orElseThrow(() -> new NotFoundException("해당 쿠폰 발급 대상 유저는 없는 유저입니다"));
-
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new StoreNotFoundException("해당 가게는 없는 가게입니다."));
-
-        // 할인율이 0~100사이의 정수인지 확인
-        if(couponRequest.getDiscountRate().intValue()>100 || couponRequest.getDiscountRate().intValue()<0){
-            throw new DiscountRateException("할인율(백분율)은 0에서 100 사이의 정수여야 합니다.");
-        }
-
-        Coupon coupon = Coupon.builder()
-                .discountRate(couponRequest.getDiscountRate())
-                .minPrice(couponRequest.getMinPrice())
-                .maxDiscount(couponRequest.getMaxDiscount())
-                .couponStatus(CouponStatus.USABLE)
-                .user(user)
-                .expiryPeriod(Period.ofDays(couponRequest.getExpiryPeriod()))
-                .store(store)
-                .build();
-
-        couponRepository.save(coupon);
-
-        CouponResponse couponResponse = CouponResponse.createCouponResponse(coupon);
-
-        return couponResponse;
-    }*/
-
-    // 보유 쿠폰 조회(유저)
+    // 보유 쿠폰 조회(유저, 관리자)
     @Override
     public List<CouponResponse> getAllCoupons(String email) {
 
@@ -133,14 +100,8 @@ public class CouponServiceImpl implements CouponService {
                 .orElseThrow(() -> new StoreNotFoundException("해당 가게는 없는 가게입니다."));
 
         // 조회 요청자가 해당 가게의 사장이 맞는지 확인
-        for (Store ownstore : owner.getStores()){
-            int i = 0;
-            if(!ownstore.equals(store)){
-                i++;
-            }
-            if (owner.getStores().size() == i){
-                throw new CouponForbiddenException("해당 가게의 소유자만 쿠폰을 조회할 수 있습니다.");
-            }
+        if(!owner.getStores().contains(store) && !owner.getUserRole().equals(UserRole.ADMIN)){
+            throw new CouponForbiddenException("해당 가게의 소유자만 쿠폰을 조회할 수 있습니다.");
         }
 
         List<Coupon> couponList = couponRepository.findByStore(store);
@@ -170,23 +131,6 @@ public class CouponServiceImpl implements CouponService {
         return couponResponseList;
     }
 
-    // 특정 가게가 발생한 쿠폰 조회(관리자)
-    @Override
-    public List<CouponResponse> getAllCouponsByStoreIdAdmin (String email, Long storeId){
-
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new StoreNotFoundException("해당 가게는 없는 가게입니다."));
-
-        List<Coupon> couponList = couponRepository.findByStore(store);
-
-        List<CouponResponse> couponResponseList = new ArrayList<>();
-        for(Coupon coupon : couponList){
-            couponResponseList.add(CouponResponse.createCouponResponse(coupon));
-        }
-
-        return couponResponseList;
-    }
-
     // 쿠폰 발행취소(삭제, 사장)
     @Override
     public void deleteCoupon(
@@ -200,28 +144,10 @@ public class CouponServiceImpl implements CouponService {
                 .orElseThrow(() -> new StoreNotFoundException("해당 가게는 없는 가게입니다."));
 
         // 삭제 요청자가 해당 가게의 사장이 맞는지 확인
-        for (Store ownstore : owner.getStores()){
-            int i = 0;
-            if(!ownstore.equals(store)){
-                i++;
-            }
-            if (owner.getStores().size() == i){
-                throw new CouponForbiddenException("해당 가게의 소유자만 쿠폰을 삭제할 수 있습니다.");
-            }
+        if(!owner.getStores().contains(store) && !owner.getUserRole().equals(UserRole.ADMIN)){
+            throw new CouponForbiddenException("해당 가게의 소유자만 쿠폰을 삭제할 수 있습니다.");
         }
 
-        Coupon coupon = couponRepository.findById(couponId)
-                .orElseThrow(()-> new CouponNotFoundException("해당 쿠폰은 없는 쿠폰입니다."));
-
-        couponRepository.delete(coupon);
-    }
-
-    // 쿠폰 발행취소(삭제, 관리자)
-    @Override
-    public void deleteCouponAdmin(
-            String email,
-            Long couponId
-    ){
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(()-> new CouponNotFoundException("해당 쿠폰은 없는 쿠폰입니다."));
 
