@@ -10,7 +10,7 @@ import com.nbacm.zzap_ki_yo.domain.coupon.exception.CouponNotFoundException;
 import com.nbacm.zzap_ki_yo.domain.coupon.repository.CouponRepository;
 import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StatisticsResponseDto;
 import com.nbacm.zzap_ki_yo.domain.dashboard.entity.Statistics;
-import com.nbacm.zzap_ki_yo.domain.dashboard.repository.StoreStatisticsRepository;
+import com.nbacm.zzap_ki_yo.domain.dashboard.repository.StatisticsRepository;
 import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
 import com.nbacm.zzap_ki_yo.domain.exception.NotFoundException;
 import com.nbacm.zzap_ki_yo.domain.menu.exception.MenuNotFoundException;
@@ -62,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
     private final StoreRepository storeRepository;
     private final OrderedMenuRepository orderedMenuRepository;
     private final UserRepository userRepository;
-    private final StoreStatisticsRepository storeStatisticsRepository;
+    private final StatisticsRepository statisticsRepository;
     private final RedisTemplate<String, Object> redisObjectTemplate;
     private final CouponRepository couponRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -301,7 +301,7 @@ public class OrderServiceImpl implements OrderService {
 
     public void updateStoreStatistics(Store store, int totalPrice) {
         LocalDate today = LocalDate.now();
-        Statistics statistics = storeStatisticsRepository.findByStoreIdAndDateBetween(store.getStoreId(), today, today)
+        Statistics statistics = statisticsRepository.findByStoreIdAndDateBetween(store.getStoreId(), today, today)
                 .stream()
                 .findFirst()
                 .orElseGet(() -> Statistics.builder()
@@ -313,7 +313,7 @@ public class OrderServiceImpl implements OrderService {
                 );
         statistics.updateSalesAndCustomers(statistics.getTotalSales() + totalPrice, statistics.getCustomerCount() + 1);
 
-        storeStatisticsRepository.save(statistics);
+        statisticsRepository.save(statistics);
 
         // StatisticsResponseDto 생성
         StatisticsResponseDto dto = StatisticsResponseDto.fromEntity(statistics);
@@ -334,7 +334,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 캐시된 데이터가 없다면 DB에서 해당 날짜의 통계 조회
-        Statistics statistics = storeStatisticsRepository.findByStoreIdAndDate(storeId, date)
+        Statistics statistics = statisticsRepository.findByStoreIdAndDate(storeId, date)
                 .orElseThrow(() -> new NotFoundException("해당 날짜의 통계 데이터를 찾을 수 없습니다."));
 
         StatisticsResponseDto dto = StatisticsResponseDto.fromEntity(statistics);
@@ -355,7 +355,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 캐시된 데이터가 없다면 DB에서 해당 기간의 통계 조회
-        List<Statistics> statisticsList = storeStatisticsRepository.findByStoreIdAndDateBetween(storeId, startOfMonth, endOfMonth);
+        List<Statistics> statisticsList = statisticsRepository.findByStoreIdAndDateBetween(storeId, startOfMonth, endOfMonth);
         if (statisticsList.isEmpty()) {
             throw new NotFoundException("해당 월의 통계 데이터를 찾을 수 없습니다.");
         }
@@ -378,7 +378,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 캐시된 데이터가 없다면 DB에서 해당 날짜의 전체 통계 조회
-        List<Statistics> statisticsList = storeStatisticsRepository.findAllByDate(date);
+        List<Statistics> statisticsList = statisticsRepository.findAllByDate(date);
         if (statisticsList.isEmpty()) {
             throw new NotFoundException("해당 날짜의 통계 데이터를 찾을 수 없습니다.");
         }
@@ -404,7 +404,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 캐시된 데이터가 없다면 DB에서 해당 월의 전체 통계 조회
-        List<Statistics> statisticsList = storeStatisticsRepository.findAllByDateBetween(startOfMonth, endOfMonth);
+        List<Statistics> statisticsList = statisticsRepository.findAllByDateBetween(startOfMonth, endOfMonth);
         if (statisticsList.isEmpty()) {
             throw new NotFoundException("해당 월의 통계 데이터를 찾을 수 없습니다.");
         }
