@@ -1,5 +1,6 @@
 package com.nbacm.zzap_ki_yo.domain.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;
 import com.nbacm.zzap_ki_yo.domain.user.entity.UserRole;
 import lombok.Getter;
@@ -16,6 +17,10 @@ public class UserResponseDto {
 
     private UserRole userRole;
 
+    // password는 JSON 응답에서 제외되므로 제거할 수 있음
+    @JsonIgnore
+    private String password;
+
     public UserResponseDto(String name, String email, String nickname, UserRole userRole) {
         this.name = name;
         this.email = email;
@@ -25,11 +30,10 @@ public class UserResponseDto {
 
     public static UserResponseDto from(User user) {
         return new UserResponseDto(
-                user.getEmail(),
                 user.getName(),
+                user.getEmail(),
                 user.getNickname(),
                 user.getUserRole()
-
         );
     }
 }
