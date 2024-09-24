@@ -37,11 +37,11 @@ public class SearchService {
     @Transactional
     public SearchResponseDto search(String keyword, Pageable pageable) {
 
-        PopularWord popularWord = popularWordRepository.findByWord(keyword);
-
         if(keyword.equals(" ")){
             throw new SearchWordBadRequestException("공백은 검색 할 수 없습니다.");
         }
+
+        PopularWord popularWord = popularWordRepository.findByWord(keyword);
 
         if(popularWord == null) {
             PopularWord word = PopularWord.create(keyword, 1L);
