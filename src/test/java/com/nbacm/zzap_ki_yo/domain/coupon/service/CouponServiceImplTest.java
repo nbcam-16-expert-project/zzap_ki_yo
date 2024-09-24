@@ -2,6 +2,7 @@ package com.nbacm.zzap_ki_yo.domain.coupon.service;
 
 import com.nbacm.zzap_ki_yo.domain.coupon.dto.CouponRequest;
 import com.nbacm.zzap_ki_yo.domain.coupon.dto.CouponResponse;
+import com.nbacm.zzap_ki_yo.domain.coupon.entity.Coupon;
 import com.nbacm.zzap_ki_yo.domain.coupon.exception.CouponForbiddenException;
 import com.nbacm.zzap_ki_yo.domain.coupon.repository.CouponRepository;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -117,4 +119,64 @@ class CouponServiceImplTest {
         //t
         assertEquals("해당 가게의 소유자만 쿠폰을 발행할 수 있습니다.",exception.getMessage());
     }
+
+    @Test
+    void getAllCoupons() {
+        // g
+        String email = "test@test.com";
+
+        User user = new User();
+        setField(user, "userId", 1L);
+        setField(user, "email", email);
+
+        Store store = new Store();
+
+        Coupon coupon = new Coupon();
+        setField(coupon, "couponName", "Test Coupon");
+        setField(coupon, "discountRate", 20);
+        setField(coupon, "minPrice", 1000);
+        setField(coupon, "maxDiscount", 5000);
+        setField(coupon, "user", user);
+        setField(coupon, "expiryPeriod", Period.ofDays(30));
+        setField(coupon, "store", store);
+        List<Coupon> coupons = new ArrayList<>();
+        coupons.add(coupon);
+
+        given(userRepository.findByEmailOrElseThrow(email)).willReturn(user);
+        given(couponRepository.findByUser(user)).willReturn(coupons);
+        // w
+        List<CouponResponse> responseList = service.getAllCoupons(email);
+        // t
+        assertNotNull(responseList);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
