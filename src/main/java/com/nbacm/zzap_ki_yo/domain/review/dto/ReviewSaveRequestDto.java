@@ -1,9 +1,11 @@
 package com.nbacm.zzap_ki_yo.domain.review.dto;
 
 import jakarta.annotation.Nullable;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class ReviewSaveRequestDto {
     //리뷰 달 주문
     private Long orderId;
