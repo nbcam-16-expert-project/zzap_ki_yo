@@ -180,7 +180,7 @@ public class AdminStoreServiceTest {
             StoreRequestDto requestDto = new StoreRequestDto();
             requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
             Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.CLOSING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, "asd",new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
             given(storeRepository.findByStoreIdAndUser(anyLong(),any(User.class))).willReturn(store);
@@ -215,7 +215,7 @@ public class AdminStoreServiceTest {
             StoreRequestDto requestDto = new StoreRequestDto();
             requestDto.testData("ads","asd","asd",1,LocalTime.MIN,LocalTime.MAX,AdType.AD);
             Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, "asd",new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
             given(storeRepository.findByStoreIdAndUser(anyLong(),any(User.class))).willReturn(store);
@@ -251,8 +251,8 @@ public class AdminStoreServiceTest {
         void 가게_삭제_테스트_정상(){
             AuthUser user = new AuthUser("email@mail.com", UserRole.OWNER);
             User user1 = new User("qwe","qwe","qwe",UserRole.ADMIN,"asd","asd");
-            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
+            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.CLOSING, new User(), 1,
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, "asd",new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
             given(userRepository.findByEmailOrElseThrow(anyString())).willReturn(user1);
             given(storeRepository.findByStoreIdAndUser(anyLong(),any(User.class))).willReturn(store);
 
@@ -312,7 +312,7 @@ public class AdminStoreServiceTest {
             User user1 = new User("asd","asd","asd",UserRole.OWNER,"asd","asd");
             long storeId = 1L;
             Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.CLOSING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, "asd",new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
             lenient().when(userRepository.findByEmailOrElseThrow(anyString())).thenReturn(user1);
 
             given(storeRepository.findByStoreIdAndUser(anyLong(), any(User.class))).willReturn(store);
@@ -362,7 +362,7 @@ public class AdminStoreServiceTest {
             User user1 = new User("asd","asd","asd",UserRole.OWNER,"asd","asd");
             long storeId = 1L;
             Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, "asd",new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
             lenient().when(userRepository.findByEmailOrElseThrow(anyString())).thenReturn(user1);
 
             given(storeRepository.findByStoreIdAndUser(anyLong(), any(User.class))).willReturn(store);
@@ -383,7 +383,7 @@ public class AdminStoreServiceTest {
             User user1 = new User("asd","asd","asd",UserRole.OWNER,"asd","asd");
             long storeId = 1L;
             Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, "asd",new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
             lenient().when(userRepository.findByEmailOrElseThrow(anyString())).thenReturn(user1);
 
             given(storeRepository.findByStoreIdAndUser(anyLong(), any(User.class))).willReturn(store);

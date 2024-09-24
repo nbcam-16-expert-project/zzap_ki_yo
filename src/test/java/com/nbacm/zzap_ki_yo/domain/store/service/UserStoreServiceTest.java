@@ -54,8 +54,7 @@ public class UserStoreServiceTest {
         void 가게_조회_폐업_오류_테스트(){
 
             Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.CLOSING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, AdType.AD, new ArrayList<>(), new ArrayList<>());
-
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, "asd",new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
             given(storeRepository.findByStoreName(anyString())).willReturn(Optional.of(store));
 
             StoreForbiddenException exception = assertThrows(StoreForbiddenException.class, () ->
@@ -77,7 +76,7 @@ public class UserStoreServiceTest {
             menus.add(menu);
 
             Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, AdType.AD, menus, new ArrayList<>());
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, "asd",new ArrayList<>(), menus, new ArrayList<>());
 
             given(storeRepository.findByStoreName(anyString())).willReturn(Optional.of(store));
 
@@ -103,8 +102,8 @@ public class UserStoreServiceTest {
             List<Menu> menus = new ArrayList<>();
             menus.add(menu);
 
-            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.OPENING, new User(), 1,
-                    LocalTime.MIN, LocalTime.MAX, AdType.AD, menus, new ArrayList<>());
+            Store store = new Store("qwe", "qwe", "qwe", 12, StoreType.CLOSING, new User(), 1,
+                    LocalTime.MIN, LocalTime.MAX, AdType.AD, "asd",new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
             given(storeRepository.findAllByStoreTypeOrderByAdTypeAndId(any())).willReturn(List.of(store));
 
