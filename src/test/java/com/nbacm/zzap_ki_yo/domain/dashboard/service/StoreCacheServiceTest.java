@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.dashboard.service;
+package com.nbacm.zzap_ki_yo.domain.dashboard.service;
 
 
 import com.nbacm.zzap_ki_yo.domain.dashboard.dto.StatisticsResponseDto;
