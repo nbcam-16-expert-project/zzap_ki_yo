@@ -3,10 +3,11 @@ package com.nbacm.zzap_ki_yo.domain.store.service;
 
 import com.nbacm.zzap_ki_yo.domain.exception.BadRequestException;
 import com.nbacm.zzap_ki_yo.domain.exception.UnauthorizedException;
-import com.nbacm.zzap_ki_yo.domain.menu.entity.Menu;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.ClosingStoreRequestDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.request.StoreRequestDto;
-import com.nbacm.zzap_ki_yo.domain.store.dto.response.*;
+import com.nbacm.zzap_ki_yo.domain.store.dto.response.ClosingStoreResponseDto;
+import com.nbacm.zzap_ki_yo.domain.store.dto.response.CreateStoreResponseDto;
+import com.nbacm.zzap_ki_yo.domain.store.dto.response.UpdateStoreResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.entity.AdType;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
@@ -28,7 +29,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;

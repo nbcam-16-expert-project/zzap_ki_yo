@@ -6,7 +6,6 @@ import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectAllStoreResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.SelectStoreResponseDto;
 import com.nbacm.zzap_ki_yo.domain.store.entity.AdType;
 import com.nbacm.zzap_ki_yo.domain.store.entity.StoreType;
-import com.nbacm.zzap_ki_yo.domain.store.service.AdminStoreServiceImpl;
 import com.nbacm.zzap_ki_yo.domain.store.service.UserStoreServiceImpl;
 import com.nbacm.zzap_ki_yo.domain.user.common.config.AuthUserArgumentResolver;
 import com.nbacm.zzap_ki_yo.domain.user.common.util.JwtAuthenticationFilter;
