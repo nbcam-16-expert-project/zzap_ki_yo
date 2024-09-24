@@ -47,14 +47,8 @@ public class CouponServiceImpl implements CouponService {
                 .orElseThrow(() -> new StoreNotFoundException("해당 가게는 없는 가게입니다."));
 
         // 발행자가 해당 가게의 사장이 맞는지 혹은 관리자인지 확인
-        for (Store ownstore : publisher.getStores()){
-            int i = 0;
-            if(!ownstore.equals(store)){
-                i++;
-            }
-            if ((publisher.getStores().size() == i) && publisher.getUserRole().equals(UserRole.ADMIN)){
-                throw new CouponForbiddenException("해당 가게의 소유자만 쿠폰을 발행할 수 있습니다.");
-            }
+        if(!publisher.getStores().contains(store) && !publisher.getUserRole().equals(UserRole.ADMIN)){
+            throw new CouponForbiddenException("해당 가게의 소유자만 쿠폰을 발행할 수 있습니다.");
         }
 
         // 할인율 0~100사이인지 확인
