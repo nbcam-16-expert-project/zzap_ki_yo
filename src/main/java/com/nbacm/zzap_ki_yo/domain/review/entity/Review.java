@@ -41,8 +41,9 @@ public class Review {
     private List<Review> replies;
 
     // 별점
-    @Column(nullable = false)
+    @Column(name = "star_point")
     private int starPoint;
+
     // 필수 입력값을 가진 builder 메서드
     public static ReviewBuilder builder(Order order, String content) {
         // 필수값 확인

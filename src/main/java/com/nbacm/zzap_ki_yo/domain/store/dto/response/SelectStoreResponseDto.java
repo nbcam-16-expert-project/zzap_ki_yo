@@ -1,5 +1,7 @@
 package com.nbacm.zzap_ki_yo.domain.store.dto.response;
 
+import com.nbacm.zzap_ki_yo.domain.favorite.entity.Favorite;
+import com.nbacm.zzap_ki_yo.domain.store.entity.Category;
 import com.nbacm.zzap_ki_yo.domain.store.entity.Store;
 import lombok.Builder;
 import lombok.Data;
@@ -15,16 +17,18 @@ public class SelectStoreResponseDto {
     private String storeNumber;
     private Integer favoriteCount;
     private List<MenuNamePrice> menus = new ArrayList<>();
+    private List<Category> categoryList;
 
 
     @Builder
-    private SelectStoreResponseDto(Long storeId, String storeName, String storeAddress, String storeNumber, List<MenuNamePrice> menus , Integer favoriteCount) {
+    private SelectStoreResponseDto(Long storeId, String storeName, String storeAddress, String storeNumber, List<MenuNamePrice> menus , Integer favoriteCount, List<Category> categoryList) {
         this.storeId = storeId;
         this.storeName = storeName;
         this.storeAddress = storeAddress;
         this.storeNumber = storeNumber;
         this.menus = menus;
         this.favoriteCount = favoriteCount;
+        this.categoryList = categoryList;
     }
 
     public static SelectStoreResponseDto selectStore(Store store, List<MenuNamePrice> menus) {
@@ -35,6 +39,7 @@ public class SelectStoreResponseDto {
                 .storeNumber(store.getStoreNumber())
                 .favoriteCount(store.getFavoriteCount())
                 .menus(menus)
+                .categoryList(store.getCategoryList())
                 .build();
 
     }
