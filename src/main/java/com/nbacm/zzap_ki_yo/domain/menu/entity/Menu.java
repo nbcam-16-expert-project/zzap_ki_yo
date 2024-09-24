@@ -38,7 +38,7 @@ public class Menu {
         this.store = store;
     }
 
-    public void update(String menuName, Integer price) {
+    public void updateMenu(String menuName, Integer price) {
         this.menuName = menuName;
         this.price = price;
     }
