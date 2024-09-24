@@ -18,8 +18,6 @@ import com.nbacm.zzap_ki_yo.domain.user.dto.AuthUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AdminStoreController.class)
 public class AdminStoreControllerTest {
 
-    private static final Logger log = LoggerFactory.getLogger(AdminStoreControllerTest.class);
     @Autowired
     private MockMvc mockMvc;
 
