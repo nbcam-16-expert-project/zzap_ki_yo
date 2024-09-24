@@ -62,7 +62,8 @@ public class Order{
     public Order(
             OrderType orderType,
             String orderAddress,
-            Store store, User user,
+            Store store,
+            User user,
             OrderStatus orderStatus,
             List<Review> reviews,
             List<OrderedMenu> orderedMenuList,
