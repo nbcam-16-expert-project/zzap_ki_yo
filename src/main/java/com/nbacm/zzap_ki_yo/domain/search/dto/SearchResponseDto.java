@@ -1,6 +1,7 @@
 package com.nbacm.zzap_ki_yo.domain.search.dto;
 
 import com.nbacm.zzap_ki_yo.domain.store.dto.response.MenuNamePrice;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
