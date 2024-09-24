@@ -61,8 +61,6 @@ class CouponServiceImplTest {
         stores.add(store);
         setField(publisher, "stores", stores);
 
-
-
         given(userRepository.findByEmailOrElseThrow(email)).willReturn(publisher);
         given(userRepository.findById(couponRequest.getUserId())).willReturn(Optional.of(user));
         given(storeRepository.findById(storeId)).willReturn(Optional.of(store));
@@ -100,8 +98,6 @@ class CouponServiceImplTest {
         stores.add(ownedStore);
         setField(publisher, "stores", stores);
 
-
-
         User user = new User();
 
         Store serchedStore = new Store();
@@ -109,8 +105,6 @@ class CouponServiceImplTest {
         // 유저 - 그냥 유저
         // 퍼블리셔 - 2번가게 소유, 제공 이메일을 갖고있음, 유저롤 오너
         // 발행할 가게 - 1번, 제공된 아이디를 갖고있음
-
-
 
         given(userRepository.findByEmailOrElseThrow(email)).willReturn(publisher);
         given(userRepository.findById(couponRequest.getUserId())).willReturn(Optional.of(user));
@@ -122,6 +116,5 @@ class CouponServiceImplTest {
 
         //t
         assertEquals("해당 가게의 소유자만 쿠폰을 발행할 수 있습니다.",exception.getMessage());
-
     }
 }
