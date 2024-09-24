@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.cart.controller;
+package com.nbacm.zzap_ki_yo.domain.cart.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nbacm.zzap_ki_yo.domain.cart.controller.CartController;

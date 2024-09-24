@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.user.service;
+package com.nbacm.zzap_ki_yo.domain.user.service;
 
 import com.nbacm.zzap_ki_yo.domain.user.common.util.JwtUtils;
 import com.nbacm.zzap_ki_yo.domain.user.common.util.PasswordUtil;

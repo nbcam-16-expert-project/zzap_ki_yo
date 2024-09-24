@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.user.service;
+package com.nbacm.zzap_ki_yo.domain.user.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nbacm.zzap_ki_yo.domain.user.entity.User;

@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.user.controller;
+package com.nbacm.zzap_ki_yo.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nbacm.zzap_ki_yo.domain.user.common.util.JwtUtils;

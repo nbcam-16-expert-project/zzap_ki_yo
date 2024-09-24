@@ -1,4 +1,4 @@
-package com.nbacm.zzap_ki_yo.notification;
+package com.nbacm.zzap_ki_yo.domain.notification;
 import com.nbacm.zzap_ki_yo.domain.notification.common.OrderEventHandler;
 import com.nbacm.zzap_ki_yo.domain.notification.controller.NotificationController;
 import com.nbacm.zzap_ki_yo.domain.user.common.util.JwtUtils;
