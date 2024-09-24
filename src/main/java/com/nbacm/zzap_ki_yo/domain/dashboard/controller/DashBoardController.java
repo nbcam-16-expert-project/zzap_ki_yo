@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/stores")
 @RequiredArgsConstructor
 public class DashBoardController {
+
     private final AdminStoreServiceImpl adminStoreService;
 
     // 일간 통계 조회 (사장님 또는 관리자)

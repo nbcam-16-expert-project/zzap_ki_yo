@@ -34,6 +34,7 @@ public class CartRedisServiceImpl implements CartRedisService {
     private final StoreRepository storeRepository;
     private final ObjectMapper objectMapper;
     private static final String CART_KEY_PREFIX = "cart:";
+
     private void saveCart(String userEmail, CartResponseDto cartDto) {
         String key = CART_KEY_PREFIX + userEmail;
         try {
