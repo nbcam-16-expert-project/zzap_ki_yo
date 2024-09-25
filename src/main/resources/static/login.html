@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kakao Login</title>
+</head>
+<body>
+<h1>Kakao Login </h1>
+<button onclick="startKakaoLogin()">Start Kakao Login</button>
+<div id="result"></div>
+
+<script>
+  function startKakaoLogin() {
+    const clientId = '56741d335f6074400df5fb6031cc4e1e';
+    const redirectUri = encodeURIComponent('http://localhost:8080/api/v1/users/oauth2/kakao');
+    const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+
+    window.location.href = kakaoAuthUrl;
+  }
+
+  // URL에서 code 파라미터 확인
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+
+  if (code) {
+    // 서버에 코드 전송
+    fetch(`http://localhost:8080/api/v1/users/oauth2/kakao?code=${code}`)
+            .then(response => response.json())
+            .then(data => {
+              document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+              document.getElementById('result').innerText = 'Error: ' + error;
+            });
+  }
+</script>
+</body>
+</html>

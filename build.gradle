@@ -30,8 +30,45 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+    //비밀번호 암호화
+    implementation 'at.favre.lib:bcrypt:0.10.2'
+
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.redisson:redisson:3.22.1'
+
+    // Jwt설정
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // JUnit 5 (Jupiter)
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+
+    // Mockito Core
+    testImplementation 'org.mockito:mockito-core:5.4.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.4.0'
+
+    // Spring Boot Starter Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Optional: AssertJ for better assertions
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+
+    // Optional: Spring Test utilities (ReflectionTestUtils, etc.)
+    testImplementation 'org.springframework:spring-test'
+
+
+
 }
 
 tasks.named('test') {
