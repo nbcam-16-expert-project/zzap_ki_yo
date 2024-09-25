@@ -1,4 +1,4 @@
-# zzap_ki_yo (Outstagram)
+# zzap_ki_yo
 
 ## 개요
 짭기요는 요기요를 모방으로 만든 프로젝트입니다 
