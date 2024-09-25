@@ -25,7 +25,8 @@
 
 
 ## ERD
-![image](https://github.com/user-attachments/assets/484beaea-983b-4a61-9681-10668a892119)
+![image](https://github.com/user-attachments/assets/c668c5f0-5233-4e20-b201-7868980fd8f7)
+
 
 ## API 명세서
 [https://documenter.getpostman.com/view/37565019/2sA3s7j9XQ](https://www.notion.so/d00be6b4f79d48588e2d2e677c6e3291?v=fff42b6edb898114bad0000c5e3f507b)
